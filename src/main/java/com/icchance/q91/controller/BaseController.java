@@ -1,0 +1,18 @@
+package com.icchance.q91.controller;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * <p>
+ * 基礎控制類
+ * </p>
+ * @author 6687353
+ * @since 2023/7/19 13:17:50
+ */
+@Slf4j
+public class BaseController {
+
+    //static final String API_PORTAL = "https://api-test.q91.co";
+    static final String API_PORTAL = "/q91/api/";
+
+}
