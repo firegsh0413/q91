@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
-public class OrderController extends BaseController {
+public class TransactionController extends BaseController {
 }
