@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${q91.db.ip}/${q91.db.name}
+    username: root
+    password: root
+  # Redis
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:  # 密碼
+    timeout: 10000ms # 連接超時時長
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #開啟SQL語句印出
+
+
+# 圖形驗證(滑動驗證碼)配置
+aj:
+  captcha:
+    # 底圖路徑 位於resource目錄下
+    #jigsaw: classpath:images/jigsaw
+    # 緩存類型 local/redis
+    cache-type: redis
+    # 緩存閾值
+    #cache-number: 1000
+    # 定時清除過期緩存 0為不執行
+    timing-clear: 0
+    # 驗證碼類型
+    type: blockpuzzle
+    #水印文字
+    water-mark:
+    # 校驗滑動允許誤差值(默認5像素)
+    slip-offset: 5
+    # aes加密座標開啟
+    aes-status: true
+    # 滑動干擾項0/1/2
+    interference-options: 2
+    # 歷史數據是否清除
+    #history-data-clear-enable: false
+    # 接口請求次數一分鐘限制是否開啟
+    req-frequency-limit-enable: true
+    # 一分鐘內驗證失敗次數 鎖定get接口
+    req-get-lock-limit: 5
+    # 驗證失敗後鎖定時間間隔(s)
+    req-get-lock-seconds: 300
+    # get接口一分鐘內請求數限制
+    req-get-minute-limit: 20
+    # check接口一分鐘內請求數限制
+    req-check-minute-limit: 20
+    # verify接口一分鐘內請求數限制
+    req-verify-minute-limit: 60
+
+# 自訂變數
+q91:
+  db:
+    ip: localhost:3306
+    name: q91

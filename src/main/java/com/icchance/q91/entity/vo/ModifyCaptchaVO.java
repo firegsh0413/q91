@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class CaptchaVO {
+public class ModifyCaptchaVO {
 
     /** 缺塊base64圖片 */
     private String cutoutImage;

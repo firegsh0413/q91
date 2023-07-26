@@ -18,11 +18,14 @@ public enum ResultCode {
 
     /** 帳號類 */
     CAPTCHA_ERROR("003", "验证码错误"),
-    ACCOUNT_ALREADY_EXIST("004", "账号已存在"),
+    ACCOUNT_ALREADY_EXIST("004", "该账号已存在"),
     ACCOUNT_NOT_EXIST("005", "账号不存在"),
     ACCOUNT_OR_PASSWORD_WRONG("", "账号密码有误"),
     PASSWORD_NOT_MATCH("", "密码不匹配"),
     FUND_PASSWORD_NOT_MATCH("", "支付密码不匹配"),
+    ACCOUNT_NOT_VALID("", "6-12位英文大小写或数字字元"),
+    USERNAME_NOT_VALId("", "1~8位中文或英文大小写"),
+    FUND_PASSWORD_NOT_VALID("", "6位数字字元"),
     ;
 
     public final String code;

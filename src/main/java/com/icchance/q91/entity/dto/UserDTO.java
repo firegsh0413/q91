@@ -1,7 +1,9 @@
 package com.icchance.q91.entity.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>
@@ -12,7 +14,9 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class AccountDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserDTO {
 
     /** 帳號 */
     private String account;
@@ -22,5 +26,9 @@ public class AccountDTO {
     private String password;
     /** 支付密碼 */
     private String fundPassword;
+    /** 驗證碼uid */
+    private String cId;
+    /** 驗證碼結果 */
+    private String captcha;
 
 }

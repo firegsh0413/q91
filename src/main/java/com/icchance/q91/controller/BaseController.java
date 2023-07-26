@@ -18,6 +18,6 @@ public class BaseController {
     //static final String API_PORTAL = "https://api-test.q91.co";
     static final String API_PORTAL = "/q91/api/";
 
-    protected final Result SUCCESS = Result.builder().resultCode(ResultCode.SUCCESS.code).msg(Message.SUCCESS.msg).build();
+    protected final Result SUCCESS = Result.builder().resultCode(ResultCode.SUCCESS).build();
 
 }
