@@ -11,7 +11,7 @@ import com.icchance.q91.entity.model.User;
  * @author 6687353
  * @since 2023/7/20 14:54:50
  */
-public interface UserService extends IService<User> {
+public interface UserService {
 
     /**
      * <p>
@@ -31,14 +31,12 @@ public interface UserService extends IService<User> {
      * @param account 帳號
      * @param username 暱稱
      * @param password 密碼
-     * @param chkPassword 確認密碼
      * @param fundPassword 支付密碼
-     * @param chkFundPassword 確認支付密碼
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/20 16:33:59
      */
-    Result register(String account, String username, String password, String chkPassword, String fundPassword, String chkFundPassword);
+    Result register(String account, String username, String password, String fundPassword);
 
     /**
      * <p>
@@ -58,27 +56,31 @@ public interface UserService extends IService<User> {
      * <p>
      * 登出
      * </p>
-     * @param token 令牌
+     * @param userToken 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:32:52
      */
-    Result logout(String token);
+    Result logout(String userToken);
 
     /**
      * <p>
      * 取得會員個人訊息
      * </p>
-     * @param token 令牌
+     * @param userToken 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
-     * @since 2023/7/25 17:28:51
+     * @since 2023/7/25 18:05:19
      */
-    Result getUserInfo(String token);
+    Result getUserInfo(String userToken);
 
-    Result getBalance(String token);
+    Result getBalance(String userToken);
 
-    Result getTransaction(String token);
+    Result certificate(String userToken, String name, String idNumber, String idCard, String facePhoto);
+
+    Result updatePassword(String userToken, String oldPassword, String newPassword);
+
+    Result updateFundPassword(String userToken, String oldFundPassword, String newFundPassword);
 
 
 

@@ -7,9 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.tomcat.jni.Local;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
+/**
+ * <p>
+ * 用戶資訊
+ * </p>
+ * @author 6687353
+ * @since 2023/7/26 14:45:55
+ */
 @Data
 @TableName("USER")
 @Builder
@@ -29,5 +38,20 @@ public class User implements Serializable {
     private String fundPassword;
     @TableField(value = "ADDRESS")
     private String address;
-
+    @TableField(value = "CERTIFIED")
+    private Boolean certified;
+    @TableField(value = "NAME")
+    private String name;
+    @TableField(value = "ID_NUMBER")
+    private String idNumber;
+    @TableField(value = "ID_CARD")
+    private String idCard;
+    @TableField(value = "FACE_PHOTO")
+    private String facePhoto;
+    @TableField(value = "ROLE")
+    private Integer role;
+    @TableField(value = "CREATE_TIME")
+    private LocalDateTime createTime;
+    @TableField(value = "UPDATE_TIME")
+    private LocalDateTime updateTime;
 }

@@ -1,6 +1,5 @@
 package com.icchance.q91.entity.vo;
 
-import com.icchance.q91.entity.dto.UserDTO;
 import lombok.*;
 
 /**
@@ -21,7 +20,7 @@ public class UserVO {
     /** 暱稱 */
     private String username;
     /** 令牌 */
-    private String token;
+    private String userToken;
     /** 頭像圖片base64 */
     private String avatar;
     /** 錢包地址 */

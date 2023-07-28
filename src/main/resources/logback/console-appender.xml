@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+<!--對日誌進行格式化-->
+<property name="logMsg" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{sessionId}] [%X{username}] %-5level %logger:%L - %m%n"/>
+    <!--輸出到控制台-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${logMsg}</pattern>
+        </encoder>
+    </appender>
+</included>
