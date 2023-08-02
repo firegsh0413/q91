@@ -46,17 +46,14 @@ public class UserController extends BaseController {
      * @param account 帳號
      * @param username 暱稱
      * @param password 密碼
-     * @param chkPassword 確認密碼
      * @param fundPassword 支付密碼
-     * @param chkFundPassword 確認支付密碼
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:05:17
      */
     @PostMapping("/register")
-    public Result register(@RequestParam String account, @RequestParam String username, @RequestParam String password,
-                           @RequestParam String chkPassword, @RequestParam String fundPassword, @RequestParam String chkFundPassword) {
-        return userService.register(account, username, password, chkPassword, fundPassword, chkFundPassword);
+    public Result register(@RequestParam String account, @RequestParam String username, @RequestParam String password, @RequestParam String fundPassword) {
+        return userService.register(account, username, password, fundPassword);
     }
 
     /**
@@ -80,43 +77,48 @@ public class UserController extends BaseController {
      * <p>
      * 登出
      * </p>
-     * @param token 令牌
+     * @param userToken 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 12:00:18
      */
     @PostMapping("/logout")
-    public Result logout(@RequestParam String token) {
-        return userService.logout(token);
+    public Result logout(@RequestParam String userToken) {
+        return userService.logout(userToken);
     }
 
     /**
      * <p>
      * 取得會員個人訊息
      * </p>
-     * @param token 令牌
+     * @param userToken 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/25 17:28:51
      */
     @GetMapping("/info")
-    public Result getUserInfo(@RequestParam String token) {
-        return userService.getUserInfo(token);
+    public Result getUserInfo(@RequestParam String userToken) {
+        return userService.getUserInfo(userToken);
     }
 
     @GetMapping("/balance")
-    public Result getBalance(@RequestParam String token) {
-        return null;
-    }
-
-    @GetMapping("/transaction")
-    public Result getTransaction(@RequestParam String token) {
-        return null;
+    public Result getBalance(@RequestParam String userToken) {
+        return userService.getBalance(userToken);
     }
 
     @PostMapping("/certificate")
-    public Result certificate(@RequestParam String token, @RequestParam String name, @RequestParam String idNumber,
+    public Result certificate(@RequestParam String userToken, @RequestParam String name, @RequestParam String idNumber,
                               @RequestParam String idCard, @RequestParam String facePhoto) {
-        return null;
+        return userService.certificate(userToken, name, idNumber, idCard, facePhoto);
+    }
+
+    @PostMapping("/pwd/update")
+    public Result updatePassword(@RequestParam String userToken, @RequestParam String oldPassword, @RequestParam String newPassword) {
+        return userService.updatePassword(userToken, oldPassword, newPassword);
+    }
+
+    @PostMapping("/fundPwd/update")
+    public Result updateFundPassword(@RequestParam String userToken, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
+        return userService.updateFundPassword(userToken, oldFundPassword, newFundPassword);
     }
 }

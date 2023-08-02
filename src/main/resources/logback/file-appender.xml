@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!--日誌級別-->
+    <springProperty scope="context" name="SPRING_APPLICATION_NAME" source="spring.application.name"/>
+
+    <!-- 文件分割大小 -->
+    <property name="maxFileSize" value="200MB"/>
+    <!-- 每天產生一個日志文件，該日志文件的保存期限為30天 -->
+    <property name="maxHistory" value="30"/>
+    <!-- 日志保留總大小 -->
+    <property name="totalSizeCap" value="3GB"/>
+
+    <!--輸出日誌文檔路徑 ${APP_LOG_FOLDER} -->
+    <property name="LOG_PATH_RULE" value="%d{yyyy-MM-dd}-%i"/>
+
+    <!--對日誌進行格式化-->
+    <property name="logMsg" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{sessionId}] [%X{username}] %-5level %logger:%L - %m%n"/>
+
+    <property name="LOG_PATH_ARCHIVED" value="archived" />
+
+    <!-- 全部LOG輸出 -->
+    <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>
+            ${APP_LOG_FOLDER}/${SPRING_APPLICATION_NAME}.${SPRING_PROFILES_ACTIVE}-all.log
+        </File>
+        <!-- 滾動策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${APP_LOG_FOLDER}/${LOG_PATH_ARCHIVED}/${SPRING_APPLICATION_NAME}.${LOG_PATH_RULE}-all.%i.log.zip
+            </FileNamePattern>
+            <!--保留最近30天的日誌-->
+            <maxHistory>${maxHistory}</maxHistory>
+            <!--指定日誌文件的上限大小，例如設置為1GB的话，當達到這個值，就會刪除舊的日誌-->
+            <totalSizeCap>${totalSizeCap}</totalSizeCap>
+            <!-- 當天的日誌大小超過  ${MAX_FILE_SIZE} 文件大小時候，新的内容寫入新的文件， 默認50MB-->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${logMsg}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- WARN 級別輸出 -->
+    <appender name="FILE_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>
+            ${APP_LOG_FOLDER}/${SPRING_APPLICATION_NAME}.${SPRING_PROFILES_ACTIVE}-warn.log
+        </File>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${APP_LOG_FOLDER}/${LOG_PATH_ARCHIVED}/${SPRING_APPLICATION_NAME}.${LOG_PATH_RULE}-warn.%i.log.zip
+            </FileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+            <totalSizeCap>${totalSizeCap}</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${logMsg}</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- ERROR 級別輸出 -->
+    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>
+            ${APP_LOG_FOLDER}/${SPRING_APPLICATION_NAME}.${SPRING_PROFILES_ACTIVE}-error.log
+        </File>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${APP_LOG_FOLDER}/${LOG_PATH_ARCHIVED}/${SPRING_APPLICATION_NAME}.${LOG_PATH_RULE}-error.%i.log.zip
+            </FileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+            <totalSizeCap>${totalSizeCap}</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${logMsg}</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- DB效能追蹤 -->
+    <appender name="dbPerformanceFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>
+            ${APP_LOG_FOLDER}/${SPRING_APPLICATION_NAME}.${SPRING_PROFILES_ACTIVE}-dbPerformance.log
+        </File>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 滾動策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${APP_LOG_FOLDER}/${LOG_PATH_ARCHIVED}/${SPRING_APPLICATION_NAME}.${LOG_PATH_RULE}-dbPerformance.%i.log.zip
+            </FileNamePattern>
+            <!--保留最近30天的日誌-->
+            <maxHistory>${maxHistory}</maxHistory>
+            <!--指定日誌文件的上限大小，例如設置為1GB的话，當達到這個值，就會刪除舊的日誌-->
+            <totalSizeCap>${totalSizeCap}</totalSizeCap>
+            <!-- 當天的日誌大小超過  ${MAX_FILE_SIZE} 文件大小時候，新的内容寫入新的文件， 默認50MB-->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${logMsg}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- API效能分析 -->
+    <appender name="apiPerformanceFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>
+            <!-- @formatter:off 對日誌進行格式化 -->
+            ${APP_LOG_FOLDER}/${SPRING_APPLICATION_NAME}.${SPRING_PROFILES_ACTIVE}-apiPerformance.log
+            <!-- @formatter:on -->
+        </File>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>TRACE</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- 滾動策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>
+                ${APP_LOG_FOLDER}/${LOG_PATH_ARCHIVED}/${SPRING_APPLICATION_NAME}.${LOG_PATH_RULE}-apiPerformance.%i.log.zip
+            </FileNamePattern>
+            <!--保留最近30天的日誌-->
+            <maxHistory>${maxHistory}</maxHistory>
+            <!--指定日誌文件的上限大小，例如設置為1GB的话，當達到這個值，就會刪除舊的日誌-->
+            <totalSizeCap>${totalSizeCap}</totalSizeCap>
+            <!-- 當天的日誌大小超過  ${MAX_FILE_SIZE} 文件大小時候，新的内容寫入新的文件， 默認50MB-->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${maxFileSize}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+</included>

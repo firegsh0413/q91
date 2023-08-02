@@ -1,4 +1,10 @@
+#server settings
+server:
+  port: 8080
+
 spring:
+  application:
+    name: q91
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${q91.db.ip}/${q91.db.name}
@@ -13,7 +19,11 @@ spring:
     timeout: 10000ms # 連接超時時長
 
 mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml #Mapper掃描
+  typeAliasesPackage: com.icchance.q91.entity.model #實體掃描,多个package用逗號或者分號分隔
   configuration:
+    map-underscore-to-camel-case: true # 開啟駝峰映射
+    cache-enabled: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #開啟SQL語句印出
 
 
@@ -41,7 +51,7 @@ aj:
     # 歷史數據是否清除
     #history-data-clear-enable: false
     # 接口請求次數一分鐘限制是否開啟
-    req-frequency-limit-enable: true
+    req-frequency-limit-enable: false
     # 一分鐘內驗證失敗次數 鎖定get接口
     req-get-lock-limit: 5
     # 驗證失敗後鎖定時間間隔(s)
@@ -52,9 +62,15 @@ aj:
     req-check-minute-limit: 20
     # verify接口一分鐘內請求數限制
     req-verify-minute-limit: 60
-
+# log配置
+logging:
+  level:
+    root: debug
 # 自訂變數
 q91:
   db:
     ip: localhost:3306
     name: q91
+jwt:
+  signKey: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890
+  expireTimeAsSec: 120
