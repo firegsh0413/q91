@@ -6,31 +6,33 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 @Slf4j
 @Repository
 public class FakeUserDB {
 
-    private static Map<String, User> userDb = new TreeMap<>();
+    private static Map<Integer, User> userDb = new TreeMap<>();
 
     public void create(User user) {
         synchronized (userDb) {
-            userDb.put(user.getAccount(), user);
+            userDb.put(1, user);
         }
         log.debug("userDb:{}", userDb);
     }
 
     public User get(String account) {
-        return userDb.get(account);
+        Optional<User> any = userDb.values().stream().filter(v -> account.equals(v.getAccount())).findAny();
+        return any.orElse(null);
     }
 
     public boolean isExist(String account) {
-        return userDb.containsKey(account);
+        return userDb.values().stream().anyMatch(v -> account.equals(v.getAccount()));
     }
 
     public User update(User user) {
-        userDb.put(user.getAccount(), user);
-        return userDb.get(user.getAccount());
+        userDb.put(user.getId(), user);
+        return userDb.get(user.getId());
     }
 }

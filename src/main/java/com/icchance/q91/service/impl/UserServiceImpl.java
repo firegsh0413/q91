@@ -213,7 +213,7 @@ public class UserServiceImpl implements UserService {
 /*        if (!redisKit.hasKey(token)) {
             return Result.builder().resultCode(ResultCode.SYSTEM_UNDER_MAINTAIN).build();
         }*/
-        String account = jwtUtil.parseAccountFromToken(userToken);
+        User user = getUserByToken(userToken);
 
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
 
@@ -339,16 +339,22 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public static String encodePassword(String passwrod) {
+    private static String encodePassword(String passwrod) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder.encode(passwrod);
     }
 
-    private User getUserByToken(String token) {
+    @Override
+    public User getUserByToken(String token) {
         String account = jwtUtil.parseAccountFromToken(token);
-        if (!fakeUserDB.isExist(account)) {
+/*        if (!fakeUserDB.isExist(account)) {
             return null;
         }
-        return fakeUserDB.get(account);
+        return fakeUserDB.get(account);*/
+        User user = authUserService.getByAccount(account);
+        if(Objects.isNull(user)) {
+            return null;
+        }
+        return user;
     }
 }

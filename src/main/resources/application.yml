@@ -19,7 +19,11 @@ spring:
     timeout: 10000ms # 連接超時時長
 
 mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml #Mapper掃描
+  typeAliasesPackage: com.icchance.q91.entity.model #實體掃描,多个package用逗號或者分號分隔
   configuration:
+    map-underscore-to-camel-case: true # 開啟駝峰映射
+    cache-enabled: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #開啟SQL語句印出
 
 

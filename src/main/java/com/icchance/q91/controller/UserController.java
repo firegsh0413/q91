@@ -119,6 +119,6 @@ public class UserController extends BaseController {
 
     @PostMapping("/fundPwd/update")
     public Result updateFundPassword(@RequestParam String userToken, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
-        return userService.updatePassword(userToken, oldFundPassword, newFundPassword);
+        return userService.updateFundPassword(userToken, oldFundPassword, newFundPassword);
     }
 }

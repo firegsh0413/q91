@@ -82,6 +82,7 @@ public interface UserService {
 
     Result updateFundPassword(String userToken, String oldFundPassword, String newFundPassword);
 
+    User getUserByToken(String token);
 
 
 }

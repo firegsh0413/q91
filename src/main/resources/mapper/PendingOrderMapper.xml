@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icchance.q91.mapper.PendingOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.icchance.q91.entity.model.PendingOrder">
+            <id property="id" column="ID" jdbcType="INTEGER"/>
+            <result property="userId" column="USER_ID" jdbcType="INTEGER"/>
+            <result property="status" column="STATUS" jdbcType="INTEGER"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="tradeTime" column="TRADE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="buyerId" column="BUYER_ID" jdbcType="INTEGER"/>
+            <result property="buyerUsername" column="BUYER_USERNAME" jdbcType="VARCHAR"/>
+            <result property="amount" column="AMOUNT" jdbcType="DECIMAL"/>
+            <result property="orderNumber" column="ORDER_NUMBER" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        a.ID, a.USER_ID, a.STATUS,
+        a.CREATE_TIME, a.UPDATE_TIME, a.TRADE_TIME, a.TRADE_INFO_ID,
+        a.BUYER_ID, a.BUYER_USERNAME, a.AMOUNT,
+        a.ORDER_NUMBER, a.CERT
+    </sql>
+    <sql id="BuyerGatewayColumnList">
+        buyerGateway.ID BUYER_GATEWAY_ID, buyerGateway.TYPE BUYER_GATEWAY_TYPE, buyerGateway.USER_ID BUYER_ID,
+        buyerGateway.NAME BUYER_NAME, buyerGateway.GATEWAY_NAME BUYER_GATEWAY_NAME,
+        buyerGateway.GATEWAY_RECEIPT_CODE BUYER_GATEWAY_RECEIPT_CODE
+    </sql>
+    <sql id="TradeGatewayColumnList">
+        tradeGateway.ID TRADE_GATEWAY_ID, tradeGateway.TYPE TRADE_GATEWAY_TYPE, tradeGateway.USER_ID TRADE_ID,
+        tradeGateway.NAME TRADE_NAME, tradeGateway.GATEWAY_NAME TRADE_GATEWAY_NAME,
+        tradeGateway.GATEWAY_RECEIPT_CODE TRADE_GATEWAY_RECEIPT_CODE
+    </sql>
+
+    <resultMap id="getPendingOrderResult" type="com.icchance.q91.entity.vo.PendingOrderVO" >
+        <result column="ID" jdbcType="INTEGER" property="id" />
+        <result column="USER_ID" jdbcType="INTEGER" property="userId" />
+        <result column="STATUS" jdbcType="INTEGER" property="status" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
+        <result column="TRADE_INFO_ID" jdbcType="INTEGER" property="tradeInfoId" />
+        <result column="BUYER_ID" jdbcType="INTEGER" property="buyerId" />
+        <result column="BUYER_USERNAME" jdbcType="VARCHAR" property="buyerUsername" />
+        <result column="BUYER_GATEWAY_ID" jdbcType="INTEGER" property="buyerGatewayId" />
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
+        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="CERT" jdbcType="BLOB" property="cert" />
+        <collection property="buyerInfo" ofType="com.icchance.q91.entity.model.Gateway">
+            <id column="BUYER_GATEWAY_ID" property="id" jdbcType="INTEGER" />
+            <result column="BUYER_ID" property="userId" jdbcType="INTEGER" />
+            <result column="BUYER_GATEWAY_TYPE" property="type" jdbcType="INTEGER" />
+            <result column="BUYER_NAME" property="name" jdbcType="VARCHAR" />
+            <result column="BUYER_GATEWAY_NAME" property="gatewayName" jdbcType="VARCHAR" />
+            <result column="BUYER_GATEWAY_RECEIPT_CODE" property="gatewayReceiptCode" jdbcType="VARCHAR" />
+        </collection>
+        <collection property="availableTradeInfo" ofType="com.icchance.q91.entity.model.Gateway">
+            <id column="TRADE_GATEWAY_ID" property="id" jdbcType="INTEGER" />
+            <result column="TRADE_ID" property="userId" jdbcType="INTEGER" />
+            <result column="TRADE_GATEWAY_TYPE" property="type" jdbcType="INTEGER" />
+            <result column="TRADE_NAME" property="name" jdbcType="VARCHAR" />
+            <result column="TRADE_GATEWAY_NAME" property="gatewayName" jdbcType="VARCHAR" />
+            <result column="TRADE_GATEWAY_RECEIPT_CODE" property="gatewayReceiptCode" jdbcType="BLOB" />
+        </collection>
+    </resultMap>
+
+    <select id="getPendingOrderList" resultMap="getPendingOrderResult">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        <include refid="BuyerGatewayColumnList"/>,
+        <include refid="TradeGatewayColumnList"/>
+        FROM PENDING_ORDER a
+        LEFT JOIN GATEWAY buyerGateway ON a.BUYER_GATEWAY_ID = buyerGateway.ID
+        LEFT JOIN GATEWAY tradeGateway ON a.USER_ID = tradeGateway.USER_ID
+        <where>
+            <if test="null != userId and '' != userId">
+                AND a.USER_ID = #{userId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
