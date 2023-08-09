@@ -30,30 +30,30 @@ public class User implements Serializable {
 
     @TableId(value = "ID")
     private Integer id;
-    @TableField(value = "ACCOUNT")
+
     private String account;
-    @TableField(value = "USERNAME")
+
     private String username;
-    @TableField(value = "PASSWORD")
+
     private String password;
-    @TableField(value = "FUND_PASSWORD")
+
     private String fundPassword;
-    @TableField(value = "ADDRESS")
+
     private String address;
-    @TableField(value = "CERTIFIED")
+
     private Boolean certified;
-    @TableField(value = "NAME")
+
     private String name;
-    @TableField(value = "ID_NUMBER")
+
     private String idNumber;
-    @TableField(value = "ID_CARD")
+
     private String idCard;
-    @TableField(value = "FACE_PHOTO")
+
     private String facePhoto;
-    @TableField(value = "ROLE")
+
     private Integer role;
-    @TableField(value = "CREATE_TIME")
+
     private LocalDateTime createTime;
-    @TableField(value = "UPDATE_TIME")
+
     private LocalDateTime updateTime;
 }

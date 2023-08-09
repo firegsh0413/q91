@@ -1,6 +1,5 @@
 package com.icchance.q91.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.icchance.q91.dao.FakeGatewayDB;
 import com.icchance.q91.entity.dto.GatewayDTO;
@@ -12,6 +11,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * <p>
  * 會員收付款服務 介面實作
@@ -32,13 +35,13 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
      * 取得會員收付款訊息
      * </p>
      *
-     * @param account 帳號
+     * @param userId 用戶ID
      * @return java.util.List<com.icchance.q91.entity.model.Gateway>
      * @author 6687353
      * @since 2023/7/31 09:46:28
      */
     @Override
-    public List<Gateway> getGatewayList(String account) {
+    public List<Gateway> getGatewayList(Integer userId) {
         //return this.list(Wrappers.<Gateway>lambdaQuery().eq(Gateway::getAccount, account));
         return fakeGatewayDB.getList();
     }
@@ -75,5 +78,21 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
         if (userId.equals(gateway.getUserId())) {
             this.removeById(id);
         }
+    }
+
+    /**
+     * <p>
+     * 取得可用收款類型列表
+     * </p>
+     *
+     * @param userId 用戶ID
+     * @return java.util.List<java.lang.Integer>
+     * @author 6687353
+     * @since 2023/8/4 16:23:55
+     */
+    @Override
+    public Set<Integer> getAvailableGateway(Integer userId) {
+        List<Gateway> availableGateway = this.getGatewayList(userId);
+        return Optional.ofNullable(availableGateway).map(set -> set.stream().map(Gateway::getType).collect(Collectors.toSet())).orElse(null);
     }
 }

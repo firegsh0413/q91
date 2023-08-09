@@ -15,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 public class UserVO {
 
+    private Integer id;
     /** 帳號 */
     private String account;
     /** 暱稱 */

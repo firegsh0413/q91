@@ -9,14 +9,12 @@ import com.icchance.q91.entity.model.OrderRecord;
 import com.icchance.q91.entity.model.User;
 import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
-import com.icchance.q91.mapper.OrderMapper;
-import com.icchance.q91.mapper.OrderRecordMapper;
-import com.icchance.q91.mapper.PendingOrderMapper;
 import com.icchance.q91.service.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -95,7 +93,8 @@ public class TransactionServiceImpl implements TransactionService {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
         List<Gateway> gatewayList = gatewayService.getGatewayList(user.getAccount());*/
-        List<Gateway> gatewayList = gatewayService.getGatewayList("");
+
+        List<Gateway> gatewayList = gatewayService.getGatewayList(0);
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(gatewayList).build();
     }
 
