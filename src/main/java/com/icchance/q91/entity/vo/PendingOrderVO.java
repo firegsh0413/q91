@@ -6,18 +6,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * <p>
+ * 用戶掛單VO
+ * </p>
+ * @author 6687353
+ * @since 2023/8/4 14:53:33
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PendingOrderVO extends BasicOrderVO {
+public class PendingOrderVO extends BaseOrderVO {
 
-    /** 購買會員暱稱 */
+    /** 買方會員暱稱 */
     private String buyerUsername;
-    /** 購買會員uid */
+    /** 買方會員uid */
     private Integer buyerId;
-    /** 購買會員使用的gateway id */
+    /** 買方會員使用的gateway id */
     private Integer buyerGatewayId;
-    /** 購買會員gateway資訊 */
-    private Gateway buyerInfo;
+    /** 買方會員gateway資訊 */
+    //private Gateway buyerInfo;
 }

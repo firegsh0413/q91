@@ -1,19 +1,31 @@
 package com.icchance.q91.common.constant;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public interface OrderConstant {
 
     enum GatewayTypeEnum {
-        BANK_CARD(0, "銀行卡"),
-        WE_CHAT(1, "微信"),
-        ALIPAY(2, "支付寶"),
+        BANK_CARD(1, "銀行卡"),
+        WE_CHAT(2, "微信"),
+        ALIPAY(3, "支付寶"),
         ;
 
-        private Integer code;
-        private String desc;
+        private final Integer code;
+        private final String desc;
         GatewayTypeEnum(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
         }
+        public Integer getCode() {
+            return code;
+        }
+    }
+
+    static List<Integer> getAllGatewayType() {
+        return Arrays.stream(GatewayTypeEnum.values()).map(GatewayTypeEnum::getCode).collect(Collectors.toList());
     }
 
     /**
