@@ -24,14 +24,52 @@ public class TransactionController extends BaseController {
 
     static final String PREFIX = "/transaction";
 
+    /**
+     * <p>
+     * 取得會員掛單訊息
+     * </p>
+     * @param userToken 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/14 10:12:27
+     */
     @GetMapping("/pendingOrder")
-    public Result getPendingOrder(@RequestParam String userToken) {
-        return transactionService.getPendingOrder(userToken);
+    public Result getPendingOrderList(@RequestParam String userToken) {
+        return transactionService.getPendingOrderList(userToken);
     }
 
+    @GetMapping("/pendingOrderDetail")
+    public Result getPendingOrderDetail(@RequestParam String userToken) {
+        return null;
+    }
+
+    /**
+     * <p>
+     * 查詢會員訂單列表
+     * </p>
+     * @param userToken
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/11 11:55:44
+     */
     @GetMapping("/order")
-    public Result getOrder(@RequestParam String userToken) {
-        return transactionService.getOrder(userToken);
+    public Result getOrderList(@RequestParam String userToken) {
+        return transactionService.getOrderList(userToken);
+    }
+
+    /**
+     * <p>
+     * 查詢會員訂單詳情
+     * </p>
+     * @param userToken
+     * @param id 訂單id
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/11 11:55:14
+     */
+    @GetMapping("/order/detail")
+    public Result getOrderDetail(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.getOrderDetail(userToken, id);
     }
 
     @GetMapping("/record")
@@ -53,5 +91,21 @@ public class TransactionController extends BaseController {
     @DeleteMapping("/gateway/delete")
     public Result deleteGateway(@RequestParam String userToken, @RequestParam Integer id) {
         return transactionService.deleteGateway(userToken, id);
+    }
+
+    /**
+     * <p>
+     * 上傳支付憑證
+     * </p>
+     * @param userToken
+     * @param id
+     * @param cert
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/11 11:54:50
+     */
+    @PostMapping("/order/verify")
+    public Result verifyOrder(@RequestParam String userToken, @RequestParam Integer id, @RequestParam String cert) {
+        return transactionService.verifyOrder(userToken, id, cert);
     }
 }

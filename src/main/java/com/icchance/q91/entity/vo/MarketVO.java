@@ -24,7 +24,7 @@ public class MarketVO extends BaseOrderVO {
     /** 賣方可用收款方式 */
     private Set<Integer> availableGateway;
     /** 賣方收付款資訊清單 */
-    private List<Gateway> gatewayList;
+    //private List<Gateway> gatewayList;
     /** 賣方可用收款方式 字串 */
     private String availableGatewayStr;
 

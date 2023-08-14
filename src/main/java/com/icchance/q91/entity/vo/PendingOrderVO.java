@@ -1,10 +1,7 @@
 package com.icchance.q91.entity.vo;
 
 import com.icchance.q91.entity.model.Gateway;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * <p>

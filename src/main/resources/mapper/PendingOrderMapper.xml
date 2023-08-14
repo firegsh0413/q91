@@ -48,7 +48,7 @@
         <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
         <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
-        <result column="SELLER_ID" jdbcType="INTEGER" property="sellerId" />
+        <result column="USER_ID" jdbcType="INTEGER" property="sellerId" />
         <result column="sellerUsername" jdbcType="VARCHAR" property="sellerUsername" />
         <result column="sellerAvatar" jdbcType="VARCHAR" property="sellerAvatar" />
         <result column="availableGatewayStr" jdbcType="VARCHAR" property="availableGatewayStr" />
@@ -70,6 +70,12 @@
         INNER JOIN ORDER_AVAILABLE_GATEWAY b ON a.ID = b.ORDER_ID
         INNER JOIN GATEWAY gateway ON b.GATEWAY_ID = gateway.ID
         <where>
+            <if test="null != dto.status and '' != dto.status" >
+                AND a.STATUS = #{dto.status}
+            </if>
+            <if test="null != dto.orderId and '' != dto.orderId">
+                AND a.ID = #{dto.orderId}
+            </if>
             <if test="null != dto.userId and '' != dto.userId">
                 AND a.USER_ID != #{dto.userId}
             </if>
@@ -99,13 +105,13 @@
         <result column="availableGatewayStr" jdbcType="VARCHAR" property="availableGatewayStr" />
         <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
         <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
-        <collection property="gatewayList" ofType="com.icchance.q91.entity.model.Gateway">
+<!--        <collection property="gatewayList" ofType="com.icchance.q91.entity.model.Gateway">
             <id column="SELLER_GATEWAY_ID" property="id" jdbcType="INTEGER" />
             <result column="TYPE" property="type" jdbcType="INTEGER" />
             <result column="NAME" property="name" jdbcType="VARCHAR" />
             <result column="GATEWAY_NAME" property="gatewayName" jdbcType="VARCHAR" />
             <result column="GATEWAY_RECEIPT_CODE" property="gatewayReceiptCode" jdbcType="VARCHAR" />
-        </collection>
+        </collection>-->
     </resultMap>
 
     <sql id="GatewayColumnList">
@@ -115,8 +121,7 @@
     <select id="getPendingOrder" resultMap="getMarketPendingOrderResult">
         SELECT
             <include refid="BaseColumnList" />,
-            <include refid="SellerColumnList" />,
-            <include refid="GatewayColumnList" />
+            <include refid="SellerColumnList" />
         FROM PENDING_ORDER a
         INNER JOIN USER seller ON a.USER_ID = seller.ID
         INNER JOIN ORDER_AVAILABLE_GATEWAY b ON a.ID = b.ORDER_ID

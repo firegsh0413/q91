@@ -56,4 +56,6 @@ public class User implements Serializable {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private String avatar;
 }

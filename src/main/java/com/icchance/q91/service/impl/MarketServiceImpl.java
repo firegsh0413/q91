@@ -1,23 +1,23 @@
 package com.icchance.q91.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.dao.FakeTransactionDB;
 import com.icchance.q91.entity.dto.MarketDTO;
+import com.icchance.q91.entity.dto.OrderDTO;
+import com.icchance.q91.entity.dto.PendingOrderDTO;
+import com.icchance.q91.entity.model.Gateway;
+import com.icchance.q91.entity.model.PendingOrder;
 import com.icchance.q91.entity.model.User;
 import com.icchance.q91.entity.vo.MarketVO;
-import com.icchance.q91.service.GatewayService;
-import com.icchance.q91.service.MarketService;
-import com.icchance.q91.service.PendingOrderService;
-import com.icchance.q91.service.UserService;
+import com.icchance.q91.service.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +26,15 @@ public class MarketServiceImpl implements MarketService {
     private final UserService userService;
     private final GatewayService gatewayService;
     private final PendingOrderService pendingOrderService;
-    public MarketServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService) {
+    private final OrderService orderService;
+    private final FakeTransactionDB fakeTransactionDB;
+    public MarketServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService,
+                             OrderService orderService, FakeTransactionDB fakeTransactionDB) {
         this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
+        this.orderService = orderService;
+        this.fakeTransactionDB = fakeTransactionDB;
     }
 
     /**
@@ -47,52 +52,121 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Result getPendingOrderList(String userToken, BigDecimal min, BigDecimal max, List<Integer> gatewayType) {
-        User user = userService.getUserByToken(userToken);
+/*        User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
-        MarketDTO marketDTO = MarketDTO.builder().userId(user.getId()).min(min).max(max).gatewayType(gatewayType).build();
-        List<MarketVO> marketList = pendingOrderService.getPendingOrderList(marketDTO);
-        if (CollectionUtils.isNotEmpty(marketList)) {
-            marketList.forEach(marketVO -> {
+        MarketDTO marketDTO = MarketDTO.builder().userId(user.getId()).min(min).max(max).gatewayType(gatewayType)
+                .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode()).build();
+        List<MarketVO> pendingOrderList = pendingOrderService.getPendingOrderList(marketDTO);
+        if (CollectionUtils.isNotEmpty(pendingOrderList)) {
+            pendingOrderList.forEach(marketVO -> {
                 String availableGatewayStr = marketVO.getAvailableGatewayStr();
                 if (StringUtils.isNotEmpty(availableGatewayStr)) {
                     marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
                 }
             });
         }
-        List<MarketVO> result = marketList.stream().filter(marketVO -> {
+        // 暫時過濾收款方式
+        List<MarketVO> result = pendingOrderList.stream().filter(marketVO -> {
             gatewayType.removeAll(marketVO.getAvailableGateway());
             return CollectionUtils.isNotEmpty(gatewayType);
         }).collect(Collectors.toList());
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(result).build();
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(result).build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getMarketPendingOrderList()).build();
     }
 
     @Override
     public Result checkGateway(String userToken, Set<Integer> availableGateway) {
-        User user = userService.getUserByToken(userToken);
+/*        User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
         Set<Integer> userAvailableGateway = gatewayService.getAvailableGateway(user.getId());
-        boolean check = Boolean.FALSE;
+        int check = 0;
         for (Integer g : availableGateway) {
             if (userAvailableGateway.contains(g)) {
-                check = Boolean.TRUE;
+                check = 1;
                 break;
             }
         }
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(check).build();
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(check).build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(1).build();
     }
 
     @Override
     public Result getPendingOrder(String userToken, Integer orderId) {
+/*        User user = userService.getUserByToken(userToken);
+        if (Objects.isNull(user)) {
+            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+        }
+        MarketDTO marketDTO = MarketDTO.builder().userId(user.getId()).orderId(orderId).build();
+        List<MarketVO> pendingOrderList = pendingOrderService.getPendingOrderList(marketDTO);
+        if (CollectionUtils.isNotEmpty(pendingOrderList)) {
+            pendingOrderList.forEach(marketVO -> {
+                String availableGatewayStr = marketVO.getAvailableGatewayStr();
+                if (StringUtils.isNotEmpty(availableGatewayStr)) {
+                    marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
+                }
+            });
+            return Result.builder().resultCode(ResultCode.SUCCESS)
+                    .resultMap(pendingOrderList.get(0))
+                    .build();
+        }*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getPendingOrder()).build();
+    }
+
+    @Override
+    public Result buy(String userToken, Integer orderId, BigDecimal amount, Integer type) {
+/*        User user = userService.getUserByToken(userToken);
+        if (Objects.isNull(user)) {
+            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+        }
+        // 1.驗證是否該掛單已被其他會員操作購買鎖定
+        // 訂單狀態不為出售中
+        MarketVO pendingOrder = pendingOrderService.getPendingOrder(user.getId(), orderId);
+        if (!OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode().equals(pendingOrder.getStatus())) {
+            return Result.builder().resultCode(ResultCode.ORDER_LOCK_BY_ANOTHER).build();
+        }
+        Gateway buyerGateway = gatewayService.getGatewayByType(user.getId(), type);
+        Gateway sellerGateway = gatewayService.getGatewayByType(pendingOrder.getUserId(), type);
+
+        OrderDTO orderDTO = OrderDTO.builder().userId(user.getId())
+                .pendingOrderId(orderId)
+                .sellerId(pendingOrder.getSellerId())
+                .userId(user.getId())
+                .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode())
+                .buyerGatewayId(Optional.ofNullable(buyerGateway).map(Gateway::getId).orElse(null))
+                .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
+                .amount(amount)
+                .build();
+        // 2.建立訂單，更新掛單狀態
+        orderService.createOrder(orderDTO);
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder().id(orderId)
+                .status(OrderConstant.OrderStatusEnum.UNCHECK.getCode())
+                .buyerId(user.getId())
+                .buyerGatewayId(Optional.ofNullable(buyerGateway).map(Gateway::getId).orElse(null))
+                .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
+                .build();
+        // cutoffTime為tradeTime往後十分鐘
+
+        pendingOrderService.uploadPendingOrder(pendingOrderDTO);*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+    }
+
+    @Override
+    public Result sell(String userToken, BigDecimal amount, List<Integer> availableGateway) {
         User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
-        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(pendingOrderService.getPendingOrder(user.getId(), orderId))
+        // 建立掛單
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder().userId(user.getId())
+                .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode())
+                .amount(amount)
+                .availableGatewayStr(availableGateway.stream().map(Object::toString).collect(Collectors.joining(",")))
                 .build();
+        pendingOrderService.createPendingOrder(pendingOrderDTO);
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 }

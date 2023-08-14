@@ -101,11 +101,33 @@ public class UserController extends BaseController {
         return userService.getUserInfo(userToken);
     }
 
+    /**
+     * <p>
+     * 取得會員錢包訊息
+     * </p>
+     * @param userToken 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/14 09:47:52
+     */
     @GetMapping("/balance")
     public Result getBalance(@RequestParam String userToken) {
         return userService.getBalance(userToken);
     }
 
+    /**
+     * <p>
+     * 實名認證
+     * </p>
+     * @param userToken 令牌
+     * @param name 姓名
+     * @param idNumber 身份證號
+     * @param idCard 身份證照片base64
+     * @param facePhoto 人臉識別照片base64
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/14 09:56:33
+     */
     @PostMapping("/certificate")
     public Result certificate(@RequestParam String userToken, @RequestParam String name, @RequestParam String idNumber,
                               @RequestParam String idCard, @RequestParam String facePhoto) {
@@ -120,5 +142,10 @@ public class UserController extends BaseController {
     @PostMapping("/fundPwd/update")
     public Result updateFundPassword(@RequestParam String userToken, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
         return userService.updateFundPassword(userToken, oldFundPassword, newFundPassword);
+    }
+
+    @PostMapping("/info/update")
+    public Result updateUserInfo(@RequestParam String userToken, @RequestParam String username, @RequestParam String avatar) {
+        return userService.updateUserInfo(userToken, username, avatar);
     }
 }

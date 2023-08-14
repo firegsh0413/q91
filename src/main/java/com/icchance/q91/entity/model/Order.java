@@ -45,12 +45,16 @@ public class Order implements Serializable {
 
 	private Integer sellerId;
 
-	private String sellerUsername;
+	//private String sellerUsername;
 
 	private BigDecimal amount;
 
 	private String orderNumber;
 
 	private String cert;
+
+	private Integer buyerGatewayId;
+
+	private Integer sellerGatewayId;
 
 }

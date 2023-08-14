@@ -41,6 +41,6 @@ public class BaseOrderVO {
     private String orderNumber;
 
     /** 支付憑證圖片base64 */
-    //private String cert;
+    private String cert;
 
 }

@@ -4,9 +4,11 @@ import com.icchance.q91.common.result.Result;
 
 public interface TransactionService {
 
-    Result getPendingOrder(String userToken);
+    Result getPendingOrderList(String userToken);
 
-    Result getOrder(String userToken);
+    Result getOrderList(String userToken);
+
+    Result getOrderDetail(String userToken, Integer id);
 
     Result getRecord(String userToken);
 
@@ -48,5 +50,7 @@ public interface TransactionService {
      * @since 2023/7/31 13:29:00
      */
     Result deleteGateway(String userToken, Integer id);
+
+    Result verifyOrder(String userToken, Integer id, String cert);
 
 }

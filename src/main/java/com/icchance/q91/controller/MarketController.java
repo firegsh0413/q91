@@ -36,4 +36,14 @@ public class MarketController extends BaseController {
     public Result getPendingOrder(@RequestParam String userToken, @RequestParam("id") Integer orderId) {
         return marketService.getPendingOrder(userToken, orderId);
     }
+
+    @PostMapping("/buy")
+    public Result buy(@RequestParam String userToken, @RequestParam("id") Integer orderId, @RequestParam BigDecimal amount, @RequestParam Integer type) {
+        return marketService.buy(userToken, orderId, amount, type);
+    }
+
+    @PostMapping("/sell")
+    public Result sell(@RequestParam String userToken, @RequestParam BigDecimal amount, @RequestParam List<Integer> availableGateway) {
+        return marketService.sell(userToken, amount, availableGateway);
+    }
 }

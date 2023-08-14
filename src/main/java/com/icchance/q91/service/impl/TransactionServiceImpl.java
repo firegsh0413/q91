@@ -3,6 +3,7 @@ package com.icchance.q91.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.dao.FakeTransactionDB;
 import com.icchance.q91.entity.dto.GatewayDTO;
 import com.icchance.q91.entity.model.Gateway;
 import com.icchance.q91.entity.model.OrderRecord;
@@ -24,46 +25,54 @@ public class TransactionServiceImpl implements TransactionService {
     private final PendingOrderService pendingOrderService;
     private final OrderService orderService;
     private final OrderRecordService orderRecordService;
+
+    private final FakeTransactionDB fakeTransactionDB;
     public TransactionServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService, OrderService orderService,
-                                  OrderRecordService orderRecordService) {
+                                  OrderRecordService orderRecordService, FakeTransactionDB fakeTransactionDB) {
         this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
         this.orderService = orderService;
         this.orderRecordService = orderRecordService;
+        this.fakeTransactionDB = fakeTransactionDB;
     }
 
     @Override
-    public Result getPendingOrder(String userToken) {
+    public Result getPendingOrderList(String userToken) {
         User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
-        //List<PendingOrder> pendingOrder = pendingOrderService.getPendingOrder(user.getAccount());
-        //List<Gateway> gatewayList = gatewayService.getGatewayList(user.getAccount());
-
-        //List<PendingOrderVO> result = new ArrayList<>(pendingOrder.size());
-/*        pendingOrder.forEach(o -> {
-            PendingOrderVO vo = new PendingOrderVO();
-            BeanUtils.copyProperties(o, vo);
-            vo.setAvailableTradeInfo(gatewayList);
-            vo.setCreateTime(o.getCreateTime().toInstant(ZoneOffset.UTC).toEpochMilli());
-            vo.setUpdateTime(o.getUpdateTime().toInstant(ZoneOffset.UTC).toEpochMilli());
-            vo.setTradeTime(o.getTradeTime().toInstant(ZoneOffset.UTC).toEpochMilli());
-            result.add(vo);
-        });*/
-        List<PendingOrderVO> pendingOrderList = pendingOrderService.getPendingOrderList(user.getId());
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(pendingOrderList).build();
+/*        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(pendingOrderService.getPendingOrderList(user.getId()))
+                .build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(fakeTransactionDB.getPendingOrderList())
+                .build();
     }
 
     @Override
-    public Result getOrder(String userToken) {
+    public Result getOrderList(String userToken) {
         User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
-        List<OrderVO> orderList = orderService.getOrderList(user.getId());
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(orderList).build();
+/*        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(orderService.getOrderList(user.getId()))
+                .build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(fakeTransactionDB.getOrderList())
+                .build();
+    }
+
+    @Override
+    public Result getOrderDetail(String userToken, Integer id) {
+/*        User user = userService.getUserByToken(userToken);
+        if (Objects.isNull(user)) {
+            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+        }
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(orderService.getOrderDetail(user.getId(), id)).build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getOrderDetail()).build();
     }
 
     @Override
@@ -72,8 +81,12 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
-        List<OrderRecord> orderRecordList = orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, user.getId()));
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(orderRecordList).build();
+/*        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, user.getId())))
+                .build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(fakeTransactionDB.getOrderRecordList())
+                .build();
     }
 
     /**
@@ -94,8 +107,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
         List<Gateway> gatewayList = gatewayService.getGatewayList(user.getAccount());*/
 
-        List<Gateway> gatewayList = gatewayService.getGatewayList(0);
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(gatewayList).build();
+        /*List<Gateway> gatewayList = gatewayService.getGatewayList(0);
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(gatewayList).build();*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getGatewayList()).build();
     }
 
     /**
@@ -115,19 +129,19 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public Result createGateway(String userToken, Integer type, String name, String gatewayName, String gatewayReceiptCode, String gatewayAccount) {
-        User user = userService.getUserByToken(userToken);
+/*        User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
+        }*/
         GatewayDTO gatewayDTO = GatewayDTO.builder()
-                .userId(user.getId())
+                //.userId(user.getId())
                 .type(type)
                 .name(name)
                 .gatewayName(gatewayName)
                 .gatewayReceiptCode(gatewayReceiptCode)
                 .gatewayAccount(gatewayAccount)
                 .build();
-        gatewayService.createGateway(gatewayDTO);
+        //gatewayService.createGateway(gatewayDTO);
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
@@ -144,12 +158,22 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public Result deleteGateway(String userToken, Integer id) {
-        User user = userService.getUserByToken(userToken);
+/*        User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        gatewayService.deleteGateway(user.getId(), id);
+        }*/
+        //gatewayService.deleteGateway(user.getId(), id);
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
+    }
+
+    @Override
+    public Result verifyOrder(String userToken, Integer id, String cert) {
+/*        User user = userService.getUserByToken(userToken);
+        if (Objects.isNull(user)) {
+            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+        }*/
+        //orderService.uploadCert(user.getId(), id, cert);
+        return Result.builder().resultMap(ResultCode.SUCCESS).build();
     }
 
 }

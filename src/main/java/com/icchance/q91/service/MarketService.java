@@ -1,6 +1,7 @@
 package com.icchance.q91.service;
 
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.entity.dto.OrderDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,4 +26,8 @@ public interface MarketService {
     Result checkGateway(String userToken, Set<Integer> availableGateway);
 
     Result getPendingOrder(String userToken, Integer orderId);
+
+    Result buy(String userToken, Integer orderId, BigDecimal amount, Integer type);
+
+    Result sell(String userToken, BigDecimal amount, List<Integer> availableGateway);
 }
