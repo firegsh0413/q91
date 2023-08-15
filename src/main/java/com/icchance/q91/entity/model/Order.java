@@ -20,7 +20,7 @@ import java.math.BigDecimal;
  * @since 2023/08/01 15:23:24 
  */
 @Data
-@TableName("order")
+@TableName("ORDER")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

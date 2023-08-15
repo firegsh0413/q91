@@ -210,4 +210,38 @@ public class FakeTransactionDB {
         return orderVO;
     }
 
+    public PendingOrderVO getPendingOrderDetail() {
+        PendingOrder pendingOrder = PendingOrder.builder()
+                .id(12)
+                .status(2)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .tradeTime(LocalDateTime.now())
+                .buyerId(5)
+                .amount(new BigDecimal("99.99"))
+                .orderNumber("go20230524131440511")
+                .cert("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII")
+                .build();
+        PendingOrderVO pendingOrderVO = new PendingOrderVO();
+        BeanUtils.copyProperties(pendingOrder, pendingOrderVO);
+        Gateway buyerInfo = Gateway.builder()
+                .id(3)
+                .type(1)
+                .name("刘小华")
+                .gatewayName("中国银行")
+                .gatewayReceiptCode("1234567000066001234")
+                .build();
+        Gateway sellerInfo = Gateway.builder()
+                .id(1)
+                .type(1)
+                .name("王大明")
+                .gatewayName("中国银行")
+                .gatewayReceiptCode("1234567000066007890")
+                .build();
+        pendingOrderVO.setBuyerUsername("johndoe");
+        pendingOrderVO.setBuyerInfo(buyerInfo);
+        pendingOrderVO.setSellerInfo(sellerInfo);
+        return pendingOrderVO;
+    }
+
 }

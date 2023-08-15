@@ -1,6 +1,5 @@
 package com.icchance.q91.controller;
 
-import com.icchance.q91.common.constant.Message;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
 import lombok.extern.slf4j.Slf4j;

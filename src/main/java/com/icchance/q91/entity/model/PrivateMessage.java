@@ -1,0 +1,38 @@
+package com.icchance.q91.entity.model;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@TableName("PRIVATE_MESSAGE")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PrivateMessage {
+
+    @TableId
+    private Integer id;
+
+    private Integer isRead;
+
+    private String title;
+
+    private String content;
+
+    private Integer senderId;
+
+    private String senderUsername;
+
+    private Integer type;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
+
+}

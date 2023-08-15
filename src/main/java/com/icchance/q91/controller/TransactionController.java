@@ -38,10 +38,48 @@ public class TransactionController extends BaseController {
         return transactionService.getPendingOrderList(userToken);
     }
 
-    @GetMapping("/pendingOrderDetail")
-    public Result getPendingOrderDetail(@RequestParam String userToken) {
-        return null;
+    @GetMapping("/pendingOrder/detail")
+    public Result getPendingOrderDetail(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.getPendingOrderDetail(userToken, id);
     }
+
+    @PostMapping("/pendingOrder/cancel")
+    public Result cancelPendingOrder(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.cancelPendingOrder(userToken, id);
+    }
+
+    /**
+     * <p>
+     * 確認掛單已下單
+     * （賣單第一階段狀態：買家已下單請賣家確認）
+     * </p>
+     * @param userToken
+     * @param id
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/14 17:27:31
+     */
+    @PostMapping("/pendingOrder/check")
+    public Result checkPendingOrder(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.checkPendingOrder(userToken, id);
+    }
+
+    /**
+     * <p>
+     * 核實掛單
+     * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
+     * </p>
+     * @param userToken
+     * @param id
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/14 17:40:59
+     */
+    @PostMapping("/pendingOrder/verify")
+    public Result verifyPendingOrder(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.verifyPendingOrder(userToken, id);
+    }
+
 
     /**
      * <p>
@@ -70,6 +108,16 @@ public class TransactionController extends BaseController {
     @GetMapping("/order/detail")
     public Result getOrderDetail(@RequestParam String userToken, @RequestParam Integer id) {
         return transactionService.getOrderDetail(userToken, id);
+    }
+
+    @PostMapping("/order/cancel")
+    public Result cancelOrder(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.cancelOrder(userToken, id);
+    }
+
+    @PostMapping("/order/appeal")
+    public Result appealOrder(@RequestParam String userToken, @RequestParam Integer id) {
+        return transactionService.appealOrder(userToken, id);
     }
 
     @GetMapping("/record")

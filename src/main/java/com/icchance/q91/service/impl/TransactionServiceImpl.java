@@ -52,6 +52,28 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Result getPendingOrderDetail(String userToken, Integer id) {
+        return Result.builder().resultCode(ResultCode.SUCCESS)
+                .resultMap(fakeTransactionDB.getPendingOrderDetail())
+                .build();
+    }
+
+    @Override
+    public Result cancelPendingOrder(String userToken, Integer id) {
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+    }
+
+    @Override
+    public Result checkPendingOrder(String userToken, Integer id) {
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+    }
+
+    @Override
+    public Result verifyPendingOrder(String userToken, Integer id) {
+        return null;
+    }
+
+    @Override
     public Result getOrderList(String userToken) {
         User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
@@ -73,6 +95,16 @@ public class TransactionServiceImpl implements TransactionService {
         }
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(orderService.getOrderDetail(user.getId(), id)).build();*/
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getOrderDetail()).build();
+    }
+
+    @Override
+    public Result cancelOrder(String userToken, Integer id) {
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+    }
+
+    @Override
+    public Result appealOrder(String userToken, Integer id) {
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override

@@ -6,9 +6,21 @@ public interface TransactionService {
 
     Result getPendingOrderList(String userToken);
 
+    Result getPendingOrderDetail(String userToken, Integer id);
+
+    Result cancelPendingOrder(String userToken, Integer id);
+
+    Result checkPendingOrder(String userToken, Integer id);
+
+    Result verifyPendingOrder(String userToken, Integer id);
+
     Result getOrderList(String userToken);
 
     Result getOrderDetail(String userToken, Integer id);
+
+    Result cancelOrder(String userToken, Integer id);
+
+    Result appealOrder(String userToken, Integer id);
 
     Result getRecord(String userToken);
 

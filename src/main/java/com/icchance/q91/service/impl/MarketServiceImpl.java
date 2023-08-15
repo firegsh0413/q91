@@ -156,12 +156,13 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public Result sell(String userToken, BigDecimal amount, List<Integer> availableGateway) {
-        User user = userService.getUserByToken(userToken);
+/*        User user = userService.getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
+        }*/
         // 建立掛單
-        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder().userId(user.getId())
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
+                //.userId(user.getId())
                 .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode())
                 .amount(amount)
                 .availableGatewayStr(availableGateway.stream().map(Object::toString).collect(Collectors.joining(",")))
