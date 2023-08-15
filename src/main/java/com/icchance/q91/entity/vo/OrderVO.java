@@ -1,12 +1,10 @@
 package com.icchance.q91.entity.vo;
 
 import com.icchance.q91.entity.model.Gateway;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -36,10 +34,15 @@ public class OrderVO extends BaseOrderVO {
     private String sellerAvatar;
 
     /** 可用收款方式 */
-    private List<Integer> availableGateway;
+    private Set<Integer> availableGateway;
 
     /** 可用收款方式字串 */
     private String availableGatewayStr;
 
+    /** 買方使用的gateway id */
+    private Integer buyerGatewayId;
+
+    /** 買方gateway資訊 */
+    private Gateway buyerInfo;
 
 }

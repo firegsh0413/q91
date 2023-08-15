@@ -18,5 +18,4 @@ public interface PendingOrderMapper extends BaseMapper<PendingOrder> {
 
     MarketVO getPendingOrder(@Param("userId") Integer userId, @Param("orderId") Integer orderId);
 
-
 }

@@ -20,7 +20,7 @@ import java.math.BigDecimal;
  * @since 2023/08/01 15:23:24 
  */
 @Data
-@TableName("order")
+@TableName("ORDER")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,12 +45,16 @@ public class Order implements Serializable {
 
 	private Integer sellerId;
 
-	private String sellerUsername;
+	//private String sellerUsername;
 
 	private BigDecimal amount;
 
 	private String orderNumber;
 
 	private String cert;
+
+	private Integer buyerGatewayId;
+
+	private Integer sellerGatewayId;
 
 }

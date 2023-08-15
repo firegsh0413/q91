@@ -2,7 +2,6 @@ package com.icchance.q91.common.constant;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public interface OrderConstant {
@@ -37,11 +36,11 @@ public interface OrderConstant {
      */
     enum OrderStatusEnum {
 
-        SELL(0, "出售中"),
-        UNCHECK(1, "待確認"),
-        APPEAL(2, "申訴中"),
-        DONE(3, "已完成"),
-        CANCEL(4, "已取消"),
+        SELL_OR_BUY(1, "出售/購買中"),
+        UNCHECK(2, "待確認"),
+        APPEAL(3, "申訴中"),
+        DONE(4, "已完成"),
+        CANCEL(5, "已取消"),
 
         ;
         private Integer code;
@@ -50,6 +49,14 @@ public interface OrderConstant {
         OrderStatusEnum(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
         }
     }
 

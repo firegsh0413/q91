@@ -13,6 +13,7 @@ import com.icchance.q91.entity.model.User;
 import com.icchance.q91.entity.vo.ModifyCaptchaVO;
 import com.icchance.q91.entity.vo.UserBalanceVO;
 import com.icchance.q91.entity.vo.UserVO;
+import com.icchance.q91.mapper.UserMapper;
 import com.icchance.q91.redis.RedisKit;
 import com.icchance.q91.service.AuthUserService;
 import com.icchance.q91.service.UserService;
@@ -39,23 +40,24 @@ import java.util.regex.Pattern;
 @Service
 public class UserServiceImpl implements UserService {
 
-
     private final CaptchaService captchaService;
     private final RedisKit redisKit;
-
     private final JwtUtil jwtUtil;
     private final AuthUserService authUserService;
-
     private final FakeUserDB fakeUserDB;
 
+    private final UserMapper userMapper;
+
     //private final CaptchaCacheServiceRedisImpl captchaCacheServiceRedis;
-    public UserServiceImpl(CaptchaService captchaService, RedisKit redisKit, JwtUtil jwtUtil, AuthUserService authUserService, FakeUserDB fakeUserDB) {
+    public UserServiceImpl(CaptchaService captchaService, RedisKit redisKit, JwtUtil jwtUtil, AuthUserService authUserService,
+                           FakeUserDB fakeUserDB, UserMapper userMapper) {
         this.captchaService = captchaService;
         //this.captchaCacheServiceRedis = captchaCacheServiceRedis;
         this.redisKit = redisKit;
         this.jwtUtil = jwtUtil;
         this.authUserService = authUserService;
         this.fakeUserDB = fakeUserDB;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -118,7 +120,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Result register(String account, String username, String password, String fundPassword) {
-        if (!(checkAccountValid(account) && checkAccountValid(password))) {
+/*        if (!(checkAccountValid(account) && checkAccountValid(password))) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_VALID).build();
         }
         if (!checkUsernameValid(username)) {
@@ -128,7 +130,7 @@ public class UserServiceImpl implements UserService {
             return Result.builder().resultCode(ResultCode.FUND_PASSWORD_NOT_VALID).build();
         }
 
-/*        if (Objects.nonNull(this.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, account)))) {
+        if (Objects.nonNull(this.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, account)))) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_ALREADY_EXIST).build();
         }*/
 /*        // 隨機生成錢包地址
@@ -213,7 +215,7 @@ public class UserServiceImpl implements UserService {
 /*        if (!redisKit.hasKey(token)) {
             return Result.builder().resultCode(ResultCode.SYSTEM_UNDER_MAINTAIN).build();
         }*/
-        User user = getUserByToken(userToken);
+        //User user = getUserByToken(userToken);
 
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
 
@@ -231,23 +233,47 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Result getUserInfo(String userToken) {
-        User user = getUserByToken(userToken);
+/*        User user = getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
+        }*/
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        //BeanUtils.copyProperties(user, userVO);
+        userVO.setAccount("johndoe");
+        userVO.setUsername("johndoe");
         userVO.setAvatar("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
         userVO.setIsCertified(0);
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userVO).build();
     }
 
     @Override
-    public Result getBalance(String userToken) {
-        User user = getUserByToken(userToken);
+    public Result updateUserInfo(String userToken, String username, String avatar) {
+/*        User user = getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
+        }*/
+/*        user.setUsername(username);
+        user.setAvatar(avatar);
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.updateById(user);*/
+        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+    }
+
+    /**
+     * <p>
+     * 取得會員錢包訊息
+     * </p>
+     * @param userToken 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/14 09:48:47
+     */
+    @Override
+    public Result getBalance(String userToken) {
+/*        User user = getUserByToken(userToken);
+        if (Objects.isNull(user)) {
+            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+        }*/
         UserBalanceVO userBalanceVO = UserBalanceVO.builder()
                 .address("qwertqwertyuiyui")
                 .balance(new BigDecimal("99.99"))
@@ -260,45 +286,46 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result certificate(String userToken, String name, String idNumber, String idCard, String facePhoto) {
-        User user = getUserByToken(userToken);
+/*        User user = getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        user.setName(name);
+        }*/
+
+/*        user.setName(name);
         user.setIdNumber(idNumber);
         user.setIdCard(idCard);
         user.setFacePhoto(facePhoto);
         user.setCertified(Boolean.TRUE);
         user.setUpdateTime(LocalDateTime.now());
-        fakeUserDB.update(user);
+        fakeUserDB.update(user);*/
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
     public Result updatePassword(String userToken, String oldPassword, String newPassword) {
-        User user = getUserByToken(userToken);
+/*        User user = getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
         if (!user.getPassword().equals(oldPassword)) {
             return Result.builder().resultCode(ResultCode.PASSWORD_NOT_MATCH).build();
-        }
-        user.setPassword(newPassword);
-        fakeUserDB.update(user);
+        }*/
+/*        user.setPassword(newPassword);
+        fakeUserDB.update(user);*/
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
     public Result updateFundPassword(String userToken, String oldFundPassword, String newFundPassword) {
-        User user = getUserByToken(userToken);
+/*        User user = getUserByToken(userToken);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
         if (!user.getFundPassword().equals(oldFundPassword)) {
             return Result.builder().resultCode(ResultCode.PASSWORD_NOT_MATCH).build();
-        }
-        user.setFundPassword(newFundPassword);
-        fakeUserDB.update(user);
+        }*/
+/*        user.setFundPassword(newFundPassword);
+        fakeUserDB.update(user);*/
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 

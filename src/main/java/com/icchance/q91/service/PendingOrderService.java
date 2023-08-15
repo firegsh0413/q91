@@ -2,6 +2,8 @@ package com.icchance.q91.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.icchance.q91.entity.dto.MarketDTO;
+import com.icchance.q91.entity.dto.OrderDTO;
+import com.icchance.q91.entity.dto.PendingOrderDTO;
 import com.icchance.q91.entity.model.PendingOrder;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
@@ -34,7 +36,7 @@ public interface PendingOrderService extends IService<PendingOrder> {
 
     /**
      * <p>
-     * 取得指定掛單資訊
+     * 取得市場上指定掛單資訊
      * </p>
      * @param userId 用戶UID
      * @param orderId 掛單UID
@@ -43,4 +45,10 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @since 2023/8/8 18:29:34
      */
     MarketVO getPendingOrder(Integer userId, Integer orderId);
+
+    int uploadCert(Integer userId, Integer orderId, String cert);
+
+    int uploadPendingOrder(PendingOrderDTO pendingOrderDTO);
+
+    int createPendingOrder(PendingOrderDTO pendingOrderDTO);
 }

@@ -11,4 +11,6 @@ public interface OrderMapper extends BaseMapper<Order> {
 
     List<OrderVO> getOrderList(@Param("userId") Integer userId);
 
+    OrderVO getOrderDetail(@Param("userId") Integer userId, @Param("orderId") Integer orderId);
+
 }

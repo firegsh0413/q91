@@ -58,4 +58,6 @@ public interface GatewayService extends IService<Gateway> {
      * @since 2023/8/4 16:23:55
      */
     Set<Integer> getAvailableGateway(Integer userId);
+
+    Gateway getGatewayByType(Integer userId, Integer type);
 }

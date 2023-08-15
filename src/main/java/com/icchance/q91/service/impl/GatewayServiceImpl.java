@@ -95,4 +95,11 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
         List<Gateway> availableGateway = this.getGatewayList(userId);
         return Optional.ofNullable(availableGateway).map(set -> set.stream().map(Gateway::getType).collect(Collectors.toSet())).orElse(null);
     }
+
+    @Override
+    public Gateway getGatewayByType(Integer userId, Integer type) {
+        //
+        Optional<Gateway> any = fakeGatewayDB.getList().stream().filter(gateway -> userId.equals(gateway.getUserId()) && type.equals(gateway.getType())).findAny();
+        return any.orElse(null);
+    }
 }

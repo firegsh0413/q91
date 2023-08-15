@@ -74,15 +74,11 @@ public interface UserService {
      */
     Result getUserInfo(String userToken);
 
+    Result updateUserInfo(String userToken, String username, String avatar);
     Result getBalance(String userToken);
-
     Result certificate(String userToken, String name, String idNumber, String idCard, String facePhoto);
-
     Result updatePassword(String userToken, String oldPassword, String newPassword);
-
     Result updateFundPassword(String userToken, String oldFundPassword, String newFundPassword);
-
     User getUserByToken(String token);
-
 
 }

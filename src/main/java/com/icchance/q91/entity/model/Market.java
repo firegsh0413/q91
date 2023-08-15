@@ -19,7 +19,7 @@ import java.math.BigDecimal;
  * @since 2023/08/02 17:10:00 
  */
 @Data
-@TableName("market")
+@TableName("MARKET")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -3,14 +3,18 @@ package com.icchance.q91.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.entity.dto.MarketDTO;
+import com.icchance.q91.entity.dto.OrderDTO;
+import com.icchance.q91.entity.dto.PendingOrderDTO;
 import com.icchance.q91.entity.model.PendingOrder;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.mapper.PendingOrderMapper;
 import com.icchance.q91.service.PendingOrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +51,7 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
 
     /**
      * <p>
-     * 取得指定掛單資訊
+     * 取得市場上指定掛單資訊
      * </p>
      * @param userId 用戶UID
      * @param orderId 掛單UID
@@ -58,6 +62,32 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
     @Override
     public MarketVO getPendingOrder(Integer userId, Integer orderId) {
         return baseMapper.getPendingOrder(userId, orderId);
+    }
+
+    @Override
+    public int uploadCert(Integer userId, Integer orderId, String cert) {
+        PendingOrder pendingOrder = PendingOrder.builder()
+                .id(orderId)
+                .cert(cert)
+                .updateTime(LocalDateTime.now())
+                .build();
+        return baseMapper.updateById(pendingOrder);
+    }
+
+    @Override
+    public int uploadPendingOrder(PendingOrderDTO pendingOrderDTO) {
+        PendingOrder pendingOrder = new PendingOrder();
+        BeanUtils.copyProperties(pendingOrderDTO, pendingOrder);
+        pendingOrder.setUpdateTime(LocalDateTime.now());
+        return baseMapper.updateById(pendingOrder);
+    }
+
+    @Override
+    public int createPendingOrder(PendingOrderDTO pendingOrderDTO) {
+        PendingOrder pendingOrder = new PendingOrder();
+        BeanUtils.copyProperties(pendingOrder, pendingOrder);
+        pendingOrder.setCreateTime(LocalDateTime.now());
+        return baseMapper.insert(pendingOrder);
     }
 
 }

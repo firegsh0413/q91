@@ -26,6 +26,7 @@ public enum ResultCode {
     ACCOUNT_NOT_VALID("", "6-12位英文大小写或数字字元"),
     USERNAME_NOT_VALId("", "1~8位中文或英文大小写"),
     FUND_PASSWORD_NOT_VALID("", "6位数字字元"),
+    ORDER_LOCK_BY_ANOTHER("", "此订单已被其他会员操作"),
     ;
 
     public final String code;
