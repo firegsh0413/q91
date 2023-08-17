@@ -189,9 +189,9 @@ public class UserServiceImpl implements UserService {
         //ResponseModel verification = captchaService.verification(captchaVO);
 
         // 2. JWT產生對應token
-        String userToken = jwtUtil.createToken(account);
-        UserVO userVO = UserVO.builder().account(account).username("johndoe").userToken(userToken).build();
-        User user = getUserByToken(userToken);
+        String token = jwtUtil.createToken(account);
+        UserVO userVO = UserVO.builder().account(account).username("johndoe").token(token).build();
+        User user = getUserByToken(token);
         if (!user.getPassword().equals(password)) {
             return Result.builder().resultCode(ResultCode.PASSWORD_NOT_MATCH).build();
         }
@@ -205,17 +205,17 @@ public class UserServiceImpl implements UserService {
      * 登出
      * </p>
      *
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:32:52
      */
     @Override
-    public Result logout(String userToken) {
+    public Result logout(String token) {
 /*        if (!redisKit.hasKey(token)) {
             return Result.builder().resultCode(ResultCode.SYSTEM_UNDER_MAINTAIN).build();
         }*/
-        //User user = getUserByToken(userToken);
+        //User user = getUserByToken(token);
 
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
 
@@ -226,14 +226,14 @@ public class UserServiceImpl implements UserService {
      * 取得會員個人訊息
      * </p>
      *
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/25 17:28:51
      */
     @Override
-    public Result getUserInfo(String userToken) {
-/*        User user = getUserByToken(userToken);
+    public Result getUserInfo(String token) {
+/*        User user = getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
@@ -247,8 +247,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result updateUserInfo(String userToken, String username, String avatar) {
-/*        User user = getUserByToken(userToken);
+    public Result updateUserInfo(String token, String username, String avatar) {
+/*        User user = getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
@@ -263,14 +263,14 @@ public class UserServiceImpl implements UserService {
      * <p>
      * 取得會員錢包訊息
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/14 09:48:47
      */
     @Override
-    public Result getBalance(String userToken) {
-/*        User user = getUserByToken(userToken);
+    public Result getBalance(String token) {
+/*        User user = getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
@@ -285,8 +285,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result certificate(String userToken, String name, String idNumber, String idCard, String facePhoto) {
-/*        User user = getUserByToken(userToken);
+    public Result certificate(String token, String name, String idNumber, String idCard, String facePhoto) {
+/*        User user = getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
@@ -302,8 +302,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result updatePassword(String userToken, String oldPassword, String newPassword) {
-/*        User user = getUserByToken(userToken);
+    public Result updatePassword(String token, String oldPassword, String newPassword) {
+/*        User user = getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -316,8 +316,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result updateFundPassword(String userToken, String oldFundPassword, String newFundPassword) {
-/*        User user = getUserByToken(userToken);
+    public Result updateFundPassword(String token, String oldFundPassword, String newFundPassword) {
+/*        User user = getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }

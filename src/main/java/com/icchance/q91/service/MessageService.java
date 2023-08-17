@@ -4,13 +4,13 @@ import com.icchance.q91.common.result.Result;
 
 public interface MessageService {
 
-    Result getAnnouncement(String userToken);
+    Result getAnnouncement(String token);
 
-    Result getUnreadPrivateMessageAmount(String userToken);
+    Result getUnreadPrivateMessageAmount(String token);
 
-    Result getMessageList(String userToken);
+    Result getMessageList(String token);
 
-    Result setPrivateMessageNotice(String userToken, Integer id);
+    Result setPrivateMessageNotice(String token, Integer id);
 
-    Result deletePrivateMessage(String userToken, Integer id);
+    Result deletePrivateMessage(String token, Integer id);
 }

@@ -24,12 +24,12 @@ public class UserValidationAspect {
         this.userService = userService;
     }
 
-    @Pointcut("execution(* com.icchance.q91.service.*.*(..)) && args(userToken, ..)")
-    public void pointcut(String userToken) {}
+    @Pointcut("execution(* com.icchance.q91.service.*.*(..)) && args(token, ..)")
+    public void pointcut(String token) {}
 
-    @Around(value = "pointcut(userToken)", argNames = "joinPoint, userToken")
-    public Object validateUser(ProceedingJoinPoint joinPoint, String userToken) throws Throwable {
-        User user = userService.getUserByToken(userToken);
+    @Around(value = "pointcut(token)", argNames = "joinPoint, token")
+    public Object validateUser(ProceedingJoinPoint joinPoint, String token) throws Throwable {
+        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }

@@ -13,7 +13,7 @@ public interface MarketService {
      * <p>
      * 取得市場買賣訊息列表
      * </p>
-     * @param userToken 使用者令牌
+     * @param token 使用者令牌
      * @param min 最小幣數量
      * @param max 最大幣數量
      * @param gatewayType 收款方式
@@ -21,13 +21,13 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/4 16:35:34
      */
-    Result getPendingOrderList(String userToken, BigDecimal min, BigDecimal max, List<Integer> gatewayType);
+    Result getPendingOrderList(String token, BigDecimal min, BigDecimal max, List<Integer> gatewayType);
 
-    Result checkGateway(String userToken, Set<Integer> availableGateway);
+    Result checkGateway(String token, Set<Integer> availableGateway);
 
-    Result getPendingOrder(String userToken, Integer orderId);
+    Result getPendingOrder(String token, Integer orderId);
 
-    Result buy(String userToken, Integer orderId, BigDecimal amount, Integer type);
+    Result buy(String token, Integer orderId, BigDecimal amount, Integer type);
 
-    Result sell(String userToken, BigDecimal amount, List<Integer> availableGateway);
+    Result sell(String token, BigDecimal amount, List<Integer> availableGateway);
 }

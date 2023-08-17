@@ -15,27 +15,27 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Result getAnnouncement(String userToken) {
+    public Result getAnnouncement(String token) {
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeMessageDB.getAnnouncement()).build();
     }
 
     @Override
-    public Result getUnreadPrivateMessageAmount(String userToken) {
+    public Result getUnreadPrivateMessageAmount(String token) {
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(1).build();
     }
 
     @Override
-    public Result getMessageList(String userToken) {
+    public Result getMessageList(String token) {
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeMessageDB.getMessageList()).build();
     }
 
     @Override
-    public Result setPrivateMessageNotice(String userToken, Integer id) {
+    public Result setPrivateMessageNotice(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
-    public Result deletePrivateMessage(String userToken, Integer id) {
+    public Result deletePrivateMessage(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 }
