@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icchance.q91.mapper.PrivateMessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.icchance.q91.entity.model.PrivateMessage">
+            <id property="id" column="ID" jdbcType="INTEGER"/>
+            <result property="userId" column="USER_ID" jdbcType="INTEGER"/>
+            <result property="isRead" column="IS_READ" jdbcType="TINYINT"/>
+            <result property="title" column="TITLE" jdbcType="VARCHAR"/>
+            <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
+            <result property="senderId" column="SENDER_ID" jdbcType="INTEGER"/>
+            <result property="type" column="TYPE" jdbcType="TINYINT"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        a.ID,a.USER_ID,a.IS_READ,
+        a.TITLE,a.CONTENT,a.SENDER_ID,
+        a.TYPE,a.CREATE_TIME,a.UPDATE_TIME
+    </sql>
+
+    <resultMap id="getPrivateMessageResult" type="com.icchance.q91.entity.vo.PrivateMessageVO" >
+        <result column="ID" jdbcType="INTEGER" property="id" />
+        <result column="IS_READ" jdbcType="INTEGER" property="isRead" />
+        <result column="TITLE" jdbcType="VARCHAR" property="title" />
+        <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+        <result column="SENDER_ID" jdbcType="INTEGER" property="senderId" />
+        <result column="senderUsername" jdbcType="VARCHAR" property="senderUsername" />
+        <result column="TYPE" jdbcType="INTEGER" property="type" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <select id="getPrivateMessageList" resultMap="getPrivateMessageResult">
+        SELECT
+            <include refid="BaseColumnList" />, username senderUsername
+        FROM q91.PRIVATE_MESSAGE a
+        INNER JOIN USER sender ON a.USER_ID = sender.ID
+        <where>
+            <if test="null != userId and '' != userId">
+                AND a.USER_ID = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>

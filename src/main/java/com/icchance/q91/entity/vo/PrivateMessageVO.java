@@ -1,12 +1,23 @@
 package com.icchance.q91.entity.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * <p>
+ * 站內信VO
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 14:04:37
+ */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PrivateMessageVO {
 
     private Integer id;

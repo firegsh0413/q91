@@ -2,7 +2,7 @@ package com.icchance.q91.common.constant;
 
 import java.util.concurrent.TimeUnit;
 
-public interface CacheConstants {
+public interface CacheConstant {
 
     interface Default{
         /** 默認的失效時間,默認不失效 */

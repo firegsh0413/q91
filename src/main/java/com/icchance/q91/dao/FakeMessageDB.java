@@ -73,17 +73,6 @@ public class FakeMessageDB {
                 .build();
         privateMessageVOList.add(privateMessageVO);
         privateMessageVO = PrivateMessageVO.builder()
-                .id(22)
-                .isRead(1)
-                .title("紧急信息")
-                .content("紧急信息")
-                .senderId(-1)
-                .senderUsername("系统管理员")
-                .type(3)
-                .createTime(LocalDateTime.now())
-                .build();
-        privateMessageVOList.add(privateMessageVO);
-        privateMessageVO = PrivateMessageVO.builder()
                 .id(11)
                 .isRead(0)
                 .title("优惠通知")

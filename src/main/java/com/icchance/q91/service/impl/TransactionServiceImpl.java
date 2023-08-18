@@ -38,8 +38,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Result getPendingOrderList(String userToken) {
-        User user = userService.getUserByToken(userToken);
+    public Result getPendingOrderList(String token) {
+        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -52,30 +52,30 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Result getPendingOrderDetail(String userToken, Integer id) {
+    public Result getPendingOrderDetail(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS)
                 .resultMap(fakeTransactionDB.getPendingOrderDetail())
                 .build();
     }
 
     @Override
-    public Result cancelPendingOrder(String userToken, Integer id) {
+    public Result cancelPendingOrder(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
-    public Result checkPendingOrder(String userToken, Integer id) {
+    public Result checkPendingOrder(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
-    public Result verifyPendingOrder(String userToken, Integer id) {
+    public Result verifyPendingOrder(String token, Integer id) {
         return null;
     }
 
     @Override
-    public Result getOrderList(String userToken) {
-        User user = userService.getUserByToken(userToken);
+    public Result getOrderList(String token) {
+        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -88,8 +88,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Result getOrderDetail(String userToken, Integer id) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result getOrderDetail(String token, Integer id) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -98,18 +98,18 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Result cancelOrder(String userToken, Integer id) {
+    public Result cancelOrder(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
-    public Result appealOrder(String userToken, Integer id) {
+    public Result appealOrder(String token, Integer id) {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
     @Override
-    public Result getRecord(String userToken) {
-        User user = userService.getUserByToken(userToken);
+    public Result getRecord(String token) {
+        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -126,14 +126,14 @@ public class TransactionServiceImpl implements TransactionService {
      * 取得會員收付款訊息
      * </p>
      *
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:26:44
      */
     @Override
-    public Result getGatewayList(String userToken) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result getGatewayList(String token) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -149,7 +149,7 @@ public class TransactionServiceImpl implements TransactionService {
      * 增加會員收付款訊息
      * </p>
      *
-     * @param userToken          令牌
+     * @param token          令牌
      * @param type               收付款方式(1.銀行卡 2.微信 3.支付寶)
      * @param name               綁定名字
      * @param gatewayName        綁定名稱
@@ -160,8 +160,8 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/7/31 13:27:53
      */
     @Override
-    public Result createGateway(String userToken, Integer type, String name, String gatewayName, String gatewayReceiptCode, String gatewayAccount) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result createGateway(String token, Integer type, String name, String gatewayName, String gatewayReceiptCode, String gatewayAccount) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
@@ -182,15 +182,15 @@ public class TransactionServiceImpl implements TransactionService {
      * 刪除會員收付款訊息
      * </p>
      *
-     * @param userToken 令牌
+     * @param token 令牌
      * @param id        收付款資訊ID
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:29:00
      */
     @Override
-    public Result deleteGateway(String userToken, Integer id) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result deleteGateway(String token, Integer id) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
@@ -199,8 +199,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Result verifyOrder(String userToken, Integer id, String cert) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result verifyOrder(String token, Integer id, String cert) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/

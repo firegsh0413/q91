@@ -1,5 +1,7 @@
 package com.icchance.q91.controller;
 
+import com.icchance.q91.annotation.PassToken;
+import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class UserController extends BaseController {
      * @author 6687353
      * @since 2023/7/20 15:26:23
      */
+    @PassToken
     @GetMapping("/captcha")
     public Result getCaptcha(@RequestParam String account) {
         return userService.getCaptcha(account);
@@ -51,6 +54,7 @@ public class UserController extends BaseController {
      * @author 6687353
      * @since 2023/7/21 10:05:17
      */
+    @PassToken
     @PostMapping("/register")
     public Result register(@RequestParam String account, @RequestParam String username, @RequestParam String password, @RequestParam String fundPassword) {
         return userService.register(account, username, password, fundPassword);
@@ -68,6 +72,7 @@ public class UserController extends BaseController {
      * @author 6687353
      * @since 2023/7/21 10:09:52
      */
+    @PassToken
     @PostMapping("/login")
     public Result login(@RequestParam String account, @RequestParam String password, @RequestParam String cId, @RequestParam String captcha) {
         return userService.login(account, password, cId, captcha);
@@ -77,49 +82,52 @@ public class UserController extends BaseController {
      * <p>
      * 登出
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 12:00:18
      */
+    @PassToken
     @PostMapping("/logout")
-    public Result logout(@RequestParam String userToken) {
-        return userService.logout(userToken);
+    public Result logout(@RequestParam String token) {
+        return userService.logout(token);
     }
 
     /**
      * <p>
      * 取得會員個人訊息
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/25 17:28:51
      */
+    @UserLoginToken
     @GetMapping("/info")
-    public Result getUserInfo(@RequestParam String userToken) {
-        return userService.getUserInfo(userToken);
+    public Result getUserInfo(@RequestParam String token) {
+        return userService.getUserInfo(token);
     }
 
     /**
      * <p>
      * 取得會員錢包訊息
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/14 09:47:52
      */
+    @UserLoginToken
     @GetMapping("/balance")
-    public Result getBalance(@RequestParam String userToken) {
-        return userService.getBalance(userToken);
+    public Result getBalance(@RequestParam String token) {
+        return userService.getBalance(token);
     }
 
     /**
      * <p>
      * 實名認證
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @param name 姓名
      * @param idNumber 身份證號
      * @param idCard 身份證照片base64
@@ -128,24 +136,28 @@ public class UserController extends BaseController {
      * @author 6687353
      * @since 2023/8/14 09:56:33
      */
+    @UserLoginToken
     @PostMapping("/certificate")
-    public Result certificate(@RequestParam String userToken, @RequestParam String name, @RequestParam String idNumber,
+    public Result certificate(@RequestParam String token, @RequestParam String name, @RequestParam String idNumber,
                               @RequestParam String idCard, @RequestParam String facePhoto) {
-        return userService.certificate(userToken, name, idNumber, idCard, facePhoto);
+        return userService.certificate(token, name, idNumber, idCard, facePhoto);
     }
 
+    @UserLoginToken
     @PostMapping("/pwd/update")
-    public Result updatePassword(@RequestParam String userToken, @RequestParam String oldPassword, @RequestParam String newPassword) {
-        return userService.updatePassword(userToken, oldPassword, newPassword);
+    public Result updatePassword(@RequestParam String token, @RequestParam String oldPassword, @RequestParam String newPassword) {
+        return userService.updatePassword(token, oldPassword, newPassword);
     }
 
+    @UserLoginToken
     @PostMapping("/fundPwd/update")
-    public Result updateFundPassword(@RequestParam String userToken, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
-        return userService.updateFundPassword(userToken, oldFundPassword, newFundPassword);
+    public Result updateFundPassword(@RequestParam String token, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
+        return userService.updateFundPassword(token, oldFundPassword, newFundPassword);
     }
 
+    @UserLoginToken
     @PostMapping("/info/update")
-    public Result updateUserInfo(@RequestParam String userToken, @RequestParam String username, @RequestParam String avatar) {
-        return userService.updateUserInfo(userToken, username, avatar);
+    public Result updateUserInfo(@RequestParam String token, @RequestParam String username, @RequestParam String avatar) {
+        return userService.updateUserInfo(token, username, avatar);
     }
 }

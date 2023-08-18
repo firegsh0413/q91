@@ -42,7 +42,7 @@ public class MarketServiceImpl implements MarketService {
      * 取得市場買賣訊息列表
      * </p>
      *
-     * @param userToken   使用者令牌
+     * @param token   使用者令牌
      * @param min         最小幣數量
      * @param max         最大幣數量
      * @param gatewayType 收款方式
@@ -51,8 +51,8 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/4 16:35:34
      */
     @Override
-    public Result getPendingOrderList(String userToken, BigDecimal min, BigDecimal max, List<Integer> gatewayType) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result getPendingOrderList(String token, BigDecimal min, BigDecimal max, List<Integer> gatewayType) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -77,8 +77,8 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Result checkGateway(String userToken, Set<Integer> availableGateway) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result checkGateway(String token, Set<Integer> availableGateway) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -95,8 +95,8 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Result getPendingOrder(String userToken, Integer orderId) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result getPendingOrder(String token, Integer orderId) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -117,8 +117,8 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Result buy(String userToken, Integer orderId, BigDecimal amount, Integer type) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result buy(String token, Integer orderId, BigDecimal amount, Integer type) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
@@ -155,8 +155,8 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Result sell(String userToken, BigDecimal amount, List<Integer> availableGateway) {
-/*        User user = userService.getUserByToken(userToken);
+    public Result sell(String token, BigDecimal amount, List<Integer> availableGateway) {
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/

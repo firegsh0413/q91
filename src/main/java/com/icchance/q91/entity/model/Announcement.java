@@ -9,6 +9,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * <p>
+ * 站內公告entity
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 15:37:24
+ */
 @Data
 @TableName("ANNOUNCEMENT")
 @Builder

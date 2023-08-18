@@ -56,29 +56,29 @@ public interface UserService {
      * <p>
      * 登出
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:32:52
      */
-    Result logout(String userToken);
+    Result logout(String token);
 
     /**
      * <p>
      * 取得會員個人訊息
      * </p>
-     * @param userToken 令牌
+     * @param token 令牌
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/25 18:05:19
      */
-    Result getUserInfo(String userToken);
+    Result getUserInfo(String token);
 
-    Result updateUserInfo(String userToken, String username, String avatar);
-    Result getBalance(String userToken);
-    Result certificate(String userToken, String name, String idNumber, String idCard, String facePhoto);
-    Result updatePassword(String userToken, String oldPassword, String newPassword);
-    Result updateFundPassword(String userToken, String oldFundPassword, String newFundPassword);
+    Result updateUserInfo(String token, String username, String avatar);
+    Result getBalance(String token);
+    Result certificate(String token, String name, String idNumber, String idCard, String facePhoto);
+    Result updatePassword(String token, String oldPassword, String newPassword);
+    Result updateFundPassword(String token, String oldFundPassword, String newFundPassword);
     User getUserByToken(String token);
 
 }

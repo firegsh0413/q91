@@ -21,7 +21,7 @@ public class UserVO {
     /** 暱稱 */
     private String username;
     /** 令牌 */
-    private String userToken;
+    private String token;
     /** 頭像圖片base64 */
     private String avatar;
     /** 錢包地址 */
