@@ -1,22 +1,22 @@
 package com.icchance.q91.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.dao.FakeTransactionDB;
 import com.icchance.q91.entity.dto.GatewayDTO;
-import com.icchance.q91.entity.model.Gateway;
-import com.icchance.q91.entity.model.OrderRecord;
 import com.icchance.q91.entity.model.User;
-import com.icchance.q91.entity.vo.OrderVO;
-import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.service.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
+/**
+ * <p>
+ * 交易服務類實作
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 16:58:11
+ */
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
@@ -37,6 +37,15 @@ public class TransactionServiceImpl implements TransactionService {
         this.fakeTransactionDB = fakeTransactionDB;
     }
 
+    /**
+     * <p>
+     * 取得會員掛單訊息
+     * </p>
+     * @param token 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 16:58:29
+     */
     @Override
     public Result getPendingOrderList(String token) {
         User user = userService.getUserByToken(token);
@@ -51,8 +60,18 @@ public class TransactionServiceImpl implements TransactionService {
                 .build();
     }
 
+    /**
+     * <p>
+     * 取得會員掛單（我的賣單）詳細訊息
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 16:58:42
+     */
     @Override
-    public Result getPendingOrderDetail(String token, Integer id) {
+    public Result getPendingOrderDetail(String token, Integer orderId) {
         return Result.builder().resultCode(ResultCode.SUCCESS)
                 .resultMap(fakeTransactionDB.getPendingOrderDetail())
                 .build();

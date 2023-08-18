@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 /**
  * <p>
- * 帳號相關服務類實做
+ * 帳號相關服務類實作
  * </p>
  *
  * @author 6687353
@@ -245,6 +245,17 @@ public class UserServiceImpl implements UserService {
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userVO).build();
     }
 
+    /**
+     * <p>
+     * 修改個人訊息
+     * </p>
+     * @param token 令牌
+     * @param username 用戶名稱
+     * @param avatar 用戶頭像
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 18:04:37
+     */
     @Override
     public Result updateUserInfo(String token, String username, String avatar) {
 /*        User user = getUserByToken(token);
@@ -283,6 +294,19 @@ public class UserServiceImpl implements UserService {
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userBalanceVO).build();
     }
 
+    /**
+     * <p>
+     * 實名認證
+     * </p>
+     * @param token 令牌
+     * @param name 姓名
+     * @param idNumber 身份證號
+     * @param idCard 身份證照片base64
+     * @param facePhoto 人臉識別照片base64
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 17:35:30
+     */
     @Override
     public Result certificate(String token, String name, String idNumber, String idCard, String facePhoto) {
 /*        User user = getUserByToken(token);
@@ -300,6 +324,17 @@ public class UserServiceImpl implements UserService {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
+    /**
+     * <p>
+     * 設置密碼
+     * </p>
+     * @param token 令牌
+     * @param oldPassword 原密碼
+     * @param newPassword 新密碼
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 17:49:17
+     */
     @Override
     public Result updatePassword(String token, String oldPassword, String newPassword) {
 /*        User user = getUserByToken(token);
@@ -314,6 +349,17 @@ public class UserServiceImpl implements UserService {
         return Result.builder().resultCode(ResultCode.SUCCESS).build();
     }
 
+    /**
+     * <p>
+     * 設置交易密碼
+     * </p>
+     * @param token 令牌
+     * @param oldFundPassword 原交易密碼
+     * @param newFundPassword 新交易密碼
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 17:59:47
+     */
     @Override
     public Result updateFundPassword(String token, String oldFundPassword, String newFundPassword) {
 /*        User user = getUserByToken(token);
@@ -370,15 +416,20 @@ public class UserServiceImpl implements UserService {
         return bCryptPasswordEncoder.encode(passwrod);
     }
 
+    /**
+     * <p>
+     * token取回用戶資訊
+     * </p>
+     * @param token 令牌
+     * @return com.icchance.q91.entity.model.User
+     * @author 6687353
+     * @since 2023/8/18 18:04:46
+     */
     @Override
     public User getUserByToken(String token) {
-        String account = jwtUtil.parseAccount(token);
-/*        if (!fakeUserDB.isExist(account)) {
-            return null;
-        }
-        return fakeUserDB.get(account);*/
-        User user = authUserService.getByAccount(account);
-        if(Objects.isNull(user)) {
+        Integer userId = jwtUtil.parseUserId(token);
+        User user = authUserService.getById(userId);
+        if (Objects.isNull(user)) {
             return null;
         }
         return user;
