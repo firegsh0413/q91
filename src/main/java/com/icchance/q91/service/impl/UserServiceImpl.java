@@ -18,13 +18,11 @@ import com.icchance.q91.redis.RedisKit;
 import com.icchance.q91.service.AuthUserService;
 import com.icchance.q91.service.UserService;
 import com.icchance.q91.util.JwtUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -189,9 +187,10 @@ public class UserServiceImpl implements UserService {
         //ResponseModel verification = captchaService.verification(captchaVO);
 
         // 2. JWT產生對應token
-        String token = jwtUtil.createToken(account);
+        User user = authUserService.getByAccount(account);
+        String token = jwtUtil.createToken(account, user.getId());
         UserVO userVO = UserVO.builder().account(account).username("johndoe").token(token).build();
-        User user = getUserByToken(token);
+        //User user = getUserByToken(token);
         if (!user.getPassword().equals(password)) {
             return Result.builder().resultCode(ResultCode.PASSWORD_NOT_MATCH).build();
         }
@@ -373,7 +372,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByToken(String token) {
-        String account = jwtUtil.parseAccountFromToken(token);
+        String account = jwtUtil.parseAccount(token);
 /*        if (!fakeUserDB.isExist(account)) {
             return null;
         }

@@ -9,6 +9,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * <p>
+ * 站內信entity
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 14:13:05
+ */
 @Data
 @TableName("PRIVATE_MESSAGE")
 @Builder
@@ -18,6 +25,8 @@ public class PrivateMessage {
 
     @TableId
     private Integer id;
+
+    private Integer userId;
 
     private Integer isRead;
 

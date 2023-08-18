@@ -7,21 +7,17 @@ import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.model.User;
 import com.icchance.q91.service.AuthUserService;
-import com.icchance.q91.service.UserService;
 import com.icchance.q91.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -65,7 +61,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             }
             String account;
             try {
-                account = jwtUtil.parseAccountFromToken(token);
+                account = jwtUtil.parseAccount(token);
             } catch (JWTDecodeException je) {
                 throw new RuntimeException("401");
             }

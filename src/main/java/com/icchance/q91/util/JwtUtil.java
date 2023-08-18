@@ -7,21 +7,23 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * JWT工具類
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 15:32:20
+ */
 @Slf4j
 @Component
 @Data
@@ -33,9 +35,19 @@ public class JwtUtil {
     @Value("${jwt.expireTimeAsSec}")
     private long jwtExpireTimeAsAsc;
 
-    public String createToken(String account) {
+    /**
+     * <p>
+     * 生成token
+     * </p>
+     * @param account 用戶帳號
+     * @param userId  用戶ID
+     * @return java.lang.String
+     * @author 6687353
+     * @since 2023/8/18 15:32:30
+     */
+    public String createToken(String account, Integer userId) {
         //Map<String, Object> claimMap = Collections.singletonMap(CLAIMS_KEY_USER_ROLES, userRoles);
-        Map<String, Object> claimMap = Collections.singletonMap("account", account);
+        Map<String, Object> claimMap = Collections.singletonMap("userId", userId);
         String token = Jwts.builder()
                 .setSubject(account)
                 .addClaims(claimMap)
@@ -48,6 +60,15 @@ public class JwtUtil {
         return token;
     }
 
+    /**
+     * <p>
+     * 解析token
+     * </p>
+     * @param token 令牌
+     * @return io.jsonwebtoken.Claims
+     * @author 6687353
+     * @since 2023/8/18 15:32:50
+     */
     private Claims parseToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 //.setSigningKey(Keys.hmacShaKeyFor(jwtSignKey.getBytes(StandardCharsets.UTF_8)))
@@ -59,8 +80,30 @@ public class JwtUtil {
         return claims;
     }
 
-    public String parseAccountFromToken(String token) {
+    /**
+     * <p>
+     * 取得用戶帳號
+     * </p>
+     * @param token 令牌
+     * @return java.lang.String
+     * @author 6687353
+     * @since 2023/8/18 15:36:27
+     */
+    public String parseAccount(String token) {
         return parseToken(token).getSubject();
+    }
+
+    /**
+     * <p>
+     * 取得用戶id
+     * </p>
+     * @param token 令牌
+     * @return java.lang.Integer
+     * @author 6687353
+     * @since 2023/8/18 15:36:53
+     */
+    public Integer parseUserId(String token) {
+        return parseToken(token).get("userId", Integer.class);
     }
 
     public List<SimpleGrantedAuthority> parseUserAuthoritiesFromToken(String token) {

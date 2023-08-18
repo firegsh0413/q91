@@ -1,6 +1,6 @@
 package com.icchance.q91.redis.impl;
 
-import com.icchance.q91.common.constant.CacheConstants;
+import com.icchance.q91.common.constant.CacheConstant;
 import com.icchance.q91.redis.RedisKit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -42,7 +42,7 @@ public class RedisKitImpl<K, V>  implements RedisKit<K, V> {
      */
     @Override
     public void set(K k, V v) {
-        this.set(k, v, CacheConstants.Default.TIME_OUT);
+        this.set(k, v, CacheConstant.Default.TIME_OUT);
     }
 
     /**
@@ -58,7 +58,7 @@ public class RedisKitImpl<K, V>  implements RedisKit<K, V> {
      */
     @Override
     public void set(K k, V v, Long timeout) {
-        this.set(k,v,timeout, CacheConstants.Default.TIME_UNIT);
+        this.set(k,v,timeout, CacheConstant.Default.TIME_UNIT);
     }
 
     /**

@@ -35,7 +35,8 @@ public class JWTService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         List<String> userRoles = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         */
-        return jwtUtil.createToken(account);
+        //return jwtUtil.createToken(account);
+        return null;
 
     }
 
