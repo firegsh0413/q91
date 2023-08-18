@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
- * 交易控制層
+ * 交易控制類
  * </p>
  * @author 6687353
  * @since 2023/7/28 18:12:42
@@ -40,10 +40,20 @@ public class TransactionController extends BaseController {
         return transactionService.getPendingOrderList(token);
     }
 
+    /**
+     * <p>
+     * 取得會員掛單（我的賣單）詳細訊息
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 16:53:22
+     */
     @UserLoginToken
     @GetMapping("/pendingOrder/detail")
-    public Result getPendingOrderDetail(@RequestParam String token, @RequestParam Integer id) {
-        return transactionService.getPendingOrderDetail(token, id);
+    public Result getPendingOrderDetail(@RequestParam String token, @RequestParam(value = "id") Integer orderId) {
+        return transactionService.getPendingOrderDetail(token, orderId);
     }
 
     @UserLoginToken

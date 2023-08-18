@@ -143,18 +143,51 @@ public class UserController extends BaseController {
         return userService.certificate(token, name, idNumber, idCard, facePhoto);
     }
 
+    /**
+     * <p>
+     * 設置密碼
+     * </p>
+     * @param token 令牌
+     * @param oldPassword 原密碼
+     * @param newPassword 新密碼
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 17:48:26
+     */
     @UserLoginToken
     @PostMapping("/pwd/update")
     public Result updatePassword(@RequestParam String token, @RequestParam String oldPassword, @RequestParam String newPassword) {
         return userService.updatePassword(token, oldPassword, newPassword);
     }
 
+    /**
+     * <p>
+     * 設置交易密碼
+     * </p>
+     * @param token 令牌
+     * @param oldFundPassword 原交易密碼
+     * @param newFundPassword 新交易密碼
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 18:00:04
+     */
     @UserLoginToken
     @PostMapping("/fundPwd/update")
     public Result updateFundPassword(@RequestParam String token, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
         return userService.updateFundPassword(token, oldFundPassword, newFundPassword);
     }
 
+    /**
+     * <p>
+     * 修改個人訊息
+     * </p>
+     * @param token 令牌
+     * @param username 用戶名稱
+     * @param avatar 用戶頭像
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 18:03:37
+     */
     @UserLoginToken
     @PostMapping("/info/update")
     public Result updateUserInfo(@RequestParam String token, @RequestParam String username, @RequestParam String avatar) {

@@ -2,11 +2,37 @@ package com.icchance.q91.service;
 
 import com.icchance.q91.common.result.Result;
 
+/**
+ * <p>
+ * 交易服務類
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 16:57:54
+ */
 public interface TransactionService {
 
+    /**
+     * <p>
+     * 取得會員掛單訊息
+     * </p>
+     * @param token 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 16:55:29
+     */
     Result getPendingOrderList(String token);
 
-    Result getPendingOrderDetail(String token, Integer id);
+    /**
+     * <p>
+     * 取得會員掛單（我的賣單）詳細訊息
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/18 16:55:35
+     */
+    Result getPendingOrderDetail(String token, Integer orderId);
 
     Result cancelPendingOrder(String token, Integer id);
 

@@ -10,6 +10,13 @@ import com.icchance.q91.entity.vo.PendingOrderVO;
 
 import java.util.List;
 
+/**
+ * <p>
+ * 掛單服務類
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 16:59:18
+ */
 public interface PendingOrderService extends IService<PendingOrder> {
 
     /**

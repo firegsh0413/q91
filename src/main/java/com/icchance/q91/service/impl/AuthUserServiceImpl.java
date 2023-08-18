@@ -16,6 +16,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * <p>
+ * 用戶認證服務類實作
+ * </p>
+ * @author 6687353
+ * @since 2023/8/18 17:07:02
+ */
 @Service
 public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implements AuthUserService {
 
@@ -36,6 +43,15 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
         return authUser;
     }
 
+    /**
+     * <p>
+     * 帳號取得用戶資訊
+     * </p>
+     * @param account 用戶帳號
+     * @return com.icchance.q91.entity.model.User
+     * @author 6687353
+     * @since 2023/8/18 17:07:37
+     */
     @Override
     public User getByAccount(String account) {
         return this.getOne(Wrappers.<User>lambdaQuery().eq(User::getAccount, account));
