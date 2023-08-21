@@ -36,11 +36,11 @@ public class UserController extends BaseController {
      * @author 6687353
      * @since 2023/7/20 15:26:23
      */
-    @PassToken
+/*    @PassToken
     @GetMapping("/captcha")
     public Result getCaptcha(@RequestParam String account) {
         return userService.getCaptcha(account);
-    }
+    }*/
 
     /**
      * <p>

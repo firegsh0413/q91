@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 //@Aspect
-@Component
+//@Component
 public class UserValidationAspect {
 
     private final UserService userService;

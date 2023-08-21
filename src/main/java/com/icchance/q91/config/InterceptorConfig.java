@@ -20,7 +20,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor())
                 // 攔截所有請求
-                .addPathPatterns("/**");
+                .addPathPatterns("/**")
+                .excludePathPatterns("/user/captcha/**");
     }
 
     @Bean
