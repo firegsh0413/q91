@@ -60,51 +60,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * <p>
-     * 取得驗證碼
-     * </p>
-     *
-     * @param account 帳號
-     * @return com.icchance.q91.common.result.Result
-     * @author 6687353
-     * @since 2023/7/20 15:25:48
-     */
-    @Override
-    public Result getCaptcha(String account) {
-        CaptchaVO captchaVO = new CaptchaVO();
-        captchaVO.setCaptchaType("blockPuzzle");
-        //captchaVO.setClientUid("q91");
-        //captchaCacheServiceRedis.set("test", "test", 0);
-        // captchaCacheServiceRedis.get("test");
-
-        ResponseModel responseModel = captchaService.get(captchaVO);
-        CaptchaVO repData = (CaptchaVO) responseModel.getRepData();
-        Object o = redisKit.get("RUNNING:CAPTCHA:" + repData.getToken());
-        String jsonString = JSON.toJSONString(o);
-        PointVO pointVO = JSON.parseObject(jsonString, PointVO.class);
-        //PointVO pointVO = (PointVO) redisKit.get("RUNNING:CAPTCHA:" + repData.getToken());
-
-        ModifyCaptchaVO modifyCaptchaVO = ModifyCaptchaVO.builder()
-                .cutoutImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII")
-                .shadeImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII")
-                .xAxis(175)
-                .yAxis(97)
-                .cId("iVBORw0KGgoAAAANSUhEUgAAADc")
-                .build();
-/*        ModifyCaptchaVO modifyCaptchaVO = ModifyCaptchaVO.builder()
-                .cutoutImage(repData.getOriginalImageBase64())
-                .shadeImage(repData.getJigsawImageBase64())
-                .xAxis(pointVO.getX())
-                .yAxis(pointVO.getY())
-                .cId(repData.getToken())
-                .build();*/
-        return Result.builder()
-                .resultCode(ResultCode.SUCCESS)
-                .resultMap(modifyCaptchaVO)
-                .build();
-    }
-
-    /**
-     * <p>
      * 註冊
      * </p>
      *
@@ -147,7 +102,7 @@ public class UserServiceImpl implements UserService {
         //redisKit.set(account, user);
         //UserVO userVO = UserVO.builder().account(account).username(username).build();
         UserVO userVO = UserVO.builder().account(account).username(username).build();
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userVO).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
     }
 
     /**
@@ -192,10 +147,10 @@ public class UserServiceImpl implements UserService {
         UserVO userVO = UserVO.builder().account(account).username("johndoe").token(token).build();
         //User user = getUserByToken(token);
         if (!user.getPassword().equals(password)) {
-            return Result.builder().resultCode(ResultCode.PASSWORD_NOT_MATCH).build();
+            return Result.builder().repCode(ResultCode.PASSWORD_NOT_MATCH.code).repMsg(ResultCode.PASSWORD_NOT_MATCH.msg).build();
         }
 
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userVO).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
         //return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
     }
 
@@ -205,18 +160,17 @@ public class UserServiceImpl implements UserService {
      * </p>
      *
      * @param token 令牌
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:32:52
      */
     @Override
-    public Result logout(String token) {
+    public void logout(String token) {
 /*        if (!redisKit.hasKey(token)) {
             return Result.builder().resultCode(ResultCode.SYSTEM_UNDER_MAINTAIN).build();
         }*/
         //User user = getUserByToken(token);
 
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        //return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
 
     }
 
@@ -242,7 +196,7 @@ public class UserServiceImpl implements UserService {
         userVO.setUsername("johndoe");
         userVO.setAvatar("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
         userVO.setIsCertified(0);
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userVO).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
     }
 
     /**
@@ -266,7 +220,7 @@ public class UserServiceImpl implements UserService {
         user.setAvatar(avatar);
         user.setUpdateTime(LocalDateTime.now());
         userMapper.updateById(user);*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -291,7 +245,7 @@ public class UserServiceImpl implements UserService {
                 .sellBalance(new BigDecimal(0))
                 .tradingAmount(new BigDecimal(0))
                 .build();
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(userBalanceVO).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userBalanceVO).build();
     }
 
     /**
@@ -321,7 +275,7 @@ public class UserServiceImpl implements UserService {
         user.setCertified(Boolean.TRUE);
         user.setUpdateTime(LocalDateTime.now());
         fakeUserDB.update(user);*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -346,7 +300,7 @@ public class UserServiceImpl implements UserService {
         }*/
 /*        user.setPassword(newPassword);
         fakeUserDB.update(user);*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -371,7 +325,7 @@ public class UserServiceImpl implements UserService {
         }*/
 /*        user.setFundPassword(newFundPassword);
         fakeUserDB.update(user);*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     private boolean checkAccountValid(String input) {

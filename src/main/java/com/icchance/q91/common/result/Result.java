@@ -19,16 +19,16 @@ public class Result implements Serializable {
 
     private static final long serialVersionUID = -752507042913307293L;
     /** 錯誤代碼 */
-    private String resultCode;
+    private String repCode;
     /** 返回數據 */
-    private Object resultMap;
+    private Object repData;
     /** 錯誤訊息 */
-    private String msg;
+    private String repMsg;
 
     @Builder
-    public Result(ResultCode resultCode, Object resultMap) {
-        this.resultCode = resultCode.code;
-        this.resultMap = resultMap;
-        this.msg = resultCode.msg;
+    public Result(String repCode, Object repData, String repMsg) {
+        this.repCode = repCode;
+        this.repData = repData;
+        this.repMsg = repMsg;
     }
 }

@@ -73,7 +73,7 @@ public class MarketServiceImpl implements MarketService {
             return CollectionUtils.isNotEmpty(gatewayType);
         }).collect(Collectors.toList());
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(result).build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getMarketPendingOrderList()).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getMarketPendingOrderList()).build();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class MarketServiceImpl implements MarketService {
             }
         }
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(check).build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(1).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(1).build();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class MarketServiceImpl implements MarketService {
                     .resultMap(pendingOrderList.get(0))
                     .build();
         }*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getPendingOrder()).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getPendingOrder()).build();
     }
 
     @Override
@@ -151,7 +151,7 @@ public class MarketServiceImpl implements MarketService {
         // cutoffTime為tradeTime往後十分鐘
 
         pendingOrderService.uploadPendingOrder(pendingOrderDTO);*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     @Override
@@ -168,6 +168,6 @@ public class MarketServiceImpl implements MarketService {
                 .availableGatewayStr(availableGateway.stream().map(Object::toString).collect(Collectors.joining(",")))
                 .build();
         pendingOrderService.createPendingOrder(pendingOrderDTO);
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 }

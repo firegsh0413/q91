@@ -62,8 +62,9 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public Result getAnnouncement(String token) {
-        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(announcementMapper.selectList(Wrappers.<Announcement>lambdaQuery()))
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(announcementMapper.selectList(Wrappers.<Announcement>lambdaQuery()))
                 .build();
         //return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeMessageDB.getAnnouncement()).build();
     }
@@ -80,7 +81,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Result getUnreadPrivateMessageAmount(String token) {
         Integer userId = jwtUtil.parseUserId(token);
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(privateMessageMapper.getPrivateMessageAmount(userId, IS_READ_FALSE)).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(privateMessageMapper.getPrivateMessageAmount(userId, IS_READ_FALSE))
+                .build();
     }
 
     /**
@@ -106,7 +110,7 @@ public class MessageServiceImpl implements MessageService {
                 .announcement(announcementVOList)
                 .build();
         //return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeMessageDB.getMessageList()).build();
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(messageListVO).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(messageListVO).build();
     }
 
     /**
@@ -123,7 +127,7 @@ public class MessageServiceImpl implements MessageService {
     public Result setPrivateMessageNotice(String token, Integer id) {
         Integer userId = jwtUtil.parseUserId(token);
         privateMessageMapper.updateIsRead(id, userId, IS_READ_TRUE, LocalDateTime.now());
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -140,7 +144,7 @@ public class MessageServiceImpl implements MessageService {
     public Result deletePrivateMessage(String token, Integer id) {
         Integer userId = jwtUtil.parseUserId(token);
         privateMessageMapper.delete(id, userId);
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     private AnnouncementVO convertAnnouncementVO(Announcement announcement) {

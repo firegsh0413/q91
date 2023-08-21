@@ -29,21 +29,6 @@ public class UserController extends BaseController {
 
     /**
      * <p>
-     * 取得驗證碼
-     * </p>
-     * @param account 帳號
-     * @return com.icchance.q91.common.result.Result
-     * @author 6687353
-     * @since 2023/7/20 15:26:23
-     */
-/*    @PassToken
-    @GetMapping("/captcha")
-    public Result getCaptcha(@RequestParam String account) {
-        return userService.getCaptcha(account);
-    }*/
-
-    /**
-     * <p>
      * 註冊
      * </p>
      * @param account 帳號
@@ -90,7 +75,8 @@ public class UserController extends BaseController {
     @PassToken
     @PostMapping("/logout")
     public Result logout(@RequestParam String token) {
-        return userService.logout(token);
+        userService.logout(token);
+        return SUCCESS;
     }
 
     /**
