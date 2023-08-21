@@ -50,13 +50,14 @@ public class TransactionServiceImpl implements TransactionService {
     public Result getPendingOrderList(String token) {
         User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
         }
 /*        return Result.builder().resultCode(ResultCode.SUCCESS)
                 .resultMap(pendingOrderService.getPendingOrderList(user.getId()))
                 .build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(fakeTransactionDB.getPendingOrderList())
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(fakeTransactionDB.getPendingOrderList())
                 .build();
     }
 
@@ -72,19 +73,20 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public Result getPendingOrderDetail(String token, Integer orderId) {
-        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(fakeTransactionDB.getPendingOrderDetail())
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(fakeTransactionDB.getPendingOrderDetail())
                 .build();
     }
 
     @Override
     public Result cancelPendingOrder(String token, Integer id) {
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     @Override
     public Result checkPendingOrder(String token, Integer id) {
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     @Override
@@ -96,13 +98,14 @@ public class TransactionServiceImpl implements TransactionService {
     public Result getOrderList(String token) {
         User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
         }
 /*        return Result.builder().resultCode(ResultCode.SUCCESS)
                 .resultMap(orderService.getOrderList(user.getId()))
                 .build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(fakeTransactionDB.getOrderList())
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(fakeTransactionDB.getOrderList())
                 .build();
     }
 
@@ -113,30 +116,31 @@ public class TransactionServiceImpl implements TransactionService {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(orderService.getOrderDetail(user.getId(), id)).build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getOrderDetail()).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getOrderDetail()).build();
     }
 
     @Override
     public Result cancelOrder(String token, Integer id) {
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     @Override
     public Result appealOrder(String token, Integer id) {
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     @Override
     public Result getRecord(String token) {
         User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
+            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
         }
 /*        return Result.builder().resultCode(ResultCode.SUCCESS)
                 .resultMap(orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, user.getId())))
                 .build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(fakeTransactionDB.getOrderRecordList())
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(fakeTransactionDB.getOrderRecordList())
                 .build();
     }
 
@@ -160,7 +164,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         /*List<Gateway> gatewayList = gatewayService.getGatewayList(0);
         return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(gatewayList).build();*/
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(fakeTransactionDB.getGatewayList()).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getGatewayList()).build();
     }
 
     /**
@@ -193,7 +197,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .gatewayAccount(gatewayAccount)
                 .build();
         //gatewayService.createGateway(gatewayDTO);
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -214,7 +218,7 @@ public class TransactionServiceImpl implements TransactionService {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
         //gatewayService.deleteGateway(user.getId(), id);
-        return Result.builder().resultCode(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     @Override
@@ -224,7 +228,7 @@ public class TransactionServiceImpl implements TransactionService {
             return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
         }*/
         //orderService.uploadCert(user.getId(), id, cert);
-        return Result.builder().resultMap(ResultCode.SUCCESS).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
 }

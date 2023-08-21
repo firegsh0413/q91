@@ -15,17 +15,6 @@ public interface UserService {
 
     /**
      * <p>
-     * 取得驗證碼
-     * </p>
-     * @param account 帳號
-     * @return com.icchance.q91.common.result.Result
-     * @author 6687353
-     * @since 2023/7/20 15:25:48
-     */
-    Result getCaptcha(String account);
-
-    /**
-     * <p>
      * 註冊
      * </p>
      * @param account 帳號
@@ -57,11 +46,10 @@ public interface UserService {
      * 登出
      * </p>
      * @param token 令牌
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:32:52
      */
-    Result logout(String token);
+    void logout(String token);
 
     /**
      * <p>
