@@ -34,20 +34,100 @@ public interface TransactionService {
      */
     Result getPendingOrderDetail(String token, Integer orderId);
 
-    Result cancelPendingOrder(String token, Integer id);
+    /**
+     * <p>
+     * 取消掛單
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 09:33:44
+     */
+    Result cancelPendingOrder(String token, Integer orderId);
 
-    Result checkPendingOrder(String token, Integer id);
+    /**
+     * <p>
+     * 確認掛單已下單
+     * （賣單第一階段狀態：買家已下單請賣家確認）
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 11:25:58
+     */
+    Result checkPendingOrder(String token, Integer orderId);
 
-    Result verifyPendingOrder(String token, Integer id);
+    /**
+     * <p>
+     * 核實掛單
+     * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 11:49:56
+     */
+    Result verifyPendingOrder(String token, Integer orderId);
 
+    /**
+     * <p>
+     * 查詢會員訂單列表
+     * </p>
+     * @param token 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/11 11:55:44
+     */
     Result getOrderList(String token);
 
-    Result getOrderDetail(String token, Integer id);
+    /**
+     * <p>
+     * 查詢會員訂單詳情
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/11 11:55:14
+     */
+    Result getOrderDetail(String token, Integer orderId);
 
-    Result cancelOrder(String token, Integer id);
+    /**
+     * <p>
+     * 取消訂單
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 14:17:35
+     */
+    Result cancelOrder(String token, Integer orderId);
 
-    Result appealOrder(String token, Integer id);
+    /**
+     * <p>
+     * 申訴訂單
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 14:23:42
+     */
+    Result appealOrder(String token, Integer orderId);
 
+    /**
+     * <p>
+     * 會員錢包紀錄訊息
+     * </p>
+     * @param token 令牌
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 14:38:13
+     */
     Result getRecord(String token);
 
     /**
@@ -82,13 +162,24 @@ public interface TransactionService {
      * 刪除會員收付款訊息
      * </p>
      * @param token 令牌
-     * @param id 收付款資訊ID
+     * @param gatewayId 收付款資訊ID
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:29:00
      */
-    Result deleteGateway(String token, Integer id);
+    Result deleteGateway(String token, Integer gatewayId);
 
-    Result verifyOrder(String token, Integer id, String cert);
+    /**
+     * <p>
+     * 上傳支付憑證
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @param cert 憑證base64
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 15:48:13
+     */
+    Result verifyOrder(String token, Integer orderId, String cert);
 
 }
