@@ -2,7 +2,6 @@ package com.icchance.q91.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.icchance.q91.entity.dto.MarketDTO;
-import com.icchance.q91.entity.dto.OrderDTO;
 import com.icchance.q91.entity.dto.PendingOrderDTO;
 import com.icchance.q91.entity.model.PendingOrder;
 import com.icchance.q91.entity.vo.MarketVO;
@@ -28,7 +27,7 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/8 18:29:42
      */
-    List<PendingOrderVO> getPendingOrderList(Integer userId);
+    List<PendingOrderVO> getList(Integer userId);
 
     /**
      * <p>
@@ -39,7 +38,7 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/7 13:16:00
      */
-    List<MarketVO> getPendingOrderList(MarketDTO marketDTO);
+    List<MarketVO> getList(MarketDTO marketDTO);
 
     /**
      * <p>
@@ -51,11 +50,59 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/8 18:29:34
      */
-    MarketVO getPendingOrder(Integer userId, Integer orderId);
+    MarketVO getDetail(Integer userId, Integer orderId);
 
     int uploadCert(Integer userId, Integer orderId, String cert);
 
     int uploadPendingOrder(PendingOrderDTO pendingOrderDTO);
 
+    /**
+     * <p>
+     * 建立掛單
+     * </p>
+     * @param pendingOrderDTO  PendingOrderDTO
+     * @return int
+     * @author 6687353
+     * @since 2023/8/22 16:19:47
+     */
     int createPendingOrder(PendingOrderDTO pendingOrderDTO);
+
+    /**
+     * <p>
+     * 取消掛單
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 09:33:44
+     */
+    int cancelPendingOrder(Integer userId, Integer orderId);
+
+    /**
+     * <p>
+     * 確認掛單已下單
+     * （賣單第一階段狀態：買家已下單請賣家確認）
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 訂單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/22 13:43:08
+     */
+    int checkPendingOrder(Integer userId, Integer orderId);
+
+    /**
+     * <p>
+     * 核實掛單
+     * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 訂單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/22 13:43:43
+     */
+    int verifyPendingOrder(Integer userId, Integer orderId);
+
 }

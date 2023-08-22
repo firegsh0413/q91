@@ -20,6 +20,13 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * 市場服務類實作
+ * </p>
+ * @author 6687353
+ * @since 2023/8/22 16:03:54
+ */
 @Service
 public class MarketServiceImpl implements MarketService {
 
@@ -76,6 +83,16 @@ public class MarketServiceImpl implements MarketService {
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getMarketPendingOrderList()).build();
     }
 
+    /**
+     * <p>
+     * 驗證會員是否有收款方式
+     * </p>
+     * @param token 令牌
+     * @param availableGateway 可用收款方式清單
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 16:10:40
+     */
     @Override
     public Result checkGateway(String token, Set<Integer> availableGateway) {
 /*        User user = userService.getUserByToken(token);
@@ -94,6 +111,16 @@ public class MarketServiceImpl implements MarketService {
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(1).build();
     }
 
+    /**
+     * <p>
+     * 取得賣方掛單訊息
+     * </p>
+     * @param token 令牌
+     * @param orderId  訂單uid
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 16:11:37
+     */
     @Override
     public Result getPendingOrder(String token, Integer orderId) {
 /*        User user = userService.getUserByToken(token);
@@ -116,6 +143,18 @@ public class MarketServiceImpl implements MarketService {
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getPendingOrder()).build();
     }
 
+    /**
+     * <p>
+     * 購買
+     * </p>
+     * @param token 令牌
+     * @param orderId 訂單uid
+     * @param amount 數量
+     * @param type 付款方式
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 16:12:14
+     */
     @Override
     public Result buy(String token, Integer orderId, BigDecimal amount, Integer type) {
 /*        User user = userService.getUserByToken(token);
@@ -154,6 +193,17 @@ public class MarketServiceImpl implements MarketService {
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
+    /**
+     * <p>
+     * 出售
+     * </p>
+     * @param token 令牌
+     * @param amount 數量
+     * @param availableGateway 可用收款方式
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/8/22 16:15:27
+     */
     @Override
     public Result sell(String token, BigDecimal amount, List<Integer> availableGateway) {
 /*        User user = userService.getUserByToken(token);

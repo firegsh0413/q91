@@ -30,6 +30,7 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
     public GatewayServiceImpl(FakeGatewayDB fakeGatewayDB) {
         this.fakeGatewayDB = fakeGatewayDB;
     }
+
     /**
      * <p>
      * 取得會員收付款訊息

@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.icchance.q91.entity.model.OrderRecord;
 
 /**
-* @author 6687353
-* @description 针对表【order_record】的数据库操作Service
-* @createDate 2023-08-02 15:03:05
-*/
+ * <p>
+ * 訂單紀錄服務類
+ * </p>
+ * @author 6687353
+ * @since 2023/8/22 15:28:37
+ */
 public interface OrderRecordService extends IService<OrderRecord> {
 
 }

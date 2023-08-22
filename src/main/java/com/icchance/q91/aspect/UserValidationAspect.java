@@ -19,7 +19,7 @@ public class UserValidationAspect {
 
     private final UserService userService;
 
-    @Autowired
+    //@Autowired
     public UserValidationAspect(UserService userService) {
         this.userService = userService;
     }
