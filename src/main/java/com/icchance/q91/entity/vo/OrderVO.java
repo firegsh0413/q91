@@ -29,20 +29,17 @@ public class OrderVO extends BaseOrderVO {
     private Integer sellerGatewayId;
     /** 賣方gateway資訊 */
     private Gateway sellerInfo;
-
     /** 賣方會員頭像base64 */
     private String sellerAvatar;
-
     /** 可用收款方式 */
     private Set<Integer> availableGateway;
-
     /** 可用收款方式字串 */
     private String availableGatewayStr;
-
     /** 買方使用的gateway id */
     private Integer buyerGatewayId;
-
     /** 買方gateway資訊 */
     private Gateway buyerInfo;
+    /** 賣方掛單uid */
+    private Integer pendingOrderId;
 
 }

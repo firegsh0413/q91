@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icchance.q91.mapper.UserBalanceMapper">
+
+    <sql id="BaseColumnList">
+        a.BALANCE, a.AVAILABLE_AMOUNT, a.PENDING_BALANCE, a.TRADING_AMOUNT
+    </sql>
+
+    <resultMap id="getUserBalance" type="com.icchance.q91.entity.vo.UserBalanceVO" >
+        <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+        <result column="BALANCE" jdbcType="DECIMAL" property="balance" />
+        <result column="AVAILABLE_AMOUNT" jdbcType="DECIMAL" property="availableAmount" />
+        <result column="PENDING_BALANCE" jdbcType="DECIMAL" property="pendingBalance" />
+        <result column="TRADING_AMOUNT" jdbcType="DECIMAL" property="tradingAmount" />
+    </resultMap>
+
+    <select id="getUserBalance" resultMap="getUserBalance">
+        SELECT
+        <include refid="BaseColumnList" />, ADDRESS
+        FROM q91.USER_BALANCE a
+        INNER JOIN USER b ON a.USER_ID = b.ID
+        <where>
+            <if test="null != userId and '' != userId">
+                AND a.USER_ID = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>

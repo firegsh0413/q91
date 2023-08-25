@@ -29,10 +29,10 @@ public class UserValidationAspect {
 
     @Around(value = "pointcut(token)", argNames = "joinPoint, token")
     public Object validateUser(ProceedingJoinPoint joinPoint, String token) throws Throwable {
-        User user = userService.getUserByToken(token);
+/*        User user = userService.getUserByToken(token);
         if (Objects.isNull(user)) {
             return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
-        }
+        }*/
         // 調用被切入的方法 並返回獲取到的用戶對象
         return joinPoint.proceed();
     }

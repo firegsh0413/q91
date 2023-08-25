@@ -1,5 +1,6 @@
 package com.icchance.q91.entity.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 掛單資料
+ * 掛單資料entity
  * </p>
  * @author 6687353
  * @since 2023/7/28 16:21:17
@@ -28,7 +29,7 @@ public class PendingOrder implements Serializable {
 
     private static final long serialVersionUID = -736909599601864457L;
 
-    @TableId(value = "ID")
+    @TableId(value = "ID", type = IdType.AUTO)
     private Integer id;
 
     private Integer userId;
@@ -54,5 +55,7 @@ public class PendingOrder implements Serializable {
     private String cert;
     /** 可用收款方式 字串 */
     private String availableGatewayStr;
+    /** 買方訂單uid */
+    private Integer orderId;
 
 }

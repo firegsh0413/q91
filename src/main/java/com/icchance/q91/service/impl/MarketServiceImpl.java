@@ -8,15 +8,18 @@ import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.OrderDTO;
 import com.icchance.q91.entity.dto.PendingOrderDTO;
 import com.icchance.q91.entity.model.Gateway;
-import com.icchance.q91.entity.model.PendingOrder;
-import com.icchance.q91.entity.model.User;
+import com.icchance.q91.entity.model.Order;
+import com.icchance.q91.entity.model.OrderRecord;
+import com.icchance.q91.entity.model.UserBalance;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.service.*;
+import com.icchance.q91.util.JwtUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,14 +37,21 @@ public class MarketServiceImpl implements MarketService {
     private final GatewayService gatewayService;
     private final PendingOrderService pendingOrderService;
     private final OrderService orderService;
+    private final OrderRecordService orderRecordService;
+    private final UserBalanceService userBalanceService;
     private final FakeTransactionDB fakeTransactionDB;
+    private final JwtUtil jwtUtil;
     public MarketServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService,
-                             OrderService orderService, FakeTransactionDB fakeTransactionDB) {
+                             OrderService orderService, OrderRecordService orderRecordService, UserBalanceService userBalanceService,
+                             FakeTransactionDB fakeTransactionDB, JwtUtil jwtUtil) {
         this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
         this.orderService = orderService;
+        this.orderRecordService = orderRecordService;
+        this.userBalanceService = userBalanceService;
         this.fakeTransactionDB = fakeTransactionDB;
+        this.jwtUtil = jwtUtil;
     }
 
     /**
@@ -59,13 +69,10 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Result getPendingOrderList(String token, BigDecimal min, BigDecimal max, List<Integer> gatewayType) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        MarketDTO marketDTO = MarketDTO.builder().userId(user.getId()).min(min).max(max).gatewayType(gatewayType)
-                .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode()).build();
-        List<MarketVO> pendingOrderList = pendingOrderService.getPendingOrderList(marketDTO);
+        Integer userId = jwtUtil.parseUserId(token);
+        MarketDTO marketDTO = MarketDTO.builder().userId(userId).min(min).max(max).gatewayType(gatewayType)
+                .status(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code).build();
+        List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
         if (CollectionUtils.isNotEmpty(pendingOrderList)) {
             pendingOrderList.forEach(marketVO -> {
                 String availableGatewayStr = marketVO.getAvailableGatewayStr();
@@ -79,8 +86,8 @@ public class MarketServiceImpl implements MarketService {
             gatewayType.removeAll(marketVO.getAvailableGateway());
             return CollectionUtils.isNotEmpty(gatewayType);
         }).collect(Collectors.toList());
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(result).build();*/
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getMarketPendingOrderList()).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(result).build();
+        //return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getMarketPendingOrderList()).build();
     }
 
     /**
@@ -95,11 +102,8 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Result checkGateway(String token, Set<Integer> availableGateway) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        Set<Integer> userAvailableGateway = gatewayService.getAvailableGateway(user.getId());
+        Integer userId = jwtUtil.parseUserId(token);
+        Set<Integer> userAvailableGateway = gatewayService.getAvailableGateway(userId);
         int check = 0;
         for (Integer g : availableGateway) {
             if (userAvailableGateway.contains(g)) {
@@ -107,8 +111,7 @@ public class MarketServiceImpl implements MarketService {
                 break;
             }
         }
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(check).build();*/
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(1).build();
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(check).build();
     }
 
     /**
@@ -123,12 +126,9 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Result getPendingOrder(String token, Integer orderId) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        MarketDTO marketDTO = MarketDTO.builder().userId(user.getId()).orderId(orderId).build();
-        List<MarketVO> pendingOrderList = pendingOrderService.getPendingOrderList(marketDTO);
+        Integer userId = jwtUtil.parseUserId(token);
+        MarketDTO marketDTO = MarketDTO.builder().userId(userId).orderId(orderId).build();
+        List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
         if (CollectionUtils.isNotEmpty(pendingOrderList)) {
             pendingOrderList.forEach(marketVO -> {
                 String availableGatewayStr = marketVO.getAvailableGatewayStr();
@@ -136,11 +136,13 @@ public class MarketServiceImpl implements MarketService {
                     marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
                 }
             });
-            return Result.builder().resultCode(ResultCode.SUCCESS)
-                    .resultMap(pendingOrderList.get(0))
+            return Result.builder().repCode(ResultCode.SUCCESS.code)
+                    .repMsg(ResultCode.SUCCESS.msg)
+                    .repData(pendingOrderList.get(0))
                     .build();
-        }*/
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getPendingOrder()).build();
+        }
+        return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+        //return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getPendingOrder()).build();
     }
 
     /**
@@ -157,39 +159,68 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Result buy(String token, Integer orderId, BigDecimal amount, Integer type) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
+        Integer userId = jwtUtil.parseUserId(token);
         // 1.驗證是否該掛單已被其他會員操作購買鎖定
-        // 訂單狀態不為出售中
-        MarketVO pendingOrder = pendingOrderService.getPendingOrder(user.getId(), orderId);
-        if (!OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode().equals(pendingOrder.getStatus())) {
-            return Result.builder().resultCode(ResultCode.ORDER_LOCK_BY_ANOTHER).build();
+        // 掛單狀態不為出售中
+        MarketVO pendingOrder = pendingOrderService.getMarketDetail(null, orderId);
+        if (Objects.isNull(pendingOrder)) {
+            return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
         }
-        Gateway buyerGateway = gatewayService.getGatewayByType(user.getId(), type);
+        if (!OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
+            return Result.builder().repCode(ResultCode.ORDER_LOCK_BY_ANOTHER.code).repMsg(ResultCode.ORDER_LOCK_BY_ANOTHER.msg).build();
+        }
+        Gateway buyerGateway = gatewayService.getGatewayByType(userId, type);
+        if (Objects.isNull(buyerGateway)) {
+            return Result.builder().repCode(ResultCode.GATEWAY_TYPE_NOT_EXIST.code).repMsg(ResultCode.GATEWAY_TYPE_NOT_EXIST.msg).build();
+        }
         Gateway sellerGateway = gatewayService.getGatewayByType(pendingOrder.getUserId(), type);
-
-        OrderDTO orderDTO = OrderDTO.builder().userId(user.getId())
+        // 2-1.建立訂單
+        // cutoffTime為tradeTime往後十分鐘
+        LocalDateTime tradeTime = LocalDateTime.now();
+        OrderDTO orderDTO = OrderDTO.builder()
+                .userId(userId)
                 .pendingOrderId(orderId)
                 .sellerId(pendingOrder.getSellerId())
-                .userId(user.getId())
-                .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode())
-                .buyerGatewayId(Optional.ofNullable(buyerGateway).map(Gateway::getId).orElse(null))
+                .status(OrderConstant.OrderStatusEnum.ON_ORDER.code)
+                .buyerGatewayId(Optional.of(buyerGateway).map(Gateway::getId).orElse(null))
                 .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
                 .amount(amount)
+                .tradeTime(tradeTime)
+                .cutOffTime(tradeTime.plusMinutes(10))
                 .build();
-        // 2.建立訂單，更新掛單狀態
-        orderService.createOrder(orderDTO);
-        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder().id(orderId)
-                .status(OrderConstant.OrderStatusEnum.UNCHECK.getCode())
-                .buyerId(user.getId())
-                .buyerGatewayId(Optional.ofNullable(buyerGateway).map(Gateway::getId).orElse(null))
+        Order order = orderService.create(orderDTO);
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
+                .id(orderId)
+                .status(OrderConstant.PendingOrderStatusEnum.ON_ORDER.code)
+                .buyerId(userId)
+                .buyerGatewayId(Optional.of(buyerGateway).map(Gateway::getId).orElse(null))
+                .orderId(order.getId())
                 .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
+                .tradeTime(tradeTime)
                 .build();
-        // cutoffTime為tradeTime往後十分鐘
-
-        pendingOrderService.uploadPendingOrder(pendingOrderDTO);*/
+        // 2-2.更新掛單狀態
+        pendingOrderService.update(pendingOrderDTO);
+        // 3-1.更新買方錢包 交易中+額度
+        UserBalance buyerBalance = userBalanceService.getEntity(userId);
+        buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().add(amount));
+        userBalanceService.updateEntity(buyerBalance);
+        // 3-2.更新賣方錢包 賣單餘額->交易中
+        UserBalance sellerBalance = userBalanceService.getEntity(pendingOrder.getSellerId());
+        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(amount));
+        if (amount.compareTo(sellerBalance.getPendingBalance()) > 0) {
+            return Result.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
+        }
+        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
+        userBalanceService.updateEntity(sellerBalance);
+        // 4.建立訂單(錢包)紀錄
+        OrderRecord orderRecord = OrderRecord.builder()
+                .userId(userId)
+                .status(OrderConstant.RecordStatusEnum.MARKET_BUY.code)
+                .amount(amount)
+                .orderNumber(order.getOrderNumber())
+                .createTime(tradeTime)
+                .build();
+        orderRecordService.save(orderRecord);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -205,19 +236,34 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/22 16:15:27
      */
     @Override
-    public Result sell(String token, BigDecimal amount, List<Integer> availableGateway) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }*/
-        // 建立掛單
+    public Result sell(String token, BigDecimal amount, Set<Integer> availableGateway) {
+        Integer userId = jwtUtil.parseUserId(token);
+        // 1.建立掛單
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
-                //.userId(user.getId())
-                .status(OrderConstant.OrderStatusEnum.SELL_OR_BUY.getCode())
+                .userId(userId)
                 .amount(amount)
                 .availableGatewayStr(availableGateway.stream().map(Object::toString).collect(Collectors.joining(",")))
                 .build();
-        pendingOrderService.createPendingOrder(pendingOrderDTO);
+        String orderNumber = pendingOrderService.create(pendingOrderDTO);
+
+        // 2.更新賣方錢包
+        // 可售數量->賣單餘額
+        UserBalance sellerBalance = userBalanceService.getEntity(userId);
+        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().add(amount));
+        if (amount.compareTo(sellerBalance.getAvailableAmount()) > 0) {
+            return Result.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
+        }
+        sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().subtract(amount));
+        userBalanceService.updateEntity(sellerBalance);
+        // 3.建立訂單紀錄
+        OrderRecord orderRecord = OrderRecord.builder()
+                .userId(userId)
+                .status(OrderConstant.RecordStatusEnum.MARKET_SELL.code)
+                .amount(amount)
+                .orderNumber(orderNumber)
+                .createTime(LocalDateTime.now())
+                .build();
+        orderRecordService.save(orderRecord);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 }

@@ -5,9 +5,13 @@ import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.entity.dto.OrderDTO;
 import com.icchance.q91.entity.model.Gateway;
 import com.icchance.q91.entity.model.Order;
+import com.icchance.q91.entity.model.PendingOrder;
 import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.mapper.OrderMapper;
 import com.icchance.q91.service.OrderService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,19 +63,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * 建立訂單
      * </p>
      * @param orderDTO OrderDTO
+     * @return java.lang.String
      * @author 6687353
      * @since 2023/8/22 14:16:44
      */
     @Override
-    public void create(OrderDTO orderDTO) {
-        Order order = Order.builder().userId(orderDTO.getUserId())
-                .status(orderDTO.getStatus())
-                .createTime(LocalDateTime.now())
-                .sellerId(orderDTO.getSellerId())
-                .amount(orderDTO.getAmount())
-                .orderNumber(generateOrderNumber(LocalDateTime.now()))
-                .build();
+    public Order create(OrderDTO orderDTO) {
+        String orderNumber = generateOrderNumber(LocalDateTime.now());
+        Order order = new Order();
+        BeanUtils.copyProperties(orderDTO, order);
+        order.setStatus(OrderConstant.OrderStatusEnum.ON_ORDER.code);
+        order.setOrderNumber(orderNumber);
+        order.setCreateTime(LocalDateTime.now());
         baseMapper.insert(order);
+        return order;
     }
 
     /**
@@ -89,9 +94,66 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public int uploadCert(Integer userId, Integer orderId, String cert) {
         Order order = Order.builder()
                 .id(orderId)
-                .status(OrderConstant.OrderStatusEnum.UNCHECK.getCode())
+                .status(OrderConstant.OrderStatusEnum.UNCHECK.code)
                 .updateTime(LocalDateTime.now())
                 .cert(cert)
+                .build();
+        return baseMapper.updateById(order);
+    }
+
+    /**
+     * <p>
+     * 更新訂單
+     * </p>
+     * @param orderDTO OrderDTO
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 18:54:13
+     */
+    @Override
+    public int update(OrderDTO orderDTO) {
+        Order order = new Order();
+        BeanUtils.copyProperties(orderDTO, order);
+        order.setUpdateTime(LocalDateTime.now());
+        return baseMapper.updateById(order);
+    }
+
+    /**
+     * <p>
+     * 取消訂單
+     * </p>
+     * @param userId  用戶uid
+     * @param orderId 訂單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 17:27:18
+     */
+    @Override
+    public int cancel(Integer userId, Integer orderId) {
+        Order order = Order.builder()
+                .id(orderId)
+                .status(OrderConstant.OrderStatusEnum.CANCEL.code)
+                .updateTime(LocalDateTime.now())
+                .build();
+        return baseMapper.updateById(order);
+    }
+
+    /**
+     * <p>
+     * 訂單申訴
+     * </p>
+     * @param userId  用戶uid
+     * @param orderId 訂單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 18:32:30
+     */
+    @Override
+    public int appeal(Integer userId, Integer orderId) {
+        Order order = Order.builder()
+                .id(orderId)
+                .status(OrderConstant.OrderStatusEnum.APPEAL.code)
+                .updateTime(LocalDateTime.now())
                 .build();
         return baseMapper.updateById(order);
     }

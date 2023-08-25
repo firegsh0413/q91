@@ -74,7 +74,7 @@ public class TransactionController extends BaseController {
 
     /**
      * <p>
-     * 確認掛單已下單
+     * 確認掛單已被下訂
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
      * @param token 令牌

@@ -1,6 +1,5 @@
 package com.icchance.q91.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.entity.model.User;
 
@@ -126,16 +125,5 @@ public interface UserService {
      * @since 2023/8/18 17:59:47
      */
     Result updateFundPassword(String token, String oldFundPassword, String newFundPassword);
-
-    /**
-     * <p>
-     * token取回用戶資訊
-     * </p>
-     * @param token 令牌
-     * @return com.icchance.q91.entity.model.User
-     * @author 6687353
-     * @since 2023/8/18 18:04:46
-     */
-    User getUserByToken(String token);
 
 }

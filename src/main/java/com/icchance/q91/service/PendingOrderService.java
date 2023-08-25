@@ -31,6 +31,18 @@ public interface PendingOrderService extends IService<PendingOrder> {
 
     /**
      * <p>
+     * 取得掛單詳細資訊
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 訂單uid
+     * @return com.icchance.q91.entity.vo.PendingOrderVO
+     * @author 6687353
+     * @since 2023/8/25 11:34:06
+     */
+    PendingOrderVO getDetail(Integer userId, Integer orderId);
+
+    /**
+     * <p>
      * 取得市場買賣訊息（他人的掛單列表）
      * </p>
      * @param marketDTO MarketDTO
@@ -38,7 +50,7 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/7 13:16:00
      */
-    List<MarketVO> getList(MarketDTO marketDTO);
+    List<MarketVO> getMarketList(MarketDTO marketDTO);
 
     /**
      * <p>
@@ -50,22 +62,31 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/8 18:29:34
      */
-    MarketVO getDetail(Integer userId, Integer orderId);
+    MarketVO getMarketDetail(Integer userId, Integer orderId);
 
     int uploadCert(Integer userId, Integer orderId, String cert);
 
-    int uploadPendingOrder(PendingOrderDTO pendingOrderDTO);
+    /**
+     * <p>
+     * 更新掛單
+     * </p>
+     * @param pendingOrderDTO PendingOrderDTO
+     * @return int
+     * @author 6687353
+     * @since 2023/8/24 10:37:51
+     */
+    int update(PendingOrderDTO pendingOrderDTO);
 
     /**
      * <p>
      * 建立掛單
      * </p>
      * @param pendingOrderDTO  PendingOrderDTO
-     * @return int
+     * @return java.lang.String
      * @author 6687353
-     * @since 2023/8/22 16:19:47
+     * @since 2023/8/22 16:46:04
      */
-    int createPendingOrder(PendingOrderDTO pendingOrderDTO);
+    String create(PendingOrderDTO pendingOrderDTO);
 
     /**
      * <p>
@@ -77,11 +98,11 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/22 09:33:44
      */
-    int cancelPendingOrder(Integer userId, Integer orderId);
+    int cancel(Integer userId, Integer orderId);
 
     /**
      * <p>
-     * 確認掛單已下單
+     * 確認掛單已被下訂
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
      * @param userId 用戶uid
@@ -90,7 +111,7 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/22 13:43:08
      */
-    int checkPendingOrder(Integer userId, Integer orderId);
+    int check(Integer userId, Integer orderId);
 
     /**
      * <p>
@@ -103,6 +124,6 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @author 6687353
      * @since 2023/8/22 13:43:43
      */
-    int verifyPendingOrder(Integer userId, Integer orderId);
+    int verify(Integer userId, Integer orderId);
 
 }

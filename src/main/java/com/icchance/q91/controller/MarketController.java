@@ -111,7 +111,7 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/sell")
-    public Result sell(@RequestParam String token, @RequestParam BigDecimal amount, @RequestParam List<Integer> availableGateway) {
+    public Result sell(@RequestParam String token, @RequestParam BigDecimal amount, @RequestParam Set<Integer> availableGateway) {
         return marketService.sell(token, amount, availableGateway);
     }
 }

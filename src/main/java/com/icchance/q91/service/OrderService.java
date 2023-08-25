@@ -44,10 +44,11 @@ public interface OrderService extends IService<Order> {
      * 建立訂單
      * </p>
      * @param orderDTO OrderDTO
+     * @return com.icchance.q91.entity.model.Order
      * @author 6687353
-     * @since 2023/8/22 14:16:44
+     * @since 2023/8/25 18:02:57
      */
-    void create(OrderDTO orderDTO);
+    Order create(OrderDTO orderDTO);
 
     /**
      * <p>
@@ -61,5 +62,40 @@ public interface OrderService extends IService<Order> {
      * @since 2023/8/22 15:56:31
      */
     int uploadCert(Integer userId, Integer orderId, String cert);
+
+    /**
+     * <p>
+     * 更新訂單
+     * </p>
+     * @param orderDTO OrderDTO
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 18:54:13
+     */
+    int update(OrderDTO orderDTO);
+
+    /**
+     * <p>
+     * 取消訂單
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 訂單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 17:27:18
+     */
+    int cancel(Integer userId, Integer orderId);
+
+    /**
+     * <p>
+     * 訂單申訴
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 訂單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 18:32:30
+     */
+    int appeal(Integer userId, Integer orderId);
 
 }

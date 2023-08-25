@@ -72,7 +72,7 @@ public class UserController extends BaseController {
      * @author 6687353
      * @since 2023/7/21 12:00:18
      */
-    @PassToken
+    @UserLoginToken
     @PostMapping("/logout")
     public Result logout(@RequestParam String token) {
         userService.logout(token);

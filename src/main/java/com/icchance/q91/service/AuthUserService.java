@@ -30,8 +30,15 @@ public interface AuthUserService extends IService<User> {
 
     User getByAccountAndPassword(String account, String password);
 
-    void createUser(User user);
-
+    /**
+     * <p>
+     * 建立使用者
+     * </p>
+     * @param user User
+     * @author 6687353
+     * @since 2023/8/23 15:48:57
+     */
+    User createUser(User user);
 
 
 }

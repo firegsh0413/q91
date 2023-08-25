@@ -7,6 +7,13 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
 
+/**
+ * <p>
+ * 訂單mapper
+ * </p>
+ * @author 6687353
+ * @since 2023/8/24 18:30:20
+ */
 public interface OrderMapper extends BaseMapper<Order> {
 
     List<OrderVO> getOrderList(@Param("userId") Integer userId);

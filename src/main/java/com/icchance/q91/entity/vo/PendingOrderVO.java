@@ -34,4 +34,6 @@ public class PendingOrderVO extends BaseOrderVO {
     private Set<Integer> availableGateway;
     /** 可用收款方式字串 */
     private String availableGatewayStr;
+    /** 買方訂單uid */
+    private Integer orderId;
 }

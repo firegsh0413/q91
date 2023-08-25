@@ -1,5 +1,6 @@
 package com.icchance.q91.entity.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 用戶資訊
+ * 用戶資訊entity
  * </p>
  * @author 6687353
  * @since 2023/7/26 14:45:55
@@ -28,7 +29,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1036384808450084875L;
 
-    @TableId(value = "ID")
+    @TableId(value = "ID", type = IdType.AUTO)
     private Integer id;
 
     private String account;

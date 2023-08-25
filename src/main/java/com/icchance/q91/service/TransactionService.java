@@ -48,7 +48,7 @@ public interface TransactionService {
 
     /**
      * <p>
-     * 確認掛單已下單
+     * 確認掛單已被下訂
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
      * @param token 令牌
@@ -61,7 +61,7 @@ public interface TransactionService {
 
     /**
      * <p>
-     * 核實掛單
+     * 核實掛單並打幣
      * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
      * </p>
      * @param token 令牌

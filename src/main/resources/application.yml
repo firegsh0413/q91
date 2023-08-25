@@ -66,6 +66,13 @@ aj:
 logging:
   level:
     root: debug
+    org:
+      apache: trace
+      springframework:
+        boot:
+          autoconfigure: ERROR
+        web: trace
+
 # 自訂變數
 q91:
   db:

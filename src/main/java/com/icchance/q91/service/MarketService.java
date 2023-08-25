@@ -79,5 +79,5 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/22 16:15:27
      */
-    Result sell(String token, BigDecimal amount, List<Integer> availableGateway);
+    Result sell(String token, BigDecimal amount, Set<Integer> availableGateway);
 }

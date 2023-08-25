@@ -8,7 +8,7 @@
         a.ID,a.USER_ID,a.STATUS,
         a.CREATE_TIME,a.UPDATE_TIME,a.TRADE_TIME,
         a.CUT_OFF_TIME,a.SELLER_ID,
-        a.AMOUNT,a.ORDER_NUMBER,a.CERT,a.SELLER_GATEWAY_ID,a.BUYER_GATEWAY_ID
+        a.AMOUNT,a.ORDER_NUMBER,a.CERT,a.SELLER_GATEWAY_ID,a.BUYER_GATEWAY_ID, a.PENDING_ORDER_ID
     </sql>
     <sql id="SellerColumnList">
         seller.USERNAME sellerUsername
@@ -26,13 +26,14 @@
         <result column="SELLER_USERNAME" jdbcType="VARCHAR" property="sellerUsername" />
         <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
         <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="PENDING_ORDER_ID" jdbcType="VARCHAR" property="pendingOrderId" />
     </resultMap>
 
     <select id="getOrderList" resultMap="getOrderResult">
         SELECT
             <include refid="BaseColumnList" />,
             <include refid="SellerColumnList" />
-        FROM q91.ORDER a
+        FROM q91.ORDERS a
         INNER JOIN USER seller ON a.SELLER_ID = seller.ID
         INNER JOIN USER buyer ON a.USER_ID = buyer.ID
         <where>
@@ -95,7 +96,7 @@
             <include refid="SellerColumnList" />,
             <include refid="SellerGatewayColumnList" />,
             <include refid="BuyerGatewayColumnList" />
-        FROM q91.ORDER a
+        FROM q91.ORDERS a
         INNER JOIN USER seller ON a.SELLER_ID = seller.ID
         INNER JOIN USER buyer ON a.USER_ID = buyer.ID
         INNER JOIN GATEWAY sellerGateway ON a.SELLER_GATEWAY_ID = sellerGateway.ID

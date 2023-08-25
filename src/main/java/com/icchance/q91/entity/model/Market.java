@@ -1,6 +1,8 @@
 package com.icchance.q91.entity.model;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +15,7 @@ import java.math.BigDecimal;
 
 /**
  * <p>  
- *   
+ * 市場
  * </p>  
  * @author 6687353 
  * @since 2023/08/02 17:10:00 
@@ -27,7 +29,7 @@ public class Market implements Serializable {
 
 	private static final long serialVersionUID =  2354129129431744782L;
 
-   	@TableId(value = "ID")
+   	@TableId(value = "ID", type = IdType.AUTO)
 	private Integer id;
 
 	private Integer sellerId;
