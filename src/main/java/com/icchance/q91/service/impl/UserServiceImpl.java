@@ -5,8 +5,7 @@ import com.anji.captcha.service.CaptchaService;
 import com.anji.captcha.util.StringUtils;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
-import com.icchance.q91.dao.FakeUserDB;
-import com.icchance.q91.entity.dto.UserBalanceDTO;
+import com.icchance.q91.entity.dto.*;
 import com.icchance.q91.entity.model.User;
 import com.icchance.q91.entity.vo.UserBalanceVO;
 import com.icchance.q91.entity.vo.UserVO;
@@ -43,19 +42,17 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final AuthUserService authUserService;
     private final UserBalanceService userBalanceService;
-    private final FakeUserDB fakeUserDB;
     private final UserMapper userMapper;
 
     //private final CaptchaCacheServiceRedisImpl captchaCacheServiceRedis;
     public UserServiceImpl(CaptchaService captchaService, RedisKit redisKit, JwtUtil jwtUtil, AuthUserService authUserService,
-                           UserBalanceService userBalanceService, FakeUserDB fakeUserDB, UserMapper userMapper) {
+                           UserBalanceService userBalanceService, UserMapper userMapper) {
         this.captchaService = captchaService;
         //this.captchaCacheServiceRedis = captchaCacheServiceRedis;
         this.redisKit = redisKit;
         this.jwtUtil = jwtUtil;
         this.authUserService = authUserService;
         this.userBalanceService = userBalanceService;
-        this.fakeUserDB = fakeUserDB;
         this.userMapper = userMapper;
     }
 
@@ -64,24 +61,19 @@ public class UserServiceImpl implements UserService {
      * 註冊
      * </p>
      *
-     * @param account         帳號
-     * @param username        暱稱
-     * @param password        密碼
-     * @param fundPassword    支付密碼
+     * @param userDTO UserDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/20 16:33:59
      */
     @Override
-    public Result register(String account, String username, String password, String fundPassword) {
-
-        if (Objects.nonNull(authUserService.getByAccount(account))) {
+    public Result register(UserDTO userDTO) {
+        if (Objects.nonNull(authUserService.getByAccount(userDTO.getAccount()))) {
             return Result.builder().repCode(ResultCode.ACCOUNT_ALREADY_EXIST.code).repMsg(ResultCode.ACCOUNT_ALREADY_EXIST.msg).build();
         }
-        User user = User.builder().account(account).username(username).password(password).fundPassword(fundPassword).build();
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user);
         authUserService.createUser(user);
-        //測試
-        //fakeUserDB.create(user);
 
         //redisKit.set(account, user);
         // 新增錢包資訊
@@ -91,7 +83,7 @@ public class UserServiceImpl implements UserService {
                 .availableAmount(new BigDecimal(0))
                 .build();
         userBalanceService.addEntity(userBalanceDTO);
-        UserVO userVO = UserVO.builder().account(account).username(username).build();
+        UserVO userVO = UserVO.builder().account(userDTO.getAccount()).username(userDTO.getUsername()).build();
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
     }
 
@@ -100,16 +92,13 @@ public class UserServiceImpl implements UserService {
      * 登錄
      * </p>
      *
-     * @param account  帳號
-     * @param password 密碼
-     * @param cId      驗證碼uid
-     * @param captcha  驗證碼結果
+     * @param userDTO UserDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 09:45:10
      */
     @Override
-    public Result login(String account, String password, String cId, String captcha) {
+    public Result login(UserDTO userDTO) {
 
 
 /*        this.getOne(Wrappers.<User>lambdaQuery()
@@ -128,19 +117,18 @@ public class UserServiceImpl implements UserService {
 
         // 1. 滑塊圖形驗證 verify
         CaptchaVO captchaVO = new CaptchaVO();
-        captchaVO.setCaptchaVerification(captcha);
+        captchaVO.setCaptchaVerification(userDTO.getCaptcha());
         //ResponseModel verification = captchaService.verification(captchaVO);
 
         // 2. JWT產生對應token
-        User user = authUserService.getByAccount(account);
+        User user = authUserService.getByAccount(userDTO.getAccount());
         if (Objects.isNull(user)) {
             return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
         }
-        if (!user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(userDTO.getPassword())) {
             return Result.builder().repCode(ResultCode.ACCOUNT_OR_PASSWORD_WRONG.code).repMsg(ResultCode.ACCOUNT_OR_PASSWORD_WRONG.msg).build();
         }
-        String token = jwtUtil.createToken(account, user.getId());
-        //UserVO userVO = UserVO.builder().account(account).username("johndoe").token(token).build();
+        String token = jwtUtil.createToken(userDTO.getAccount(), user.getId());
         UserVO userVO = UserVO.builder()
                 .account(user.getAccount())
                 .username(user.getUsername())
@@ -154,13 +142,13 @@ public class UserServiceImpl implements UserService {
      * 登出
      * </p>
      *
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @author 6687353
      * @since 2023/7/21 10:32:52
      */
     @Override
-    public void logout(String token) {
-        Integer userId = jwtUtil.parseUserId(token);
+    public void logout(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
 
     }
 
@@ -169,25 +157,17 @@ public class UserServiceImpl implements UserService {
      * 取得會員個人訊息
      * </p>
      *
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/25 17:28:51
      */
     @Override
-    public Result getUserInfo(String token) {
-/*        User user = getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }*/
-        Integer userId = jwtUtil.parseUserId(token);
+    public Result getUserInfo(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         User user = authUserService.getById(userId);
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
-/*        userVO.setAccount("johndoe");
-        userVO.setUsername("johndoe");
-        userVO.setAvatar("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
-        userVO.setIsCertified(0);*/
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
     }
 
@@ -195,19 +175,17 @@ public class UserServiceImpl implements UserService {
      * <p>
      * 修改個人訊息
      * </p>
-     * @param token 令牌
-     * @param username 用戶名稱
-     * @param avatar 用戶頭像
+     * @param userInfoDTO UserInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 18:04:37
      */
     @Override
-    public Result updateUserInfo(String token, String username, String avatar) {
-        Integer userId = jwtUtil.parseUserId(token);
+    public Result updateUserInfo(UserInfoDTO userInfoDTO) {
+        Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
-        user.setUsername(username);
-        user.setAvatar(avatar);
+        user.setUsername(userInfoDTO.getUsername());
+        user.setAvatar(userInfoDTO.getAvatar());
         user.setUpdateTime(LocalDateTime.now());
         userMapper.updateById(user);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
@@ -217,21 +195,14 @@ public class UserServiceImpl implements UserService {
      * <p>
      * 取得會員錢包訊息
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/14 09:48:47
      */
     @Override
-    public Result getBalance(String token) {
-/*        UserBalanceVO userBalanceVO = UserBalanceVO.builder()
-                .address("qwertqwertyuiyui")
-                .balance(new BigDecimal("99.99"))
-                .availableAmount(new BigDecimal("99.99"))
-                .sellBalance(new BigDecimal(0))
-                .tradingAmount(new BigDecimal(0))
-                .build();*/
-        Integer userId = jwtUtil.parseUserId(token);
+    public Result getBalance(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         UserBalanceVO userBalanceVO = userBalanceService.getInfo(userId);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userBalanceVO).build();
     }
@@ -240,26 +211,21 @@ public class UserServiceImpl implements UserService {
      * <p>
      * 實名認證
      * </p>
-     * @param token 令牌
-     * @param name 姓名
-     * @param idNumber 身份證號
-     * @param idCard 身份證照片base64
-     * @param facePhoto 人臉識別照片base64
+     * @param certificateDTO CertificateDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:35:30
      */
     @Override
-    public Result certificate(String token, String name, String idNumber, String idCard, String facePhoto) {
-        Integer userId = jwtUtil.parseUserId(token);
+    public Result certificate(CertificateDTO certificateDTO) {
+        Integer userId = jwtUtil.parseUserId(certificateDTO.getToken());
         User user = authUserService.getById(userId);
-        user.setName(name);
-        user.setIdNumber(idNumber);
-        user.setIdCard(idCard);
-        user.setFacePhoto(facePhoto);
+        user.setName(certificateDTO.getName());
+        user.setIdNumber(certificateDTO.getIdNumber());
+        user.setIdCard(certificateDTO.getIdCard());
+        user.setFacePhoto(certificateDTO.getFacePhoto());
         user.setCertified(Boolean.TRUE);
         user.setUpdateTime(LocalDateTime.now());
-        //fakeUserDB.update(user);
         authUserService.updateById(user);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
@@ -268,23 +234,20 @@ public class UserServiceImpl implements UserService {
      * <p>
      * 設置密碼
      * </p>
-     * @param token 令牌
-     * @param oldPassword 原密碼
-     * @param newPassword 新密碼
+     * @param userInfoDTO UserInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:49:17
      */
     @Override
-    public Result updatePassword(String token, String oldPassword, String newPassword) {
-        Integer userId = jwtUtil.parseUserId(token);
+    public Result updatePassword(UserInfoDTO userInfoDTO) {
+        Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
-        if (!user.getPassword().equals(oldPassword)) {
+        if (!user.getPassword().equals(userInfoDTO.getOldPassword())) {
             return Result.builder().repCode(ResultCode.PASSWORD_NOT_MATCH.code).repMsg(ResultCode.PASSWORD_NOT_MATCH.msg).build();
         }
-        user.setPassword(newPassword);
+        user.setPassword(userInfoDTO.getNewPassword());
         user.setUpdateTime(LocalDateTime.now());
-        //fakeUserDB.update(user);
         authUserService.updateById(user);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
@@ -293,23 +256,20 @@ public class UserServiceImpl implements UserService {
      * <p>
      * 設置交易密碼
      * </p>
-     * @param token 令牌
-     * @param oldFundPassword 原交易密碼
-     * @param newFundPassword 新交易密碼
+     * @param userInfoDTO UserInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:59:47
      */
     @Override
-    public Result updateFundPassword(String token, String oldFundPassword, String newFundPassword) {
-        Integer userId = jwtUtil.parseUserId(token);
+    public Result updateFundPassword(UserInfoDTO userInfoDTO) {
+        Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
-        if (!user.getFundPassword().equals(oldFundPassword)) {
+        if (!user.getFundPassword().equals(userInfoDTO.getOldFundPassword())) {
             return Result.builder().repCode(ResultCode.PASSWORD_NOT_MATCH.code).repMsg(ResultCode.PASSWORD_NOT_MATCH.msg).build();
         }
-        user.setFundPassword(newFundPassword);
+        user.setFundPassword(userInfoDTO.getNewFundPassword());
         user.setUpdateTime(LocalDateTime.now());
-        //fakeUserDB.update(user);
         authUserService.updateById(user);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }

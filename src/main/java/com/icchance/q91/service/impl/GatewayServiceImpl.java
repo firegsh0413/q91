@@ -2,13 +2,11 @@ package com.icchance.q91.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.icchance.q91.dao.FakeGatewayDB;
 import com.icchance.q91.entity.dto.GatewayDTO;
 import com.icchance.q91.entity.model.Gateway;
 import com.icchance.q91.mapper.GatewayMapper;
 import com.icchance.q91.service.GatewayService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +25,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> implements GatewayService {
-    private final FakeGatewayDB fakeGatewayDB;
-    public GatewayServiceImpl(FakeGatewayDB fakeGatewayDB) {
-        this.fakeGatewayDB = fakeGatewayDB;
-    }
 
     /**
      * <p>
@@ -45,7 +39,6 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
     @Override
     public List<Gateway> getGatewayList(Integer userId) {
         return this.list(Wrappers.<Gateway>lambdaQuery().eq(Gateway::getUserId, userId));
-        //return fakeGatewayDB.getList();
     }
 
     /**
@@ -111,7 +104,5 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
     @Override
     public Gateway getGatewayByType(Integer userId, Integer gatewayType) {
         return this.getOne(Wrappers.<Gateway>lambdaQuery().eq(Gateway::getUserId, userId).eq(Gateway::getType, gatewayType));
-        //Optional<Gateway> any = fakeGatewayDB.getList().stream().filter(gateway -> userId.equals(gateway.getUserId()) && type.equals(gateway.getType())).findAny();
-        //return any.orElse(null);
     }
 }

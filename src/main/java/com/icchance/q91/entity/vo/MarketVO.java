@@ -9,6 +9,13 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * <p>
+ * 市場交易VO
+ * </p>
+ * @author 6687353
+ * @since 2023/8/29 15:31:14
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor

@@ -2,6 +2,7 @@ package com.icchance.q91.entity.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
  * @since 2023/8/24 18:04:59
  */
 @Data
-@Builder
-public class OrderDTO {
+@SuperBuilder
+public class OrderDTO extends BaseDTO {
     /** 訂單uid */
     private Integer id;
     /** 買方uid */

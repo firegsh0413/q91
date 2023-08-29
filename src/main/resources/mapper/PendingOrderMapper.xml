@@ -142,8 +142,8 @@
             <if test="null != dto.status and '' != dto.status" >
                 AND a.STATUS = #{dto.status}
             </if>
-            <if test="null != dto.orderId and '' != dto.orderId">
-                AND a.ID = #{dto.orderId}
+            <if test="null != dto.id and '' != dto.id">
+                AND a.ID = #{dto.id}
             </if>
             <if test="null != dto.userId and '' != dto.userId">
                 AND a.USER_ID != #{dto.userId}

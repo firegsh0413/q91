@@ -3,6 +3,10 @@ package com.icchance.q91.controller;
 import com.icchance.q91.annotation.PassToken;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.entity.dto.BaseDTO;
+import com.icchance.q91.entity.dto.CertificateDTO;
+import com.icchance.q91.entity.dto.UserDTO;
+import com.icchance.q91.entity.dto.UserInfoDTO;
 import com.icchance.q91.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,51 +35,45 @@ public class UserController extends BaseController {
      * <p>
      * 註冊
      * </p>
-     * @param account 帳號
-     * @param username 暱稱
-     * @param password 密碼
-     * @param fundPassword 支付密碼
+     * @param userDTO UserDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:05:17
      */
     @PassToken
     @PostMapping("/register")
-    public Result register(@RequestParam String account, @RequestParam String username, @RequestParam String password, @RequestParam String fundPassword) {
-        return userService.register(account, username, password, fundPassword);
+    public Result register(@RequestBody UserDTO userDTO) {
+        return userService.register(userDTO);
     }
 
     /**
      * <p>
      * 登錄
      * </p>
-     * @param account 帳號
-     * @param password 密碼
-     * @param cId 驗證碼uid
-     * @param captcha 驗證碼結果
+     * @param userDTO UserDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 10:09:52
      */
     @PassToken
     @PostMapping("/login")
-    public Result login(@RequestParam String account, @RequestParam String password, @RequestParam String cId, @RequestParam String captcha) {
-        return userService.login(account, password, cId, captcha);
+    public Result login(@RequestBody UserDTO userDTO) {
+        return userService.login(userDTO);
     }
 
     /**
      * <p>
      * 登出
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/21 12:00:18
      */
     @UserLoginToken
     @PostMapping("/logout")
-    public Result logout(@RequestParam String token) {
-        userService.logout(token);
+    public Result logout(@RequestBody BaseDTO baseDTO) {
+        userService.logout(baseDTO);
         return SUCCESS;
     }
 
@@ -83,100 +81,89 @@ public class UserController extends BaseController {
      * <p>
      * 取得會員個人訊息
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/25 17:28:51
      */
     @UserLoginToken
     @GetMapping("/info")
-    public Result getUserInfo(@RequestParam String token) {
-        return userService.getUserInfo(token);
+    public Result getUserInfo(@RequestBody BaseDTO baseDTO) {
+        return userService.getUserInfo(baseDTO);
     }
 
     /**
      * <p>
      * 取得會員錢包訊息
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/14 09:47:52
      */
     @UserLoginToken
     @GetMapping("/balance")
-    public Result getBalance(@RequestParam String token) {
-        return userService.getBalance(token);
+    public Result getBalance(@RequestBody BaseDTO baseDTO) {
+        return userService.getBalance(baseDTO);
     }
 
     /**
      * <p>
      * 實名認證
      * </p>
-     * @param token 令牌
-     * @param name 姓名
-     * @param idNumber 身份證號
-     * @param idCard 身份證照片base64
-     * @param facePhoto 人臉識別照片base64
+     * @param certificateDTO CertificateDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/14 09:56:33
      */
     @UserLoginToken
     @PostMapping("/certificate")
-    public Result certificate(@RequestParam String token, @RequestParam String name, @RequestParam String idNumber,
-                              @RequestParam String idCard, @RequestParam String facePhoto) {
-        return userService.certificate(token, name, idNumber, idCard, facePhoto);
+    public Result certificate(@RequestBody CertificateDTO certificateDTO) {
+        return userService.certificate(certificateDTO);
     }
 
     /**
      * <p>
      * 設置密碼
      * </p>
-     * @param token 令牌
-     * @param oldPassword 原密碼
-     * @param newPassword 新密碼
+     * @param userInfoDTO UserInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:48:26
      */
     @UserLoginToken
     @PostMapping("/pwd/update")
-    public Result updatePassword(@RequestParam String token, @RequestParam String oldPassword, @RequestParam String newPassword) {
-        return userService.updatePassword(token, oldPassword, newPassword);
+    public Result updatePassword(@RequestBody UserInfoDTO userInfoDTO) {
+        return userService.updatePassword(userInfoDTO);
     }
 
     /**
      * <p>
      * 設置交易密碼
      * </p>
-     * @param token 令牌
-     * @param oldFundPassword 原交易密碼
-     * @param newFundPassword 新交易密碼
+     * @param userInfoDTO UserInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 18:00:04
      */
     @UserLoginToken
     @PostMapping("/fundPwd/update")
-    public Result updateFundPassword(@RequestParam String token, @RequestParam String oldFundPassword, @RequestParam String newFundPassword) {
-        return userService.updateFundPassword(token, oldFundPassword, newFundPassword);
+    public Result updateFundPassword(@RequestBody UserInfoDTO userInfoDTO) {
+        return userService.updateFundPassword(userInfoDTO);
     }
 
     /**
      * <p>
      * 修改個人訊息
      * </p>
-     * @param token 令牌
-     * @param username 用戶名稱
-     * @param avatar 用戶頭像
+     * @param userInfoDTO UserInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 18:03:37
      */
     @UserLoginToken
     @PostMapping("/info/update")
-    public Result updateUserInfo(@RequestParam String token, @RequestParam String username, @RequestParam String avatar) {
-        return userService.updateUserInfo(token, username, avatar);
+    public Result updateUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
+        return userService.updateUserInfo(userInfoDTO);
     }
 }
