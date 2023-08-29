@@ -1,17 +1,19 @@
 package com.icchance.q91.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
-import com.icchance.q91.dao.FakeTransactionDB;
-import com.icchance.q91.entity.dto.GatewayDTO;
-import com.icchance.q91.entity.dto.PendingOrderDTO;
-import com.icchance.q91.entity.model.User;
-import com.icchance.q91.entity.vo.MarketVO;
+import com.icchance.q91.entity.dto.*;
+import com.icchance.q91.entity.model.*;
+import com.icchance.q91.entity.vo.OrderVO;
+import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.service.*;
 import com.icchance.q91.util.JwtUtil;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,16 +31,17 @@ public class TransactionServiceImpl implements TransactionService {
     private final PendingOrderService pendingOrderService;
     private final OrderService orderService;
     private final OrderRecordService orderRecordService;
-    private final FakeTransactionDB fakeTransactionDB;
+    private final UserBalanceService userBalanceService;
     private final JwtUtil jwtUtil;
-    public TransactionServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService, OrderService orderService,
-                                  OrderRecordService orderRecordService, FakeTransactionDB fakeTransactionDB, JwtUtil jwtUtil) {
+    public TransactionServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService,
+                                  OrderService orderService, OrderRecordService orderRecordService, UserBalanceService userBalanceService,
+                                  JwtUtil jwtUtil) {
         this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
         this.orderService = orderService;
         this.orderRecordService = orderRecordService;
-        this.fakeTransactionDB = fakeTransactionDB;
+        this.userBalanceService = userBalanceService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -46,23 +49,17 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 取得會員掛單訊息
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 16:58:29
      */
     @Override
-    public Result getPendingOrderList(String token) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
-        }*/
-/*        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(pendingOrderService.getPendingOrderList(user.getId()))
-                .build();*/
+    public Result getPendingOrderList(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         return Result.builder().repCode(ResultCode.SUCCESS.code)
                 .repMsg(ResultCode.SUCCESS.msg)
-                .repData(fakeTransactionDB.getPendingOrderList())
+                .repData(pendingOrderService.getList(userId))
                 .build();
     }
 
@@ -70,18 +67,17 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 取得會員掛單（我的賣單）詳細訊息
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 16:58:42
      */
     @Override
-    public Result getPendingOrderDetail(String token, Integer orderId) {
-        //pendingOrderService.getPendingOrder
+    public Result getPendingOrderDetail(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         return Result.builder().repCode(ResultCode.SUCCESS.code)
                 .repMsg(ResultCode.SUCCESS.msg)
-                .repData(fakeTransactionDB.getPendingOrderDetail())
+                .repData(pendingOrderService.getDetail(userId, transactionDTO.getId()))
                 .build();
     }
 
@@ -89,49 +85,89 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 取消掛單
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 09:33:44
      */
     @Override
-    public Result cancelPendingOrder(String token, Integer orderId) {
-        //pendingOrderService.cancelPendingOrder
+    public Result cancelPendingOrder(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        BigDecimal amount = pendingOrderVO.getAmount();
+        pendingOrderService.cancel(userId, transactionDTO.getId());
+        // 取消掛單 賣方錢包額度要回歸 賣單餘額->可售數量
+        UserBalance sellerBalance = userBalanceService.getEntity(userId);
+        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
+        sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().add(amount));
+        userBalanceService.updateEntity(sellerBalance);
+        // 如果有買方 已下訂訂單取消
+        // 錢包額度 交易中額度扣除
+        if (Objects.nonNull(pendingOrderVO.getBuyerId())) {
+            orderService.cancel(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
+            UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
+            buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(amount));
+            userBalanceService.updateEntity(buyerBalance);
+        }
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
      * <p>
-     * 確認掛單已下單
+     * 確認掛單已被下訂
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 11:25:58
      */
     @Override
-    public Result checkPendingOrder(String token, Integer orderId) {
-        //pendingOrderService.checkPendingOrder
+    public Result checkPendingOrder(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        pendingOrderService.check(userId, transactionDTO.getId());
+        // 掛單有人下訂 用戶錢包額度 賣單餘額->交易中
+        UserBalance sellerBalance = userBalanceService.getEntity(userId);
+        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(pendingOrderVO.getAmount()));
+        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(pendingOrderVO.getAmount()));
+        userBalanceService.updateEntity(sellerBalance);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
      * <p>
-     * 核實掛單
+     * 核實掛單並打幣
      * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 11:49:56
      */
     @Override
-    public Result verifyPendingOrder(String token, Integer orderId) {
-        //pendingOrderService.verifyPendingOrder
+    public Result verifyPendingOrder(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        BigDecimal amount = pendingOrderVO.getAmount();
+        // TODO 判斷掛單狀態為買家已付款
+        // 掛單有人下訂 用戶錢包額度 從交易中扣除
+        UserBalance sellerBalance = userBalanceService.getEntity(userId);
+        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().subtract(amount));
+        userBalanceService.updateEntity(sellerBalance);
+        // 打幣給買家 交易中->可售數量/錢包餘額
+        UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
+        buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(amount));
+        buyerBalance.setBalance(buyerBalance.getBalance().add(amount));
+        buyerBalance.setAvailableAmount(buyerBalance.getAvailableAmount().add(amount));
+        userBalanceService.updateEntity(buyerBalance);
+        pendingOrderService.verify(userId, transactionDTO.getId());
+        // 更新訂單狀態
+        OrderDTO orderDTO = OrderDTO.builder()
+                .id(pendingOrderVO.getOrderId())
+                .status(OrderConstant.OrderStatusEnum.FINISH.code)
+                .build();
+        orderService.update(orderDTO);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -139,23 +175,17 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 查詢會員訂單列表
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 13:10:09
      */
     @Override
-    public Result getOrderList(String token) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
-        }*/
-/*        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(orderService.getOrderList(user.getId()))
-                .build();*/
+    public Result getOrderList(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         return Result.builder().repCode(ResultCode.SUCCESS.code)
                 .repMsg(ResultCode.SUCCESS.msg)
-                .repData(fakeTransactionDB.getOrderList())
+                .repData(orderService.getList(userId))
                 .build();
     }
 
@@ -163,36 +193,54 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 查詢會員訂單詳情
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/11 11:55:14
      */
     @Override
-    public Result getOrderDetail(String token, Integer orderId) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(orderService.getOrderDetail(user.getId(), id)).build();*/
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getOrderDetail()).build();
+    public Result getOrderDetail(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        return Result.builder().repCode(ResultCode.SUCCESS.code)
+                .repMsg(ResultCode.SUCCESS.msg)
+                .repData(orderService.getDetail(userId, transactionDTO.getId()))
+                .build();
     }
 
     /**
      * <p>
      * 取消訂單
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 11:03:16
      */
     @Override
-    public Result cancelOrder(String token, Integer orderId) {
-        //Integer userId = jwtUtil.parseUserId(token);
-        //orderService.cancelOrder(userId, orderId);
+    public Result cancelOrder(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
+        orderService.cancel(userId, transactionDTO.getId());
+        // 取消訂單 買方錢包額度 交易中移除額度
+        UserBalance buyerBalance = userBalanceService.getEntity(userId);
+        buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(orderVO.getAmount()));
+        userBalanceService.updateEntity(buyerBalance);
+        // 賣方掛單更新
+        // 錢包額度 交易中->賣單餘額
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
+                .id(orderVO.getPendingOrderId())
+                .status(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code)
+                // 買方資訊清空
+                .orderId(null)
+                .buyerId(null)
+                .buyerGatewayId(null)
+                .tradeTime(null)
+                .build();
+        pendingOrderService.update(pendingOrderDTO);
+        UserBalance sellBalance = userBalanceService.getEntity(orderVO.getSellerId());
+        sellBalance.setTradingAmount(sellBalance.getTradingAmount().subtract(orderVO.getAmount()));
+        sellBalance.setPendingBalance(sellBalance.getPendingBalance().add(orderVO.getAmount()));
+        userBalanceService.updateEntity(sellBalance);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -200,15 +248,15 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 申訴訂單
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 14:23:42
      */
     @Override
-    public Result appealOrder(String token, Integer orderId) {
-        //orderService
+    public Result appealOrder(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        orderService.appeal(userId, transactionDTO.getId());
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -216,23 +264,17 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 會員錢包紀錄訊息
      * </p>
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 14:38:13
      */
     @Override
-    public Result getRecord(String token) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
-        }*/
-/*        return Result.builder().resultCode(ResultCode.SUCCESS)
-                .resultMap(orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, user.getId())))
-                .build();*/
+    public Result getRecord(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         return Result.builder().repCode(ResultCode.SUCCESS.code)
                 .repMsg(ResultCode.SUCCESS.msg)
-                .repData(fakeTransactionDB.getOrderRecordList())
+                .repData(orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, userId)))
                 .build();
     }
 
@@ -241,22 +283,16 @@ public class TransactionServiceImpl implements TransactionService {
      * 取得會員收付款訊息
      * </p>
      *
-     * @param token 令牌
+     * @param baseDTO BaseDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:26:44
      */
     @Override
-    public Result getGatewayList(String token) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }
-        List<Gateway> gatewayList = gatewayService.getGatewayList(user.getAccount());*/
-
-        /*List<Gateway> gatewayList = gatewayService.getGatewayList(0);
-        return Result.builder().resultCode(ResultCode.SUCCESS).resultMap(gatewayList).build();*/
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(fakeTransactionDB.getGatewayList()).build();
+    public Result getGatewayList(BaseDTO baseDTO) {
+        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
+        List<Gateway> gatewayList = gatewayService.getGatewayList(userId);
+        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(gatewayList).build();
     }
 
     /**
@@ -264,31 +300,16 @@ public class TransactionServiceImpl implements TransactionService {
      * 增加會員收付款訊息
      * </p>
      *
-     * @param token          令牌
-     * @param type               收付款方式(1.銀行卡 2.微信 3.支付寶)
-     * @param name               綁定名字
-     * @param gatewayName        綁定名稱
-     * @param gatewayReceiptCode 收付款號碼
-     * @param gatewayAccount     帳號
+     * @param gatewayDTO GatewayDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:27:53
      */
     @Override
-    public Result createGateway(String token, Integer type, String name, String gatewayName, String gatewayReceiptCode, String gatewayAccount) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }*/
-        GatewayDTO gatewayDTO = GatewayDTO.builder()
-                //.userId(user.getId())
-                .type(type)
-                .name(name)
-                .gatewayName(gatewayName)
-                .gatewayReceiptCode(gatewayReceiptCode)
-                .gatewayAccount(gatewayAccount)
-                .build();
-        //gatewayService.createGateway(gatewayDTO);
+    public Result createGateway(GatewayDTO gatewayDTO) {
+        Integer userId = jwtUtil.parseUserId(gatewayDTO.getToken());
+        gatewayDTO.setUserId(userId);
+        gatewayService.createGateway(gatewayDTO);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -297,19 +318,15 @@ public class TransactionServiceImpl implements TransactionService {
      * 刪除會員收付款訊息
      * </p>
      *
-     * @param token 令牌
-     * @param gatewayId        收付款資訊ID
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:29:00
      */
     @Override
-    public Result deleteGateway(String token, Integer gatewayId) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }*/
-        //gatewayService.deleteGateway(user.getId(), id);
+    public Result deleteGateway(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        gatewayService.deleteGateway(userId, transactionDTO.getId());
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -317,20 +334,23 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 上傳支付憑證
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
-     * @param cert 憑證base64
+     * @param orderDTO OrderDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */
     @Override
-    public Result verifyOrder(String token, Integer orderId, String cert) {
-/*        User user = userService.getUserByToken(token);
-        if (Objects.isNull(user)) {
-            return Result.builder().resultCode(ResultCode.ACCOUNT_NOT_EXIST).build();
-        }*/
-        //orderService.uploadCert(user.getId(), id, cert);
+    public Result verifyOrder(OrderDTO orderDTO) {
+        Integer userId = jwtUtil.parseUserId(orderDTO.getToken());
+        OrderVO orderVO = orderService.getDetail(userId, orderDTO.getId());
+        orderService.update(orderDTO);
+        // 訂單狀態更新
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
+                .id(orderVO.getPendingOrderId())
+                .status(OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code)
+                .cert(orderDTO.getCert())
+                .build();
+        pendingOrderService.update(pendingOrderDTO);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 

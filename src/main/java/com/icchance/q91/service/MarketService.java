@@ -1,6 +1,8 @@
 package com.icchance.q91.service;
 
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.entity.dto.MarketDTO;
+import com.icchance.q91.entity.dto.MarketInfoDTO;
 import com.icchance.q91.entity.dto.OrderDTO;
 
 import java.math.BigDecimal;
@@ -20,64 +22,54 @@ public interface MarketService {
      * <p>
      * 取得市場買賣訊息列表
      * </p>
-     * @param token 使用者令牌
-     * @param min 最小幣數量
-     * @param max 最大幣數量
-     * @param gatewayType 收款方式
+     * @param marketDTO MarketDTO
      * @return java.util.List<com.icchance.q91.entity.vo.MarketVO>
      * @author 6687353
      * @since 2023/8/4 16:35:34
      */
-    Result getPendingOrderList(String token, BigDecimal min, BigDecimal max, List<Integer> gatewayType);
+    Result getPendingOrderList(MarketDTO marketDTO);
 
     /**
      * <p>
      * 驗證會員是否有收款方式
      * </p>
-     * @param token 令牌
-     * @param availableGateway 可用收款方式清單
+     * @param marketInfoDTO MarketInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:10:40
      */
-    Result checkGateway(String token, Set<Integer> availableGateway);
+    Result checkGateway(MarketInfoDTO marketInfoDTO);
 
     /**
      * <p>
      * 取得賣方掛單訊息
      * </p>
-     * @param token 令牌
-     * @param orderId  訂單uid
+     * @param marketDTO MarketDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:11:37
      */
-    Result getPendingOrder(String token, Integer orderId);
+    Result getPendingOrder(MarketDTO marketDTO);
 
     /**
      * <p>
      * 購買
      * </p>
-     * @param token 令牌
-     * @param orderId 訂單uid
-     * @param amount 數量
-     * @param type 付款方式
+     * @param marketInfoDTO MarketInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:12:14
      */
-    Result buy(String token, Integer orderId, BigDecimal amount, Integer type);
+    Result buy(MarketInfoDTO marketInfoDTO);
 
     /**
      * <p>
      * 出售
      * </p>
-     * @param token 令牌
-     * @param amount 數量
-     * @param availableGateway 可用收款方式
+     * @param marketInfoDTO MarketInfoDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:15:27
      */
-    Result sell(String token, BigDecimal amount, List<Integer> availableGateway);
+    Result sell(MarketInfoDTO marketInfoDTO);
 }

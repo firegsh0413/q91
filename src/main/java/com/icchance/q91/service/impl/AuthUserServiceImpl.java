@@ -69,8 +69,16 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
                 .eq(User::getPassword, password));
     }
 
+    /**
+     * <p>
+     * 建立使用者
+     * </p>
+     * @param user User
+     * @author 6687353
+     * @since 2023/8/23 15:48:57
+     */
     @Override
-    public void createUser(User user) {
+    public User createUser(User user) {
         // 隨機生成錢包地址
         String address;
         boolean isDuplicate;
@@ -78,7 +86,9 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
             address = generateRandomAddress();
             isDuplicate = Objects.nonNull(this.getOne(Wrappers.<User>lambdaQuery().eq(User::getAddress, address)));
         } while (isDuplicate);
+        user.setAddress(address);
         this.save(user);
+        return user;
     }
 
     private String generateRandomAddress() {

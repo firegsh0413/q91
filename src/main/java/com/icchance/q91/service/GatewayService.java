@@ -59,5 +59,15 @@ public interface GatewayService extends IService<Gateway> {
      */
     Set<Integer> getAvailableGateway(Integer userId);
 
-    Gateway getGatewayByType(Integer userId, Integer type);
+    /**
+     * <p>
+     * 取得指定類型的收款類型資訊
+     * </p>
+     * @param userId 用戶uid
+     * @param gatewayType 收款類型
+     * @return com.icchance.q91.entity.model.Gateway
+     * @author 6687353
+     * @since 2023/8/24 09:36:07
+     */
+    Gateway getGatewayByType(Integer userId, Integer gatewayType);
 }

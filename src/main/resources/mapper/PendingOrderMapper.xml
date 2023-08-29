@@ -8,7 +8,7 @@
         a.ID, a.USER_ID, a.STATUS,
         a.CREATE_TIME, a.UPDATE_TIME, a.TRADE_TIME,
         a.BUYER_ID, a.AMOUNT,
-        a.ORDER_NUMBER, a.CERT
+        a.ORDER_NUMBER, a.CERT, a.SELLER_GATEWAY_ID, a.AVAILABLE_GATEWAY_STR, a.ORDER_ID
     </sql>
     <sql id="BuyerColumnList">
         buyer.USERNAME buyerUsername
@@ -26,6 +26,9 @@
         <result column="BUYER_GATEWAY_ID" jdbcType="INTEGER" property="buyerGatewayId" />
         <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
         <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="SELLER_GATEWAY_ID" jdbcType="INTEGER" property="sellerGatewayId" />
+        <result column="AVAILABLE_GATEWAY_STR" jdbcType="VARCHAR" property="availableGatewayStr" />
+        <result column="ORDER_ID" jdbcType="INTEGER" property="orderId" />
     </resultMap>
 
     <select id="getPendingOrderList" resultMap="getPendingOrderResult">
@@ -33,9 +36,75 @@
             <include refid="BaseColumnList" />,
             <include refid="BuyerColumnList" />
         FROM PENDING_ORDER a
-        INNER JOIN USER buyer ON a.BUYER_GATEWAY_ID = buyer.ID
+        LEFT JOIN USER buyer ON a.BUYER_ID = buyer.ID
         <where>
             <if test="null neq userId and '' neq userId">
+                AND a.USER_ID = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="getPendingOrderDetailResult" type="com.icchance.q91.entity.vo.PendingOrderVO" >
+        <result column="ID" jdbcType="INTEGER" property="id" />
+        <result column="USER_ID" jdbcType="INTEGER" property="userId" />
+        <result column="STATUS" jdbcType="INTEGER" property="status" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
+        <result column="sellerGatewayId" jdbcType="INTEGER" property="sellerGatewayId" />
+        <result column="buyerGatewayId" jdbcType="INTEGER" property="buyerGatewayId" />
+        <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
+        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
+        <collection property="sellerInfo" ofType="com.icchance.q91.entity.model.Gateway">
+            <id column="sellerGatewayId" property="id" jdbcType="INTEGER" />
+            <result column="sellerId" property="userId" jdbcType="INTEGER" />
+            <result column="sellerGatewayType" property="type" jdbcType="INTEGER" />
+            <result column="sellerName" property="name" jdbcType="VARCHAR" />
+            <result column="sellerGatewayName" property="gatewayName" jdbcType="VARCHAR" />
+            <result column="sellerGatewayAccount" property="gatewayAccount" jdbcType="VARCHAR" />
+            <result column="sellerGatewayReceiptCode" property="gatewayReceiptCode" jdbcType="VARCHAR" />
+        </collection>
+        <collection property="buyerInfo" ofType="com.icchance.q91.entity.model.Gateway">
+            <id column="buyerGatewayId" property="id" jdbcType="INTEGER" />
+            <result column="buyerId" property="userId" jdbcType="INTEGER" />
+            <result column="buyerGatewayType" property="type" jdbcType="INTEGER" />
+            <result column="buyerName" property="name" jdbcType="VARCHAR" />
+            <result column="buyerGatewayName" property="gatewayName" jdbcType="VARCHAR" />
+            <result column="buyerGatewayAccount" property="gatewayAccount" jdbcType="VARCHAR" />
+            <result column="buyerGatewayReceiptCode" property="gatewayReceiptCode" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <sql id="SellerGatewayColumnList">
+        sellerGateway.ID sellerGatewayId, sellerGateway.TYPE sellerGatewayType, sellerGateway.USER_ID sellerId,
+        sellerGateway.NAME sellerName, sellerGateway.GATEWAY_NAME sellerGatewayName,
+        sellerGateway.GATEWAY_ACCOUNT sellerGatewayAccount,
+        sellerGateway.GATEWAY_RECEIPT_CODE sellerGatewayReceiptCode
+    </sql>
+
+    <sql id="BuyerGatewayColumnList">
+        buyerGateway.ID buyerGatewayId, buyerGateway.TYPE buyerGatewayType, buyerGateway.USER_ID buyerId,
+        buyerGateway.NAME buyerName, buyerGateway.GATEWAY_NAME buyerGatewayName,
+        buyerGateway.GATEWAY_ACCOUNT buyerGatewayAccount,
+        buyerGateway.GATEWAY_RECEIPT_CODE buyerGatewayReceiptCode
+    </sql>
+
+    <select id="getDetail" resultMap="getPendingOrderDetailResult">
+        SELECT
+        <include refid="BaseColumnList" />,
+        <include refid="SellerColumnList" />,
+        <include refid="SellerGatewayColumnList" />,
+        <include refid="BuyerGatewayColumnList" />
+        FROM q91.PENDING_ORDER a
+        INNER JOIN USER seller ON a.USER_ID = seller.ID
+        LEFT JOIN USER buyer ON a.BUYER_ID = buyer.ID
+        INNER JOIN GATEWAY sellerGateway ON a.SELLER_GATEWAY_ID = sellerGateway.ID
+        LEFT JOIN GATEWAY buyerGateway ON a.BUYER_GATEWAY_ID = buyerGateway.ID
+        <where>
+            <if test="null != orderId and '' != orderId">
+                AND a.ID = #{orderId}
+            </if>
+            <if test="null != userId and '' != userId">
                 AND a.USER_ID = #{userId}
             </if>
         </where>
@@ -57,7 +126,7 @@
     </resultMap>
 
     <sql id="SellerColumnList">
-        seller.USERNAME sellerUsername, seller.AVATAR sellerAvatar
+        seller.ID sellerId, seller.USERNAME sellerUsername, seller.AVATAR sellerAvatar
     </sql>
 
     <select id="getMarketList" resultMap="getMarketListResult">
@@ -73,8 +142,8 @@
             <if test="null != dto.status and '' != dto.status" >
                 AND a.STATUS = #{dto.status}
             </if>
-            <if test="null != dto.orderId and '' != dto.orderId">
-                AND a.ID = #{dto.orderId}
+            <if test="null != dto.id and '' != dto.id">
+                AND a.ID = #{dto.id}
             </if>
             <if test="null != dto.userId and '' != dto.userId">
                 AND a.USER_ID != #{dto.userId}
@@ -99,7 +168,7 @@
         <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
         <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
-        <result column="SELLER_ID" jdbcType="INTEGER" property="sellerId" />
+        <result column="sellerId" jdbcType="INTEGER" property="sellerId" />
         <result column="sellerUsername" jdbcType="VARCHAR" property="sellerUsername" />
         <result column="sellerAvatar" jdbcType="VARCHAR" property="sellerAvatar" />
         <result column="availableGatewayStr" jdbcType="VARCHAR" property="availableGatewayStr" />
@@ -118,14 +187,12 @@
         gateway.ID SELLER_GATEWAY_ID, gateway.type, gateway.NAME, gateway.GATEWAY_NAME, gateway.GATEWAY_RECEIPT_CODE
     </sql>
 
-    <select id="getPendingOrder" resultMap="getMarketPendingOrderResult">
+    <select id="getMarketDetail" resultMap="getMarketPendingOrderResult">
         SELECT
             <include refid="BaseColumnList" />,
             <include refid="SellerColumnList" />
         FROM PENDING_ORDER a
         INNER JOIN USER seller ON a.USER_ID = seller.ID
-        INNER JOIN ORDER_AVAILABLE_GATEWAY b ON a.ID = b.ORDER_ID
-        INNER JOIN GATEWAY gateway ON b.GATEWAY_ID = gateway.ID
         <where>
             <if test="null != userId and '' != userId">
                 AND a.USER_ID != #{userId}

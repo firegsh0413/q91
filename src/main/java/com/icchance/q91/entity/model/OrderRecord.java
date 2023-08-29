@@ -1,6 +1,8 @@
 package com.icchance.q91.entity.model;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +16,7 @@ import java.math.BigDecimal;
 
 /**
  * <p>  
- *   
+ * 錢包（訂單）記錄entity
  * </p>  
  * @author 6687353 
  * @since 2023/08/02 14:44:22 
@@ -28,7 +30,7 @@ public class OrderRecord implements Serializable {
 
 	private static final long serialVersionUID =  1261584036056598776L;
 
-   	@TableId(value = "ID")
+   	@TableId(value = "ID", type = IdType.AUTO)
 	private Integer id;
 
 	private Integer status;

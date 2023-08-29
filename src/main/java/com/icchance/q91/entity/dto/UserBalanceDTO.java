@@ -1,24 +1,26 @@
-package com.icchance.q91.entity.vo;
+package com.icchance.q91.entity.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 /**
  * <p>
- * 用戶錢包資訊VO
+ * 會員錢包DTO
  * </p>
  * @author 6687353
- * @since 2023/8/24 11:54:52
+ * @since 2023/8/23 14:57:15
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserBalanceVO {
+public class UserBalanceDTO {
 
-    /** 錢包地址 */
-    private String address;
+    private Integer userId;
     /** 錢包餘額 */
     private BigDecimal balance;
     /** 可售數量 */

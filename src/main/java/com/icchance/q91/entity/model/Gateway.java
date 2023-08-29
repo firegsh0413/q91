@@ -1,5 +1,6 @@
 package com.icchance.q91.entity.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * <p>
- * 收付款方式
+ * 收付款方式entity
  * </p>
  * @author 6687353
  * @since 2023/7/28 17:24:41
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Gateway {
 
-    @TableId(value = "ID")
+    @TableId(value = "ID", type = IdType.AUTO)
     private Integer id;
     @TableField(value = "USER_ID")
     private Integer userId;

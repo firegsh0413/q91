@@ -27,6 +27,23 @@ public interface OrderConstant {
         return Arrays.stream(GatewayTypeEnum.values()).map(GatewayTypeEnum::getCode).collect(Collectors.toList());
     }
 
+    enum PendingOrderStatusEnum {
+        ON_PENDING(1, "掛賣中"),
+        ON_ORDER(2, "買家已下單"),
+        NO_PAY(3, "買家未付款"),
+        ALREADY_PAY(4, "買家已付款"),
+        FINISH(5, "已完成"),
+        CANCEL(6, "已取消"),
+        ;
+        public final Integer code;
+        public final String desc;
+
+        PendingOrderStatusEnum(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
     /**
      * <p>
      * 訂單狀態列舉
@@ -36,27 +53,18 @@ public interface OrderConstant {
      */
     enum OrderStatusEnum {
 
-        SELL_OR_BUY(1, "出售/購買中"),
-        UNCHECK(2, "待確認"),
+        ON_ORDER(1, "已下單"),
+        UNCHECK(2, "已付款，待賣家確認"),
         APPEAL(3, "申訴中"),
-        DONE(4, "已完成"),
+        FINISH(4, "已完成"),
         CANCEL(5, "已取消"),
-
         ;
-        private Integer code;
-        private String desc;
+        public final Integer code;
+        public final String desc;
 
         OrderStatusEnum(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
-        }
-
-        public Integer getCode() {
-            return code;
-        }
-
-        public String getDesc() {
-            return desc;
         }
     }
 
@@ -73,8 +81,8 @@ public interface OrderConstant {
         ADD_CREDIT(3, "充值到商戶"),
         PAY_OUT(4, "商戶下發入"),
         ;
-        private Integer code;
-        private String desc;
+        public final Integer code;
+        public final String desc;
         RecordStatusEnum(Integer code, String desc) {
             this.code = code;
             this.desc = desc;

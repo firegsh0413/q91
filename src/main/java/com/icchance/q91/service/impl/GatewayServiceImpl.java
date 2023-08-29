@@ -1,7 +1,7 @@
 package com.icchance.q91.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.icchance.q91.dao.FakeGatewayDB;
 import com.icchance.q91.entity.dto.GatewayDTO;
 import com.icchance.q91.entity.model.Gateway;
 import com.icchance.q91.mapper.GatewayMapper;
@@ -26,11 +26,6 @@ import java.util.stream.Collectors;
 @Service
 public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> implements GatewayService {
 
-    private final FakeGatewayDB fakeGatewayDB;
-    public GatewayServiceImpl(FakeGatewayDB fakeGatewayDB) {
-        this.fakeGatewayDB = fakeGatewayDB;
-    }
-
     /**
      * <p>
      * 取得會員收付款訊息
@@ -43,8 +38,7 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
      */
     @Override
     public List<Gateway> getGatewayList(Integer userId) {
-        //return this.list(Wrappers.<Gateway>lambdaQuery().eq(Gateway::getAccount, account));
-        return fakeGatewayDB.getList();
+        return this.list(Wrappers.<Gateway>lambdaQuery().eq(Gateway::getUserId, userId));
     }
 
     /**
@@ -97,10 +91,18 @@ public class GatewayServiceImpl extends ServiceImpl<GatewayMapper, Gateway> impl
         return Optional.ofNullable(availableGateway).map(set -> set.stream().map(Gateway::getType).collect(Collectors.toSet())).orElse(null);
     }
 
+    /**
+     * <p>
+     * 取得指定類型的收款類型資訊
+     * </p>
+     * @param userId 用戶uid
+     * @param gatewayType 收款類型
+     * @return com.icchance.q91.entity.model.Gateway
+     * @author 6687353
+     * @since 2023/8/24 09:36:07
+     */
     @Override
-    public Gateway getGatewayByType(Integer userId, Integer type) {
-        //
-        Optional<Gateway> any = fakeGatewayDB.getList().stream().filter(gateway -> userId.equals(gateway.getUserId()) && type.equals(gateway.getType())).findAny();
-        return any.orElse(null);
+    public Gateway getGatewayByType(Integer userId, Integer gatewayType) {
+        return this.getOne(Wrappers.<Gateway>lambdaQuery().eq(Gateway::getUserId, userId).eq(Gateway::getType, gatewayType));
     }
 }
