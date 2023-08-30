@@ -16,11 +16,11 @@ import java.util.List;
  * @author 6687353
  * @since 2023/8/29 15:31:21
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class MarketDTO extends BaseDTO {
+@Builder
+public class MarketDTO {
 
+    private String token;
     /** 掛單用戶UID */
     private Integer userId;
     /** 金額最小值 */

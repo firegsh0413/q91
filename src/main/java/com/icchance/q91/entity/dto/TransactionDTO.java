@@ -10,18 +10,14 @@ import lombok.experimental.SuperBuilder;
  * @author 6687353
  * @since 2023/8/29 16:43:43
  */
-@Getter
-@SuperBuilder
-public class TransactionDTO extends BaseDTO {
+@Data
+@Builder
+public class TransactionDTO {
+
+    private String token;
 
     private Integer id;
 
     private String cert;
-
-    public TransactionDTO(String token, Integer id, String cert) {
-        super.setToken(token);
-        this.id = id;
-        this.cert = cert;
-    }
 
 }

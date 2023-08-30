@@ -15,8 +15,10 @@ import java.time.LocalDateTime;
  * @since 2023/8/24 18:04:59
  */
 @Data
-@SuperBuilder
-public class OrderDTO extends BaseDTO {
+@Builder
+public class OrderDTO{
+
+    private String token;
     /** 訂單uid */
     private Integer id;
     /** 買方uid */

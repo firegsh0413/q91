@@ -5,7 +5,6 @@ import com.icchance.q91.entity.dto.BaseDTO;
 import com.icchance.q91.entity.dto.CertificateDTO;
 import com.icchance.q91.entity.dto.UserDTO;
 import com.icchance.q91.entity.dto.UserInfoDTO;
-import com.icchance.q91.entity.model.User;
 
 /**
  * <p>

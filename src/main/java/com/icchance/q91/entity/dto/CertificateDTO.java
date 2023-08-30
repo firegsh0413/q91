@@ -3,6 +3,7 @@ package com.icchance.q91.entity.dto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -12,10 +13,11 @@ import lombok.experimental.SuperBuilder;
  * @author 6687353
  * @since 2023/8/29 14:45:51
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class CertificateDTO extends BaseDTO {
+@Builder
+public class CertificateDTO {
+
+    private String token;
 
     private String name;
 
@@ -24,4 +26,5 @@ public class CertificateDTO extends BaseDTO {
     private String idCard;
 
     private String facePhoto;
+
 }

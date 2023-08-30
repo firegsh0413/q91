@@ -12,10 +12,11 @@ import lombok.experimental.SuperBuilder;
  * @author 6687353
  * @since 2023/8/29 13:48:54
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class UserInfoDTO extends BaseDTO {
+@Builder
+public class UserInfoDTO {
+
+    private String token;
 
     private String username;
 
