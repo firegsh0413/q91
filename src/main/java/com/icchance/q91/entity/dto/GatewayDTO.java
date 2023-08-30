@@ -3,6 +3,7 @@ package com.icchance.q91.entity.dto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -12,11 +13,11 @@ import lombok.experimental.SuperBuilder;
  * @author 6687353
  * @since 2023/8/29 17:54:19
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class GatewayDTO extends BaseDTO {
+@Builder
+public class GatewayDTO {
 
+    private String token;
     /** 使用者ID */
     private Integer userId;
     /** 收付款方式 */
@@ -29,4 +30,5 @@ public class GatewayDTO extends BaseDTO {
     private String gatewayReceiptCode;
     /** 帳號 */
     private String gatewayAccount;
+
 }

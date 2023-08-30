@@ -1,5 +1,6 @@
 package com.icchance.q91.entity.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -11,10 +12,11 @@ import lombok.experimental.SuperBuilder;
  * @author 6687353
  * @since 2023/8/29 16:17:53
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class MessageDTO extends BaseDTO {
+@Builder
+public class MessageDTO {
+
+    private String token;
 
     private Integer id;
 }

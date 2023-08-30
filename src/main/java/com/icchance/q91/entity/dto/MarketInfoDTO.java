@@ -3,6 +3,7 @@ package com.icchance.q91.entity.dto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
@@ -15,10 +16,11 @@ import java.util.Set;
  * @author 6687353
  * @since 2023/8/29 16:05:47
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-@SuperBuilder
-public class MarketInfoDTO extends BaseDTO {
+@Builder
+public class MarketInfoDTO {
+
+    private String token;
 
     private String userId;
     /** 訂單UID */
@@ -29,6 +31,5 @@ public class MarketInfoDTO extends BaseDTO {
     private BigDecimal amount;
 
     private Integer type;
-
 
 }
