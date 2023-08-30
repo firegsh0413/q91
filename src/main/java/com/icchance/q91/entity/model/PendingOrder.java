@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @since 2023/7/28 16:21:17
  */
 @Data
-@TableName("PENDING_ORDER")
+@TableName("pending_order")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class PendingOrder implements Serializable {
 
     private static final long serialVersionUID = -736909599601864457L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private Integer userId;
@@ -46,8 +46,6 @@ public class PendingOrder implements Serializable {
 
     private Integer buyerGatewayId;
 
-    //private String buyerUsername;
-
     private BigDecimal amount;
 
     private String orderNumber;
@@ -57,5 +55,7 @@ public class PendingOrder implements Serializable {
     private String availableGatewayStr;
     /** 買方訂單uid */
     private Integer orderId;
+
+    private Integer sellerGatewayId;
 
 }

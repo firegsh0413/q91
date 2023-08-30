@@ -5,25 +5,25 @@
 <mapper namespace="com.icchance.q91.mapper.UserBalanceMapper">
 
     <sql id="BaseColumnList">
-        a.BALANCE, a.AVAILABLE_AMOUNT, a.PENDING_BALANCE, a.TRADING_AMOUNT
+        a.balance, a.available_amount, a.pending_balance, a.trading_amount
     </sql>
 
     <resultMap id="getUserBalance" type="com.icchance.q91.entity.vo.UserBalanceVO" >
-        <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
-        <result column="BALANCE" jdbcType="DECIMAL" property="balance" />
-        <result column="AVAILABLE_AMOUNT" jdbcType="DECIMAL" property="availableAmount" />
-        <result column="PENDING_BALANCE" jdbcType="DECIMAL" property="pendingBalance" />
-        <result column="TRADING_AMOUNT" jdbcType="DECIMAL" property="tradingAmount" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="balance" jdbcType="DECIMAL" property="balance" />
+        <result column="available_amount" jdbcType="DECIMAL" property="availableAmount" />
+        <result column="pending_balance" jdbcType="DECIMAL" property="pendingBalance" />
+        <result column="trading_amount" jdbcType="DECIMAL" property="tradingAmount" />
     </resultMap>
 
     <select id="getUserBalance" resultMap="getUserBalance">
         SELECT
-        <include refid="BaseColumnList" />, ADDRESS
-        FROM q91.USER_BALANCE a
-        INNER JOIN USER b ON a.USER_ID = b.ID
+        <include refid="BaseColumnList" />, address
+        FROM q91.user_balance a
+        INNER JOIN USER b ON a.user_id = b.id
         <where>
             <if test="null != userId and '' != userId">
-                AND a.USER_ID = #{userId}
+                AND a.user_id = #{userId}
             </if>
         </where>
     </select>

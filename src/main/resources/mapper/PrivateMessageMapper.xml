@@ -5,42 +5,42 @@
 <mapper namespace="com.icchance.q91.mapper.PrivateMessageMapper">
 
     <resultMap id="BaseResultMap" type="com.icchance.q91.entity.model.PrivateMessage">
-            <id property="id" column="ID" jdbcType="INTEGER"/>
-            <result property="userId" column="USER_ID" jdbcType="INTEGER"/>
-            <result property="isRead" column="IS_READ" jdbcType="TINYINT"/>
-            <result property="title" column="TITLE" jdbcType="VARCHAR"/>
-            <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
-            <result property="senderId" column="SENDER_ID" jdbcType="INTEGER"/>
-            <result property="type" column="TYPE" jdbcType="TINYINT"/>
-            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="userId" column="user_id" jdbcType="INTEGER"/>
+            <result property="isRead" column="is_read" jdbcType="TINYINT"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="senderId" column="sender_id" jdbcType="INTEGER"/>
+            <result property="type" column="type" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="BaseColumnList">
-        a.ID,a.USER_ID,a.IS_READ,
-        a.TITLE,a.CONTENT,a.SENDER_ID,
-        a.TYPE,a.CREATE_TIME,a.UPDATE_TIME
+        a.id,a.user_id,a.is_read,
+        a.title,a.content,a.sender_id,
+        a.type,a.create_time,a.update_time
     </sql>
 
     <resultMap id="getPrivateMessageResult" type="com.icchance.q91.entity.vo.PrivateMessageVO" >
-        <result column="ID" jdbcType="INTEGER" property="id" />
-        <result column="IS_READ" jdbcType="INTEGER" property="isRead" />
-        <result column="TITLE" jdbcType="VARCHAR" property="title" />
-        <result column="CONTENT" jdbcType="VARCHAR" property="content" />
-        <result column="SENDER_ID" jdbcType="INTEGER" property="senderId" />
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="is_read" jdbcType="INTEGER" property="isRead" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="sender_id" jdbcType="INTEGER" property="senderId" />
         <result column="senderUsername" jdbcType="VARCHAR" property="senderUsername" />
-        <result column="TYPE" jdbcType="INTEGER" property="type" />
-        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     </resultMap>
 
     <select id="getPrivateMessageList" resultMap="getPrivateMessageResult">
         SELECT
             <include refid="BaseColumnList" />, username senderUsername
-        FROM q91.PRIVATE_MESSAGE a
-        INNER JOIN USER sender ON a.USER_ID = sender.ID
+        FROM q91.private_message a
+        INNER JOIN USER sender ON a.user_id = sender.ID
         <where>
             <if test="null != userId and '' != userId">
-                AND a.USER_ID = #{userId}
+                AND a.user_id = #{userId}
             </if>
         </where>
     </select>

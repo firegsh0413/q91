@@ -21,7 +21,7 @@ import java.math.BigDecimal;
  * @since 2023/08/02 17:10:00 
  */
 @Data
-@TableName("MARKET")
+@TableName("market")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class Market implements Serializable {
 
 	private static final long serialVersionUID =  2354129129431744782L;
 
-   	@TableId(value = "ID", type = IdType.AUTO)
+   	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 
 	private Integer sellerId;

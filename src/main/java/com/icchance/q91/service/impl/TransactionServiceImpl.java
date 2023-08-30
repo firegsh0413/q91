@@ -94,6 +94,9 @@ public class TransactionServiceImpl implements TransactionService {
     public Result cancelPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(pendingOrderVO)) {
+            return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+        }
         BigDecimal amount = pendingOrderVO.getAmount();
         pendingOrderService.cancel(userId, transactionDTO.getId());
         // 取消掛單 賣方錢包額度要回歸 賣單餘額->可售數量

@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @since 2023/7/28 14:36:08
  */
 @Data
-@TableName("USER_BALANCE")
+@TableName("user_balance")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,13 +33,13 @@ public class UserBalance implements Serializable {
     private Integer id;
 
     private Integer userId;
-    @TableField(value = "BALANCE")
+
     private BigDecimal balance;
-    @TableField(value = "AVAILABLE_AMOUNT")
+
     private BigDecimal availableAmount;
-    @TableField(value = "PENDING_BALANCE")
+
     private BigDecimal pendingBalance;
-    @TableField(value = "TRADING_AMOUNT")
+
     private BigDecimal tradingAmount;
 
     private LocalDateTime createTime;
