@@ -18,13 +18,13 @@ import java.time.LocalDateTime;
  * @since 2023/8/18 14:13:05
  */
 @Data
-@TableName("PRIVATE_MESSAGE")
+@TableName("private_message")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrivateMessage {
 
-    @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private Integer userId;

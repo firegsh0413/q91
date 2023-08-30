@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * @since 2023/7/26 14:45:55
  */
 @Data
-@TableName("USER")
+@TableName("user")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1036384808450084875L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private String account;

@@ -33,7 +33,7 @@ aj:
     # 底圖路徑 位於resource目錄下
     #jigsaw: classpath:images/jigsaw
     # 緩存類型 local/redis
-    cache-type: local
+    cache-type: redis
     # 緩存閾值
     #cache-number: 1000
     # 定時清除過期緩存 0為不執行

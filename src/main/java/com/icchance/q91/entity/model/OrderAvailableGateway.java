@@ -16,13 +16,13 @@ import java.io.Serializable;
  * @since 2023/8/24 16:45:26
  */
 @Data
-@TableName("ORDER_AVAILABLE_GATEWAY")
+@TableName("order_available_gateway")
 @Builder
 public class OrderAvailableGateway implements Serializable {
 
     private static final long serialVersionUID = -8265790103201939082L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private Integer orderId;

@@ -17,24 +17,24 @@ import lombok.NoArgsConstructor;
  * @since 2023/7/28 17:24:41
  */
 @Data
-@TableName("GATEWAY")
+@TableName("gateway")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Gateway {
 
-    @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    @TableField(value = "USER_ID")
+
     private Integer userId;
-    @TableField(value = "TYPE")
+
     private Integer type;
-    @TableField(value = "NAME")
+
     private String name;
-    @TableField(value = "GATEWAY_NAME")
+
     private String gatewayName;
-    @TableField(value = "GATEWAY_RECEIPT_CODE")
+
     private String gatewayReceiptCode;
-    @TableField(value = "GATEWAY_ACCOUNT")
+
     private String gatewayAccount;
 }

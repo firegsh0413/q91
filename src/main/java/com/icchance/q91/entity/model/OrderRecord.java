@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  * @since 2023/08/02 14:44:22 
  */
 @Data
-@TableName("ORDER_RECORD")
+@TableName("order_record")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,7 +30,7 @@ public class OrderRecord implements Serializable {
 
 	private static final long serialVersionUID =  1261584036056598776L;
 
-   	@TableId(value = "ID", type = IdType.AUTO)
+   	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 
 	private Integer status;

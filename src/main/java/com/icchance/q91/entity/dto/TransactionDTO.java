@@ -1,7 +1,6 @@
 package com.icchance.q91.entity.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -11,12 +10,18 @@ import lombok.experimental.SuperBuilder;
  * @author 6687353
  * @since 2023/8/29 16:43:43
  */
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
 @SuperBuilder
 public class TransactionDTO extends BaseDTO {
 
     private Integer id;
 
     private String cert;
+
+    public TransactionDTO(String token, Integer id, String cert) {
+        super.setToken(token);
+        this.id = id;
+        this.cert = cert;
+    }
+
 }

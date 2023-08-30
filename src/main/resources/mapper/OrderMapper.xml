@@ -5,71 +5,71 @@
 <mapper namespace="com.icchance.q91.mapper.OrderMapper">
 
     <sql id="BaseColumnList">
-        a.ID,a.USER_ID,a.STATUS,
-        a.CREATE_TIME,a.UPDATE_TIME,a.TRADE_TIME,
-        a.CUT_OFF_TIME,a.SELLER_ID,
-        a.AMOUNT,a.ORDER_NUMBER,a.CERT,a.SELLER_GATEWAY_ID,a.BUYER_GATEWAY_ID, a.PENDING_ORDER_ID
+        a.id,a.user_id,a.status,
+        a.create_time,a.update_time,a.trade_time,
+        a.cut_off_time,a.seller_id,
+        a.amount,a.order_number,a.cert,a.seller_gateway_id,a.buyer_gateway_id, a.pending_order_id
     </sql>
     <sql id="SellerColumnList">
-        seller.USERNAME sellerUsername
+        seller.username sellerUsername
     </sql>
 
     <resultMap id="getOrderResult" type="com.icchance.q91.entity.vo.OrderVO" >
-        <result column="ID" jdbcType="INTEGER" property="id" />
-        <result column="USER_ID" jdbcType="INTEGER" property="userId" />
-        <result column="STATUS" jdbcType="INTEGER" property="status" />
-        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
-        <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
-        <result column="CUT_OFF_TIME" jdbcType="TIMESTAMP" property="cutOffTime" />
-        <result column="SELLER_ID" jdbcType="INTEGER" property="sellerId" />
-        <result column="SELLER_USERNAME" jdbcType="VARCHAR" property="sellerUsername" />
-        <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
-        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
-        <result column="PENDING_ORDER_ID" jdbcType="VARCHAR" property="pendingOrderId" />
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="trade_time" jdbcType="TIMESTAMP" property="tradeTime" />
+        <result column="cut_off_time" jdbcType="TIMESTAMP" property="cutOffTime" />
+        <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+        <result column="seller_username" jdbcType="VARCHAR" property="sellerUsername" />
+        <result column="amount" jdbcType="DECIMAL" property="amount" />
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="pending_order_id" jdbcType="VARCHAR" property="pendingOrderId" />
     </resultMap>
 
     <select id="getOrderList" resultMap="getOrderResult">
         SELECT
             <include refid="BaseColumnList" />,
             <include refid="SellerColumnList" />
-        FROM q91.ORDERS a
-        INNER JOIN USER seller ON a.SELLER_ID = seller.ID
-        INNER JOIN USER buyer ON a.USER_ID = buyer.ID
+        FROM q91.orders a
+        INNER JOIN USER seller ON a.seller_id = seller.ID
+        INNER JOIN USER buyer ON a.user_id = buyer.ID
         <where>
             <if test="null != userId and '' != userId">
-                AND a.USER_ID = #{userId}
+                AND a.user_id = #{userId}
             </if>
         </where>
     </select>
 
     <sql id="SellerGatewayColumnList">
-        sellerGateway.ID sellerGatewayId, sellerGateway.TYPE sellerGatewayType, sellerGateway.USER_ID sellerId,
-        sellerGateway.NAME sellerName, sellerGateway.GATEWAY_NAME sellerGatewayName,
-        sellerGateway.GATEWAY_ACCOUNT sellerGatewayAccount,
-        sellerGateway.GATEWAY_RECEIPT_CODE sellerGatewayReceiptCode
+        sellerGateway.id sellerGatewayId, sellerGateway.type sellerGatewayType, sellerGateway.user_id sellerId,
+        sellerGateway.name sellerName, sellerGateway.gateway_name sellerGatewayName,
+        sellerGateway.gateway_account sellerGatewayAccount,
+        sellerGateway.gateway_receipt_code sellerGatewayReceiptCode
     </sql>
 
     <sql id="BuyerGatewayColumnList">
-        buyerGateway.ID buyerGatewayId, buyerGateway.TYPE buyerGatewayType, buyerGateway.USER_ID buyerId,
-        buyerGateway.NAME buyerName, buyerGateway.GATEWAY_NAME buyerGatewayName,
-        buyerGateway.GATEWAY_ACCOUNT buyerGatewayAccount,
-        buyerGateway.GATEWAY_RECEIPT_CODE buyerGatewayReceiptCode
+        buyerGateway.id buyerGatewayId, buyerGateway.type buyerGatewayType, buyerGateway.user_id buyerId,
+        buyerGateway.name buyerName, buyerGateway.gateway_name buyerGatewayName,
+        buyerGateway.gateway_account buyerGatewayAccount,
+        buyerGateway.gateway_receipt_code buyerGatewayReceiptCode
     </sql>
 
     <resultMap id="getOrderDetailResult" type="com.icchance.q91.entity.vo.OrderVO" >
-        <result column="ID" jdbcType="INTEGER" property="id" />
-        <result column="USER_ID" jdbcType="INTEGER" property="userId" />
-        <result column="STATUS" jdbcType="INTEGER" property="status" />
-        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
-        <result column="TRADE_TIME" jdbcType="TIMESTAMP" property="tradeTime" />
-        <result column="SELLER_ID" jdbcType="INTEGER" property="sellerId" />
-        <result column="SELLER_USERNAME" jdbcType="VARCHAR" property="sellerUsername" />
+        <result column="id" jdbcType="INTEGER" property="id" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="trade_time" jdbcType="TIMESTAMP" property="tradeTime" />
+        <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+        <result column="seller_username" jdbcType="VARCHAR" property="sellerUsername" />
         <result column="sellerGatewayId" jdbcType="INTEGER" property="sellerGatewayId" />
         <result column="buyerGatewayId" jdbcType="INTEGER" property="buyerGatewayId" />
-        <result column="AMOUNT" jdbcType="DECIMAL" property="amount" />
-        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="amount" jdbcType="DECIMAL" property="amount" />
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
         <collection property="sellerInfo" ofType="com.icchance.q91.entity.model.Gateway">
             <id column="sellerGatewayId" property="id" jdbcType="INTEGER" />
             <result column="sellerId" property="userId" jdbcType="INTEGER" />
@@ -96,17 +96,17 @@
             <include refid="SellerColumnList" />,
             <include refid="SellerGatewayColumnList" />,
             <include refid="BuyerGatewayColumnList" />
-        FROM q91.ORDERS a
-        INNER JOIN USER seller ON a.SELLER_ID = seller.ID
-        INNER JOIN USER buyer ON a.USER_ID = buyer.ID
-        INNER JOIN GATEWAY sellerGateway ON a.SELLER_GATEWAY_ID = sellerGateway.ID
-        INNER JOIN GATEWAY buyerGateway ON a.BUYER_GATEWAY_ID = buyerGateway.ID
+        FROM q91.orders a
+        INNER JOIN USER seller ON a.seller_id = seller.id
+        INNER JOIN USER buyer ON a.user_id = buyer.id
+        INNER JOIN gateway sellerGateway ON a.seller_gateway_id = sellerGateway.ID
+        INNER JOIN gateway buyerGateway ON a.buyer_gateway_id = buyerGateway.ID
         <where>
             <if test="null != orderId and '' != orderId">
-                AND a.ID = #{orderId}
+                AND a.id = #{orderId}
             </if>
             <if test="null != userId and '' != userId">
-                AND a.USER_ID = #{userId}
+                AND a.user_id = #{userId}
             </if>
         </where>
     </select>
