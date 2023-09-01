@@ -34,6 +34,7 @@ public enum ResultCode {
     ORDER_LOCK_BY_ANOTHER("2001", "此订单已被其他会员操作"),
     BALANCE_NOT_ENOUGH("2002", "馀额不足"),
     GATEWAY_TYPE_NOT_EXIST("2003", "付款方式不存在"),
+    ORDER_FINISH("2004", "订单已完成"),
     ;
 
     public final String code;

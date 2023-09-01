@@ -53,11 +53,12 @@ public interface OrderConstant {
      */
     enum OrderStatusEnum {
 
-        ON_ORDER(1, "已下單"),
-        UNCHECK(2, "已付款，待賣家確認"),
-        APPEAL(3, "申訴中"),
-        FINISH(4, "已完成"),
-        CANCEL(5, "已取消"),
+        ON_ORDER(1, "已下單，待賣家確認"),
+        SELLER_CHECKED(2, "賣家已確認，待轉帳"),
+        ORDER_VERIFY(3, "已付款，待賣家確認"),
+        APPEAL(4, "申訴中"),
+        FINISH(5, "已完成"),
+        CANCEL(6, "已取消"),
         ;
         public final Integer code;
         public final String desc;
