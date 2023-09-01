@@ -1,5 +1,6 @@
 package com.icchance.q91.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -17,7 +18,7 @@ public class TransactionDTO {
     private String token;
 
     private Integer id;
-
+    @JsonIgnore
     private String cert;
 
 }

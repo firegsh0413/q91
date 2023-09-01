@@ -1,6 +1,7 @@
 #server settings
 server:
   port: 8080
+  max-http-header-size: 8192
 
 spring:
   application:
@@ -10,13 +11,15 @@ spring:
     url: jdbc:mysql://${q91.db.ip}/${q91.db.name}
     username: root
     password: root
+  main:
+    lazy-initialization: false
   # Redis
-  #redis:
-   # database: 0
-   # host: 127.0.0.1
-   # port: 6379
-   # password:  # 密碼
-   # timeout: 10000ms # 連接超時時長
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:  # 密碼
+    timeout: 10000ms # 連接超時時長
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*.xml #Mapper掃描
@@ -67,7 +70,10 @@ logging:
   level:
     root: debug
     org:
-      apache: trace
+      apache:
+        tomcat: INFO
+        util:
+          net: WARN
       springframework:
         boot:
           autoconfigure: ERROR
