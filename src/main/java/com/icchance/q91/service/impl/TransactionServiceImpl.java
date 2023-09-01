@@ -346,6 +346,9 @@ public class TransactionServiceImpl implements TransactionService {
     public Result verifyOrder(OrderDTO orderDTO) {
         Integer userId = jwtUtil.parseUserId(orderDTO.getToken());
         OrderVO orderVO = orderService.getDetail(userId, orderDTO.getId());
+        if (Objects.isNull(orderVO)) {
+            return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+        }
         orderService.update(orderDTO);
         // 訂單狀態更新
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()

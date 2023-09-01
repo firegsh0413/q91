@@ -1,11 +1,16 @@
 package com.icchance.q91.interceptor;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icchance.q91.annotation.PassToken;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.model.User;
+import com.icchance.q91.filter.ParamsRequestFilter;
 import com.icchance.q91.service.AuthUserService;
 import com.icchance.q91.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -40,7 +46,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        String token = request.getParameter("token");
+        String token = "";
+        // 用過濾器獲取requestBody中json格式傳遞的內容，這裡只獲取token做為jwt檢核使用
+        if (request instanceof ParamsRequestFilter.RequestWrapper) {
+            ParamsRequestFilter.RequestWrapper restoreRequest = (ParamsRequestFilter.RequestWrapper) request;
+            JSONObject jsonObject = JSON.parseObject(restoreRequest.getBody());
+            token = jsonObject.get("token").toString();
+        }
+
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
