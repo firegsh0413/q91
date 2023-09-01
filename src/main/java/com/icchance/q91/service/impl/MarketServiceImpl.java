@@ -150,17 +150,20 @@ public class MarketServiceImpl implements MarketService {
     public Result buy(MarketInfoDTO marketInfoDTO) {
         Integer userId = jwtUtil.parseUserId(marketInfoDTO.getToken());
         // 1.驗證是否該掛單已被其他會員操作購買鎖定
-        // 掛單狀態不為出售中
         MarketVO pendingOrder = pendingOrderService.getMarketDetail(null, marketInfoDTO.getId());
         if (Objects.isNull(pendingOrder)) {
             return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
         }
-        if (OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
+        // 掛單狀態不為掛賣中
+        if (!OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
             return Result.builder().repCode(ResultCode.ORDER_LOCK_BY_ANOTHER.code).repMsg(ResultCode.ORDER_LOCK_BY_ANOTHER.msg).build();
         }
         Gateway buyerGateway = gatewayService.getGatewayByType(userId, marketInfoDTO.getType());
         if (Objects.isNull(buyerGateway)) {
             return Result.builder().repCode(ResultCode.GATEWAY_TYPE_NOT_EXIST.code).repMsg(ResultCode.GATEWAY_TYPE_NOT_EXIST.msg).build();
+        }
+        if (marketInfoDTO.getAmount().compareTo(pendingOrder.getAmount()) > 0) {
+            return Result.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
         }
         Gateway sellerGateway = gatewayService.getGatewayByType(pendingOrder.getUserId(), marketInfoDTO.getType());
         BigDecimal amount = marketInfoDTO.getAmount();
@@ -171,14 +174,14 @@ public class MarketServiceImpl implements MarketService {
                 .userId(userId)
                 .pendingOrderId(marketInfoDTO.getId())
                 .sellerId(pendingOrder.getSellerId())
-                .status(OrderConstant.OrderStatusEnum.ON_ORDER.code)
                 .buyerGatewayId(Optional.of(buyerGateway).map(Gateway::getId).orElse(null))
                 .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
                 .amount(amount)
                 .tradeTime(tradeTime)
-                .cutOffTime(tradeTime.plusMinutes(10))
+                //.cutOffTime(tradeTime.plusMinutes(10))
                 .build();
         Order order = orderService.create(orderDTO);
+        // 2-2.更新掛單狀態
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(marketInfoDTO.getId())
                 .status(OrderConstant.PendingOrderStatusEnum.ON_ORDER.code)
@@ -188,20 +191,11 @@ public class MarketServiceImpl implements MarketService {
                 .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
                 .tradeTime(tradeTime)
                 .build();
-        // 2-2.更新掛單狀態
         pendingOrderService.update(pendingOrderDTO);
-        // 3-1.更新買方錢包 交易中+額度
+        // 3.更新買方錢包 交易中+額度
         UserBalance buyerBalance = userBalanceService.getEntity(userId);
         buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().add(amount));
         userBalanceService.updateEntity(buyerBalance);
-        // 3-2.更新賣方錢包 賣單餘額->交易中
-        UserBalance sellerBalance = userBalanceService.getEntity(pendingOrder.getSellerId());
-        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(amount));
-        if (amount.compareTo(sellerBalance.getPendingBalance()) > 0) {
-            return Result.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
-        }
-        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
-        userBalanceService.updateEntity(sellerBalance);
         // 4.建立訂單(錢包)紀錄
         OrderRecord orderRecord = OrderRecord.builder()
                 .userId(userId)

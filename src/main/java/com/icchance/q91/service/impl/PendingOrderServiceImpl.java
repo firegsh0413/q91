@@ -192,6 +192,8 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
                 .id(orderId)
                 .status(OrderConstant.PendingOrderStatusEnum.NO_PAY.code)
                 .updateTime(LocalDateTime.now())
+                // 掛單下單時間為確認訂單的十分後
+                .tradeTime(LocalDateTime.now().plusMinutes(10))
                 .build();
         return baseMapper.updateById(pendingOrder);
     }

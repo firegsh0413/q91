@@ -3,21 +3,16 @@ package com.icchance.q91.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.entity.dto.OrderDTO;
-import com.icchance.q91.entity.model.Gateway;
 import com.icchance.q91.entity.model.Order;
-import com.icchance.q91.entity.model.PendingOrder;
 import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.mapper.OrderMapper;
 import com.icchance.q91.service.OrderService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <p>
@@ -94,7 +89,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public int uploadCert(Integer userId, Integer orderId, String cert) {
         Order order = Order.builder()
                 .id(orderId)
-                .status(OrderConstant.OrderStatusEnum.UNCHECK.code)
+                .status(OrderConstant.OrderStatusEnum.ORDER_VERIFY.code)
                 .updateTime(LocalDateTime.now())
                 .cert(cert)
                 .build();

@@ -13,6 +13,7 @@ import com.icchance.q91.util.JwtUtil;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -97,12 +98,23 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(pendingOrderVO)) {
             return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
         }
+        if (OrderConstant.PendingOrderStatusEnum.FINISH.code.equals(pendingOrderVO.getStatus())) {
+            return Result.builder().repCode(ResultCode.ORDER_FINISH.code).repMsg(ResultCode.ORDER_FINISH.msg).build();
+        }
         BigDecimal amount = pendingOrderVO.getAmount();
         pendingOrderService.cancel(userId, transactionDTO.getId());
-        // 取消掛單 賣方錢包額度要回歸 賣單餘額->可售數量
+        // 取消掛單 賣方錢包額度要回歸
+        // 1.掛單狀態為掛賣中 賣單餘額->可售數量
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
-        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
-        sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().add(amount));
+        if (OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrderVO.getStatus())) {
+            sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
+            sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().add(amount));
+        }
+        // 2.掛單狀態為有人下訂 交易中->可售數量
+        else {
+            sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().subtract(amount));
+            sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().add(amount));
+        }
         userBalanceService.updateEntity(sellerBalance);
         // 如果有買方 已下訂訂單取消
         // 錢包額度 交易中額度扣除
@@ -129,12 +141,22 @@ public class TransactionServiceImpl implements TransactionService {
     public Result checkPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
-        pendingOrderService.check(userId, transactionDTO.getId());
-        // 掛單有人下訂 用戶錢包額度 賣單餘額->交易中
-        UserBalance sellerBalance = userBalanceService.getEntity(userId);
-        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(pendingOrderVO.getAmount()));
-        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(pendingOrderVO.getAmount()));
-        userBalanceService.updateEntity(sellerBalance);
+        // 掛單狀態為有人下單
+        if (Objects.nonNull(pendingOrderVO) && OrderConstant.PendingOrderStatusEnum.ON_ORDER.code.equals(pendingOrderVO.getStatus())) {
+            pendingOrderService.check(userId, transactionDTO.getId());
+            // 更新訂單狀態
+            Order order = Order.builder()
+                    .id(pendingOrderVO.getOrderId())
+                    .status(OrderConstant.OrderStatusEnum.SELLER_CHECKED.code)
+                    .updateTime(LocalDateTime.now())
+                    .cutOffTime(LocalDateTime.now().plusMinutes(10)).build();
+            orderService.updateById(order);
+            // 掛單有人下訂 用戶錢包額度 賣單餘額->交易中
+            UserBalance sellerBalance = userBalanceService.getEntity(userId);
+            sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(pendingOrderVO.getAmount()));
+            sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(pendingOrderVO.getAmount()));
+            userBalanceService.updateEntity(sellerBalance);
+        }
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
@@ -153,7 +175,13 @@ public class TransactionServiceImpl implements TransactionService {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
         BigDecimal amount = pendingOrderVO.getAmount();
-        // TODO 判斷掛單狀態為買家已付款
+        // 判斷掛單狀態是否為買家已付款
+        if (!OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code.equals(pendingOrderVO.getStatus())) {
+            return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
+        }
+/*        if (LocalDateTime.now().isAfter(pendingOrderVO.getCutOffTime())) {
+
+        }*/
         // 掛單有人下訂 用戶錢包額度 從交易中扣除
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
         sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().subtract(amount));
@@ -238,6 +266,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .buyerId(null)
                 .buyerGatewayId(null)
                 .tradeTime(null)
+                //.cutOffTime(null)
                 .build();
         pendingOrderService.update(pendingOrderDTO);
         UserBalance sellBalance = userBalanceService.getEntity(orderVO.getSellerId());
@@ -349,6 +378,10 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(orderVO)) {
             return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
         }
+        // TODO 判斷超過截止時間 取消訂單
+        if (LocalDateTime.now().isAfter(orderVO.getCutOffTime())) {
+            this.cancelOrder(transactionDTO);
+        }
         //OrderDTO orderDTO = OrderDTO.builder().id(transactionDTO.getId()).cert(transactionDTO.getCert()).build();
         //orderService.update(orderDTO);
         orderService.uploadCert(userId, orderVO.getId(), transactionDTO.getCert());
@@ -356,6 +389,7 @@ public class TransactionServiceImpl implements TransactionService {
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(orderVO.getPendingOrderId())
                 .status(OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code)
+                //.cutOffTime(LocalDateTime.now().plusMinutes(10))
                 .cert(transactionDTO.getCert())
                 .build();
         pendingOrderService.update(pendingOrderDTO);
