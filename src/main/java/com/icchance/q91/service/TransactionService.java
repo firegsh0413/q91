@@ -164,11 +164,11 @@ public interface TransactionService {
      * <p>
      * 上傳支付憑證
      * </p>
-     * @param orderDTO OrderDTO
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */
-    Result verifyOrder(OrderDTO orderDTO);
+    Result verifyOrder(TransactionDTO transactionDTO);
 
 }

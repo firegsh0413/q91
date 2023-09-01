@@ -55,6 +55,8 @@
         <result column="buyerGatewayId" jdbcType="INTEGER" property="buyerGatewayId" />
         <result column="amount" jdbcType="DECIMAL" property="amount" />
         <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="buyer_id" jdbcType="INTEGER" property="buyerId" />
+        <result column="order_id" jdbcType="INTEGER" property="orderId" />
         <collection property="sellerInfo" ofType="com.icchance.q91.entity.model.Gateway">
             <id column="sellerGatewayId" property="id" jdbcType="INTEGER" />
             <result column="sellerId" property="userId" jdbcType="INTEGER" />
@@ -174,6 +176,7 @@
         <result column="availableGatewayStr" jdbcType="VARCHAR" property="availableGatewayStr" />
         <result column="amount" jdbcType="DECIMAL" property="amount" />
         <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="status" jdbcType="INTEGER" property="status" />
 <!--        <collection property="gatewayList" ofType="com.icchance.q91.entity.model.Gateway">
             <id column="SELLER_GATEWAY_ID" property="id" jdbcType="INTEGER" />
             <result column="TYPE" property="type" jdbcType="INTEGER" />

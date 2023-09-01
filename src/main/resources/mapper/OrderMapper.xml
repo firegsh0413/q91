@@ -70,6 +70,7 @@
         <result column="buyerGatewayId" jdbcType="INTEGER" property="buyerGatewayId" />
         <result column="amount" jdbcType="DECIMAL" property="amount" />
         <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+        <result column="pending_order_id" jdbcType="INTEGER" property="pendingOrderId" />
         <collection property="sellerInfo" ofType="com.icchance.q91.entity.model.Gateway">
             <id column="sellerGatewayId" property="id" jdbcType="INTEGER" />
             <result column="sellerId" property="userId" jdbcType="INTEGER" />

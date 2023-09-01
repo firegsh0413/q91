@@ -337,24 +337,26 @@ public class TransactionServiceImpl implements TransactionService {
      * <p>
      * 上傳支付憑證
      * </p>
-     * @param orderDTO OrderDTO
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */
     @Override
-    public Result verifyOrder(OrderDTO orderDTO) {
-        Integer userId = jwtUtil.parseUserId(orderDTO.getToken());
-        OrderVO orderVO = orderService.getDetail(userId, orderDTO.getId());
+    public Result verifyOrder(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
         if (Objects.isNull(orderVO)) {
             return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
         }
-        orderService.update(orderDTO);
+        //OrderDTO orderDTO = OrderDTO.builder().id(transactionDTO.getId()).cert(transactionDTO.getCert()).build();
+        //orderService.update(orderDTO);
+        orderService.uploadCert(userId, orderVO.getId(), transactionDTO.getCert());
         // 訂單狀態更新
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(orderVO.getPendingOrderId())
                 .status(OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code)
-                .cert(orderDTO.getCert())
+                .cert(transactionDTO.getCert())
                 .build();
         pendingOrderService.update(pendingOrderDTO);
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();

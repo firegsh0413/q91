@@ -155,7 +155,7 @@ public class MarketServiceImpl implements MarketService {
         if (Objects.isNull(pendingOrder)) {
             return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
         }
-        if (!OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
+        if (OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
             return Result.builder().repCode(ResultCode.ORDER_LOCK_BY_ANOTHER.code).repMsg(ResultCode.ORDER_LOCK_BY_ANOTHER.msg).build();
         }
         Gateway buyerGateway = gatewayService.getGatewayByType(userId, marketInfoDTO.getType());
