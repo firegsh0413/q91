@@ -16,9 +16,9 @@ import lombok.experimental.SuperBuilder;
 public class TransactionDTO {
 
     private String token;
-
+    /** 訂單uid */
     private Integer id;
-    @JsonIgnore
+    /** 支付憑證 */
     private String cert;
 
 }

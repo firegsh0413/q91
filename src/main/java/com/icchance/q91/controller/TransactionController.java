@@ -230,14 +230,14 @@ public class TransactionController extends BaseController {
      * <p>
      * 上傳支付憑證
      * </p>
-     * @param orderDTO OrderDTO
+     * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/11 11:54:50
      */
     @UserLoginToken
     @PostMapping("/order/verify")
-    public Result verifyOrder(@RequestBody OrderDTO orderDTO) {
-        return transactionService.verifyOrder(orderDTO);
+    public Result verifyOrder(@RequestBody TransactionDTO transactionDTO) {
+        return transactionService.verifyOrder(transactionDTO);
     }
 }

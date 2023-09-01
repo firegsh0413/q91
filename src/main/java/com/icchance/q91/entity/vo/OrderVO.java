@@ -3,6 +3,7 @@ package com.icchance.q91.entity.vo;
 import com.icchance.q91.entity.model.Gateway;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 public class OrderVO extends BaseOrderVO {
 
     /** 截止轉帳時間 */
-    private Long cutOffTime;
+    private LocalDateTime cutOffTime;
     /** 賣方會員暱稱 */
     private String sellerUsername;
     /** 賣方會員uid */
