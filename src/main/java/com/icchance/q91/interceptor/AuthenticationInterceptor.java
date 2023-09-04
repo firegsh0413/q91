@@ -69,6 +69,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                     // 攔截
                     return false;
                 }
+                log.info("從request取得的JSON內容 = " + JSON.toJSONString(jsonObject));
                 token = jsonObject.get("token").toString();
                 if (StringUtils.isBlank(token)) {
                     return false;
