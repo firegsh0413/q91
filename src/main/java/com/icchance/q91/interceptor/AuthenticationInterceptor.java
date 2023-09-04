@@ -47,13 +47,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String token = "";
-        // 用過濾器獲取requestBody中json格式傳遞的內容，這裡只獲取token做為jwt檢核使用
-        if (request instanceof ParamsRequestFilter.RequestWrapper) {
-            ParamsRequestFilter.RequestWrapper restoreRequest = (ParamsRequestFilter.RequestWrapper) request;
-            JSONObject jsonObject = JSON.parseObject(restoreRequest.getBody());
-            token = jsonObject.get("token").toString();
-        }
-
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
@@ -71,6 +64,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (StringUtils.isBlank(token)) {
                 // 攔截
                 return false;
+            }
+            // 用過濾器獲取requestBody中json格式傳遞的內容，這裡只獲取token做為jwt檢核使用
+            if (request instanceof ParamsRequestFilter.RequestWrapper) {
+                ParamsRequestFilter.RequestWrapper restoreRequest = (ParamsRequestFilter.RequestWrapper) request;
+                JSONObject jsonObject = JSON.parseObject(restoreRequest.getBody());
+
+                token = Objects.nonNull(jsonObject) ? jsonObject.get("token").toString() : "";
             }
             String account;
             try {
