@@ -90,3 +90,25 @@ For open source projects, say how it is licensed.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+
+## Docker 環境
+
+    1. docker image 的名稱在 build.sh 指定為 apifront
+
+    2. docker image 的版號, 由所產生的在 target 的 jar 檔名取得
+
+    3. 需先登入到 harbor, 域名為 docker-php.icchance.com.tw
+
+    4. 建立本地 image
+        sh build.sh
+        
+    5. 建立本地 image 並上傳到 harbor, 加上參數 -p
+        sh build.sh -p
+
+    6. 使用己產生 /target 目錄建立 image, 加上參數 -s
+        sh build.sh -s
+
+    7. 使用測試 image 建立容器, image名為 "docker-php.icchance.com.tw/java/q91/apifront", 版本為 "0.0.1", 服務埠為 "8080"
+        docker run -it --rm -p 8080:80 docker-php.icchance.com.tw/java/q91/apifront:0.0.1
+
