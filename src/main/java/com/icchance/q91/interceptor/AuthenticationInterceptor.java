@@ -61,16 +61,18 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
         // TODO 應該改為login時才去DB確認user資料
         if (method.isAnnotationPresent(UserLoginToken.class)) {
-            if (StringUtils.isBlank(token)) {
-                // 攔截
-                return false;
-            }
             // 用過濾器獲取requestBody中json格式傳遞的內容，這裡只獲取token做為jwt檢核使用
             if (request instanceof ParamsRequestFilter.RequestWrapper) {
                 ParamsRequestFilter.RequestWrapper restoreRequest = (ParamsRequestFilter.RequestWrapper) request;
                 JSONObject jsonObject = JSON.parseObject(restoreRequest.getBody());
-
-                token = Objects.nonNull(jsonObject) ? jsonObject.get("token").toString() : "";
+                if (Objects.isNull(jsonObject)) {
+                    // 攔截
+                    return false;
+                }
+                token = jsonObject.get("token").toString();
+                if (StringUtils.isBlank(token)) {
+                    return false;
+                }
             }
             String account;
             try {
