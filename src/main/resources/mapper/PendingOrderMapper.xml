@@ -51,6 +51,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="trade_time" jdbcType="TIMESTAMP" property="tradeTime" />
+<!--        <result column="cut_off_time" jdbcType="TIMESTAMP" property="cutOffTime" />-->
         <result column="sellerGatewayId" jdbcType="INTEGER" property="sellerGatewayId" />
         <result column="buyerGatewayId" jdbcType="INTEGER" property="buyerGatewayId" />
         <result column="amount" jdbcType="DECIMAL" property="amount" />
@@ -142,7 +143,7 @@
         INNER JOIN gateway ON b.gateway_id = gateway.id
         <where>
             <if test="null != dto.status and '' != dto.status" >
-                AND a.dto.status = #{dto.status}
+                AND a.status = #{dto.status}
             </if>
             <if test="null != dto.id and '' != dto.id">
                 AND a.id = #{dto.id}
