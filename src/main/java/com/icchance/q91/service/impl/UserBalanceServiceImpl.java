@@ -105,6 +105,14 @@ public class UserBalanceServiceImpl extends ServiceImpl<UserBalanceMapper, UserB
         return baseMapper.updateById(userBalance);
     }
 
+    /**
+     * <p>
+     * 模擬用戶儲值（內部使用）
+     * </p>
+     * @param userBalanceDTO UserBalanceDTO
+     * @author 6687353
+     * @since 2023/9/5 13:47:01
+     */
     @Override
     public void update(UserBalanceDTO userBalanceDTO) {
         LambdaUpdateWrapper<UserBalance> updateWrapper = new LambdaUpdateWrapper<>();

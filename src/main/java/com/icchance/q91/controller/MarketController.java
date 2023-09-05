@@ -71,7 +71,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:11:05
      */
     @UserLoginToken
-    @PostMapping("/pendingOrder")
+    @GetMapping("/pendingOrder")
     public Result getPendingOrder(@RequestBody MarketDTO marketDTO) {
         return marketService.getPendingOrder(marketDTO);
     }

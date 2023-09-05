@@ -70,5 +70,13 @@ public interface UserBalanceService extends IService<UserBalance> {
      */
     int updateEntity(UserBalance userBalance);
 
+    /**
+     * <p>
+     * 模擬用戶儲值（內部使用）
+     * </p>
+     * @param userBalanceDTO UserBalanceDTO
+     * @author 6687353
+     * @since 2023/9/5 13:47:01
+     */
     void update(UserBalanceDTO userBalanceDTO);
 }
