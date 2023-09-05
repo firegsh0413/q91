@@ -152,7 +152,7 @@
                 AND a.user_id != #{dto.userId}
             </if>
             <if test="null != dto.min and null != dto.max">
-                AND a.amount &gt; #{dto.min} AND a.amount &lt; #{dto.max}
+                AND a.amount &gt;= #{dto.min} AND a.amount &lt;= #{dto.max}
             </if>
 <!--            <if test="null != dto.gatewayType and dto.gatewayType.size > 0">
                 AND gateway.TYPE NOT IN
