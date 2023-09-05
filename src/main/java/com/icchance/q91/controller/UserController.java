@@ -168,6 +168,15 @@ public class UserController extends BaseController {
         return userService.updateUserInfo(userInfoDTO);
     }
 
+    /**
+     * <p>
+     * 模擬用戶儲值（內部使用）
+     * </p>
+     * @param userBalanceDTO UserBalanceDTO
+     * @return com.icchance.q91.common.result.Result
+     * @author 6687353
+     * @since 2023/9/5 13:47:01
+     */
     @PassToken
     @PostMapping("/balance/update")
     public Result updateBalance(@RequestBody UserBalanceDTO userBalanceDTO) {
