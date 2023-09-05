@@ -64,6 +64,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="trade_time" jdbcType="TIMESTAMP" property="tradeTime" />
+        <result column="cut_off_time" jdbcType="TIMESTAMP" property="cutOffTime" />
         <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
         <result column="seller_username" jdbcType="VARCHAR" property="sellerUsername" />
         <result column="sellerGatewayId" jdbcType="INTEGER" property="sellerGatewayId" />
