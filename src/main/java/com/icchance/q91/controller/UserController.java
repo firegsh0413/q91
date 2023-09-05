@@ -3,10 +3,8 @@ package com.icchance.q91.controller;
 import com.icchance.q91.annotation.PassToken;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
-import com.icchance.q91.entity.dto.BaseDTO;
-import com.icchance.q91.entity.dto.CertificateDTO;
-import com.icchance.q91.entity.dto.UserDTO;
-import com.icchance.q91.entity.dto.UserInfoDTO;
+import com.icchance.q91.entity.dto.*;
+import com.icchance.q91.service.UserBalanceService;
 import com.icchance.q91.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +23,11 @@ public class UserController extends BaseController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserBalanceService userBalanceService;
+
+    public UserController(UserService userService, UserBalanceService userBalanceService) {
         this.userService = userService;
+        this.userBalanceService = userBalanceService;
     }
 
     static final String PREFIX = "/user";
@@ -165,5 +166,12 @@ public class UserController extends BaseController {
     @PostMapping("/info/update")
     public Result updateUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
         return userService.updateUserInfo(userInfoDTO);
+    }
+
+    @PassToken
+    @PostMapping("/balance/update")
+    public Result updateBalance(@RequestBody UserBalanceDTO userBalanceDTO) {
+        userBalanceService.update(userBalanceDTO);
+        return SUCCESS;
     }
 }

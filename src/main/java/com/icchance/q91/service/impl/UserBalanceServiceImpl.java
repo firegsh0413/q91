@@ -1,5 +1,7 @@
 package com.icchance.q91.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.icchance.q91.entity.dto.UserBalanceDTO;
@@ -101,5 +103,17 @@ public class UserBalanceServiceImpl extends ServiceImpl<UserBalanceMapper, UserB
     public int updateEntity(UserBalance userBalance) {
         userBalance.setUpdateTime(LocalDateTime.now());
         return baseMapper.updateById(userBalance);
+    }
+
+    @Override
+    public void update(UserBalanceDTO userBalanceDTO) {
+        LambdaUpdateWrapper<UserBalance> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(UserBalance::getUserId, userBalanceDTO.getUserId())
+                .set(UserBalance::getBalance, userBalanceDTO.getBalance())
+                .set(UserBalance::getAvailableAmount, userBalanceDTO.getAvailableAmount())
+                .set(UserBalance::getPendingBalance, userBalanceDTO.getPendingBalance())
+                .set(UserBalance::getTradingAmount, userBalanceDTO.getTradingAmount())
+                .set(UserBalance::getUpdateTime, LocalDateTime.now());
+        this.userBalanceMapper.update(null, updateWrapper);
     }
 }

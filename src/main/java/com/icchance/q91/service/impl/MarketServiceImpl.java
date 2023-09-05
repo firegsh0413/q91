@@ -65,8 +65,8 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public Result getPendingOrderList(MarketDTO marketDTO) {
         Integer userId = jwtUtil.parseUserId(marketDTO.getToken());
-        marketDTO.setUserId(userId);
-        marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
+        //marketDTO.setUserId(userId);
+        //marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
         List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
         if (CollectionUtils.isNotEmpty(pendingOrderList)) {
             pendingOrderList.forEach(marketVO -> {
@@ -80,7 +80,7 @@ public class MarketServiceImpl implements MarketService {
         // 暫時過濾收款方式
         List<MarketVO> result = pendingOrderList.stream().filter(marketVO -> {
             gatewayType.removeAll(marketVO.getAvailableGateway());
-            return CollectionUtils.isNotEmpty(gatewayType);
+            return CollectionUtils.isEmpty(gatewayType);
         }).collect(Collectors.toList());
         return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(result).build();
     }

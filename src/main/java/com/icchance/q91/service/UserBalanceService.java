@@ -69,4 +69,6 @@ public interface UserBalanceService extends IService<UserBalance> {
      * @since 2023/8/24 13:18:45
      */
     int updateEntity(UserBalance userBalance);
+
+    void update(UserBalanceDTO userBalanceDTO);
 }
