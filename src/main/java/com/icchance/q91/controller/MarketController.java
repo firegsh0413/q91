@@ -2,15 +2,16 @@ package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.MarketInfoDTO;
+import com.icchance.q91.entity.vo.CheckGatewayVO;
+import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.service.MarketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 /**
  * <p>
@@ -42,8 +43,8 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/pendingOrder/list")
-    public Result getMarketList(@RequestBody MarketDTO marketDTO) {
-        return marketService.getPendingOrderList(marketDTO);
+    public Result<List<MarketVO>> getMarketList(@RequestBody MarketDTO marketDTO) {
+        return SUCCESS_DATA.repData(marketService.getPendingOrderList(marketDTO)).build();
     }
 
     /**
@@ -57,8 +58,8 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/checkGateway")
-    public Result checkGateway(@RequestBody MarketInfoDTO marketInfoDTO) {
-        return marketService.checkGateway(marketInfoDTO);
+    public Result<CheckGatewayVO> checkGateway(@RequestBody MarketInfoDTO marketInfoDTO) {
+        return SUCCESS_DATA.repData(marketService.checkGateway(marketInfoDTO)).build();
     }
 
     /**
@@ -72,8 +73,8 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/pendingOrder")
-    public Result getPendingOrder(@RequestBody MarketDTO marketDTO) {
-        return marketService.getPendingOrder(marketDTO);
+    public Result<MarketVO> getPendingOrder(@RequestBody MarketDTO marketDTO) {
+        return SUCCESS_DATA.repData(marketService.getPendingOrder(marketDTO)).build();
     }
 
     /**
@@ -87,8 +88,9 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/buy")
-    public Result buy(@RequestBody MarketInfoDTO marketInfoDTO) {
-        return marketService.buy(marketInfoDTO);
+    public Result<Void> buy(@RequestBody MarketInfoDTO marketInfoDTO) {
+        marketService.buy(marketInfoDTO);
+        return SUCCESS;
     }
 
     /**
@@ -102,7 +104,8 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/sell")
-    public Result sell(@RequestBody MarketInfoDTO marketInfoDTO) {
-        return marketService.sell(marketInfoDTO);
+    public Result<Void> sell(@RequestBody MarketInfoDTO marketInfoDTO) {
+        marketService.sell(marketInfoDTO);
+        return SUCCESS;
     }
 }

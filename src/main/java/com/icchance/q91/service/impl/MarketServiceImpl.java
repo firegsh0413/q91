@@ -2,7 +2,9 @@ package com.icchance.q91.service.impl;
 
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
+import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.MarketInfoDTO;
 import com.icchance.q91.entity.dto.OrderDTO;
@@ -11,6 +13,7 @@ import com.icchance.q91.entity.model.Gateway;
 import com.icchance.q91.entity.model.Order;
 import com.icchance.q91.entity.model.OrderRecord;
 import com.icchance.q91.entity.model.UserBalance;
+import com.icchance.q91.entity.vo.CheckGatewayVO;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.service.*;
 import com.icchance.q91.util.JwtUtil;
@@ -63,10 +66,10 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/4 16:35:34
      */
     @Override
-    public Result getPendingOrderList(MarketDTO marketDTO) {
+    public List<MarketVO> getPendingOrderList(MarketDTO marketDTO) {
         Integer userId = jwtUtil.parseUserId(marketDTO.getToken());
-        //marketDTO.setUserId(userId);
-        //marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
+        marketDTO.setUserId(userId);
+        marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
         List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
         if (CollectionUtils.isNotEmpty(pendingOrderList)) {
             pendingOrderList.forEach(marketVO -> {
@@ -78,11 +81,10 @@ public class MarketServiceImpl implements MarketService {
         }
         List<Integer> gatewayType = marketDTO.getGatewayType();
         // 暫時過濾收款方式
-        List<MarketVO> result = pendingOrderList.stream().filter(marketVO -> {
+        return pendingOrderList.stream().filter(marketVO -> {
             gatewayType.removeAll(marketVO.getAvailableGateway());
             return CollectionUtils.isEmpty(gatewayType);
         }).collect(Collectors.toList());
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(result).build();
     }
 
     /**
@@ -95,7 +97,7 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/22 16:10:40
      */
     @Override
-    public Result checkGateway(MarketInfoDTO marketInfoDTO) {
+    public CheckGatewayVO checkGateway(MarketInfoDTO marketInfoDTO) {
         Integer userId = jwtUtil.parseUserId(marketInfoDTO.getToken());
         Set<Integer> userAvailableGateway = gatewayService.getAvailableGateway(userId);
         int check = 0;
@@ -105,7 +107,7 @@ public class MarketServiceImpl implements MarketService {
                 break;
             }
         }
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(check).build();
+        return CheckGatewayVO.builder().result(check).build();
     }
 
     /**
@@ -118,7 +120,7 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/22 16:11:37
      */
     @Override
-    public Result getPendingOrder(MarketDTO marketDTO) {
+    public MarketVO getPendingOrder(MarketDTO marketDTO) {
         Integer userId = jwtUtil.parseUserId(marketDTO.getToken());
         marketDTO.setUserId(userId);
         List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
@@ -129,12 +131,9 @@ public class MarketServiceImpl implements MarketService {
                     marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
                 }
             });
-            return Result.builder().repCode(ResultCode.SUCCESS.code)
-                    .repMsg(ResultCode.SUCCESS.msg)
-                    .repData(pendingOrderList.get(0))
-                    .build();
+            return pendingOrderList.get(0);
         }
-        return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+        return null;
     }
 
     /**
@@ -147,23 +146,23 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/22 16:12:14
      */
     @Override
-    public Result buy(MarketInfoDTO marketInfoDTO) {
+    public void buy(MarketInfoDTO marketInfoDTO) {
         Integer userId = jwtUtil.parseUserId(marketInfoDTO.getToken());
         // 1.驗證是否該掛單已被其他會員操作購買鎖定
         MarketVO pendingOrder = pendingOrderService.getMarketDetail(null, marketInfoDTO.getId());
         if (Objects.isNull(pendingOrder)) {
-            return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
         // 掛單狀態不為掛賣中
         if (!OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
-            return Result.builder().repCode(ResultCode.ORDER_LOCK_BY_ANOTHER.code).repMsg(ResultCode.ORDER_LOCK_BY_ANOTHER.msg).build();
+            throw new ServiceException(ResultCode.ORDER_LOCK_BY_ANOTHER);
         }
         Gateway buyerGateway = gatewayService.getGatewayByType(userId, marketInfoDTO.getType());
         if (Objects.isNull(buyerGateway)) {
-            return Result.builder().repCode(ResultCode.GATEWAY_TYPE_NOT_EXIST.code).repMsg(ResultCode.GATEWAY_TYPE_NOT_EXIST.msg).build();
+            throw new ServiceException(ResultCode.GATEWAY_TYPE_NOT_EXIST);
         }
         if (marketInfoDTO.getAmount().compareTo(pendingOrder.getAmount()) > 0) {
-            return Result.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
+            throw new ServiceException(ResultCode.BALANCE_NOT_ENOUGH);
         }
         Gateway sellerGateway = gatewayService.getGatewayByType(pendingOrder.getUserId(), marketInfoDTO.getType());
         BigDecimal amount = marketInfoDTO.getAmount();
@@ -205,7 +204,6 @@ public class MarketServiceImpl implements MarketService {
                 .createTime(tradeTime)
                 .build();
         orderRecordService.save(orderRecord);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -218,7 +216,7 @@ public class MarketServiceImpl implements MarketService {
      * @since 2023/8/22 16:15:27
      */
     @Override
-    public Result sell(MarketInfoDTO marketInfoDTO) {
+    public void sell(MarketInfoDTO marketInfoDTO) {
         Integer userId = jwtUtil.parseUserId(marketInfoDTO.getToken());
         BigDecimal amount = marketInfoDTO.getAmount();
         // 1.建立掛單
@@ -234,7 +232,7 @@ public class MarketServiceImpl implements MarketService {
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
         sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().add(amount));
         if (amount.compareTo(sellerBalance.getAvailableAmount()) > 0) {
-            return Result.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
+            //return ResultSuper.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
         }
         sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().subtract(amount));
         userBalanceService.updateEntity(sellerBalance);
@@ -247,6 +245,5 @@ public class MarketServiceImpl implements MarketService {
                 .createTime(LocalDateTime.now())
                 .build();
         orderRecordService.save(orderRecord);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 }

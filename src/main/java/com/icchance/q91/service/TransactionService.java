@@ -1,10 +1,15 @@
 package com.icchance.q91.service;
 
-import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.BaseDTO;
 import com.icchance.q91.entity.dto.GatewayDTO;
-import com.icchance.q91.entity.dto.OrderDTO;
 import com.icchance.q91.entity.dto.TransactionDTO;
+import com.icchance.q91.entity.model.Gateway;
+import com.icchance.q91.entity.model.OrderRecord;
+import com.icchance.q91.entity.vo.OrderVO;
+import com.icchance.q91.entity.vo.PendingOrderVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -24,7 +29,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/18 16:55:29
      */
-    Result getPendingOrderList(BaseDTO baseDTO);
+    List<PendingOrderVO> getPendingOrderList(BaseDTO baseDTO);
 
     /**
      * <p>
@@ -35,7 +40,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/18 16:55:35
      */
-    Result getPendingOrderDetail(TransactionDTO transactionDTO);
+    PendingOrderVO getPendingOrderDetail(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -46,7 +51,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 09:33:44
      */
-    Result cancelPendingOrder(TransactionDTO transactionDTO);
+    void cancelPendingOrder(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -58,7 +63,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 11:25:58
      */
-    Result checkPendingOrder(TransactionDTO transactionDTO);
+    void checkPendingOrder(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -70,7 +75,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 11:49:56
      */
-    Result verifyPendingOrder(TransactionDTO transactionDTO);
+    void verifyPendingOrder(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -81,7 +86,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/11 11:55:44
      */
-    Result getOrderList(BaseDTO baseDTO);
+    List<OrderVO> getOrderList(BaseDTO baseDTO);
 
     /**
      * <p>
@@ -92,7 +97,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/11 11:55:14
      */
-    Result getOrderDetail(TransactionDTO transactionDTO);
+    OrderVO getOrderDetail(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -103,7 +108,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 14:17:35
      */
-    Result cancelOrder(TransactionDTO transactionDTO);
+    void cancelOrder(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -114,7 +119,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 14:23:42
      */
-    Result appealOrder(TransactionDTO transactionDTO);
+    void appealOrder(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -125,7 +130,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 14:38:13
      */
-    Result getRecord(BaseDTO baseDTO);
+    List<OrderRecord> getRecord(BaseDTO baseDTO);
 
     /**
      * <p>
@@ -136,7 +141,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/7/31 13:26:44
      */
-    Result getGatewayList(BaseDTO baseDTO);
+    List<Gateway> getGatewayList(BaseDTO baseDTO);
 
     /**
      * <p>
@@ -147,7 +152,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/7/31 13:27:53
      */
-    Result createGateway(GatewayDTO gatewayDTO);
+    void createGateway(GatewayDTO gatewayDTO);
 
     /**
      * <p>
@@ -158,7 +163,7 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/7/31 13:29:00
      */
-    Result deleteGateway(TransactionDTO transactionDTO);
+    void deleteGateway(TransactionDTO transactionDTO);
 
     /**
      * <p>
@@ -169,6 +174,6 @@ public interface TransactionService {
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */
-    Result verifyOrder(TransactionDTO transactionDTO);
+    void verifyOrder(TransactionDTO transactionDTO);
 
 }

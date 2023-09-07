@@ -1,12 +1,17 @@
 package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.UserLoginToken;
-import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MessageDTO;
+import com.icchance.q91.entity.model.Announcement;
+import com.icchance.q91.entity.vo.MessageListVO;
+import com.icchance.q91.entity.vo.MessageVO;
 import com.icchance.q91.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -39,8 +44,8 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/announcement")
-    public Result getAnnouncement(@RequestBody MessageDTO messageDTO) {
-        return messageService.getAnnouncement(messageDTO);
+    public Result<List<Announcement>> getAnnouncement(@RequestBody MessageDTO messageDTO) {
+        return SUCCESS_DATA.repData(messageService.getAnnouncement(messageDTO)).build();
     }
 
     /**
@@ -54,8 +59,8 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/private/unread")
-    public Result getUnreadPrivateMessageAmount(@RequestBody MessageDTO messageDTO) {
-        return messageService.getUnreadPrivateMessageAmount(messageDTO);
+    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody MessageDTO messageDTO) {
+        return SUCCESS_DATA.repData(messageService.getUnreadPrivateMessageAmount(messageDTO)).build();
     }
 
     /**
@@ -69,8 +74,8 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/list")
-    public Result getMessageList(@RequestBody MessageDTO messageDTO) {
-        return messageService.getMessageList(messageDTO);
+    public Result<MessageListVO> getMessageList(@RequestBody MessageDTO messageDTO) {
+        return SUCCESS_DATA.repData(messageService.getMessageList(messageDTO)).build();
     }
 
     /**
@@ -84,8 +89,9 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/private/notice")
-    public Result setPrivateMessageNotice(@RequestBody MessageDTO messageDTO) {
-        return messageService.setPrivateMessageNotice(messageDTO);
+    public Result<Void> setPrivateMessageNotice(@RequestBody MessageDTO messageDTO) {
+        messageService.setPrivateMessageNotice(messageDTO);
+        return SUCCESS;
     }
 
     /**
@@ -99,7 +105,8 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @DeleteMapping("/private/delete")
-    public Result deletePrivateMessage(@RequestBody MessageDTO messageDTO) {
-        return messageService.deletePrivateMessage(messageDTO);
+    public Result<Void> deletePrivateMessage(@RequestBody MessageDTO messageDTO) {
+        messageService.deletePrivateMessage(messageDTO);
+        return SUCCESS;
     }
 }

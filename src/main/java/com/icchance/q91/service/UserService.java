@@ -1,10 +1,11 @@
 package com.icchance.q91.service;
 
-import com.icchance.q91.common.result.Result;
 import com.icchance.q91.entity.dto.BaseDTO;
 import com.icchance.q91.entity.dto.CertificateDTO;
 import com.icchance.q91.entity.dto.UserDTO;
 import com.icchance.q91.entity.dto.UserInfoDTO;
+import com.icchance.q91.entity.vo.UserBalanceVO;
+import com.icchance.q91.entity.vo.UserVO;
 
 /**
  * <p>
@@ -24,7 +25,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/7/20 16:33:59
      */
-    Result register(UserDTO userDTO);
+    UserVO register(UserDTO userDTO);
 
     /**
      * <p>
@@ -35,7 +36,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/7/21 09:45:10
      */
-    Result login(UserDTO userDTO);
+    UserVO login(UserDTO userDTO);
 
     /**
      * <p>
@@ -56,7 +57,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/7/25 18:05:19
      */
-    Result getUserInfo(BaseDTO baseDTO);
+    UserVO getUserInfo(BaseDTO baseDTO);
 
     /**
      * <p>
@@ -67,7 +68,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/8/18 18:04:37
      */
-    Result updateUserInfo(UserInfoDTO userInfoDTO);
+    void updateUserInfo(UserInfoDTO userInfoDTO);
 
     /**
      * <p>
@@ -78,7 +79,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/8/18 17:34:47
      */
-    Result getBalance(BaseDTO baseDTO);
+    UserBalanceVO getBalance(BaseDTO baseDTO);
 
     /**
      * <p>
@@ -89,7 +90,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/8/18 17:35:30
      */
-    Result certificate(CertificateDTO certificateDTO);
+    void certificate(CertificateDTO certificateDTO);
 
     /**
      * <p>
@@ -100,7 +101,7 @@ public interface UserService {
      * @author 6687353
      * @since 2023/8/18 17:49:17
      */
-    Result updatePassword(UserInfoDTO userInfoDTO);
+    void updatePassword(UserInfoDTO userInfoDTO);
 
     /**
      * <p>
@@ -111,6 +112,6 @@ public interface UserService {
      * @author 6687353
      * @since 2023/8/18 17:59:47
      */
-    Result updateFundPassword(UserInfoDTO userInfoDTO);
+    void updateFundPassword(UserInfoDTO userInfoDTO);
 
 }

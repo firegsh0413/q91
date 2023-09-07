@@ -24,12 +24,12 @@ public class AbstractException extends RuntimeException {
      * */
     private static final int STACK_TRACE_LIMIT_TO = 10;
 
-    private static final int FAIL = -1;
+    private static final String FAIL = "-1";
 
     /**
      * 錯誤碼
      */
-    private int code;
+    private String code;
     /**
      * 錯誤消息
      */
@@ -53,12 +53,21 @@ public class AbstractException extends RuntimeException {
         this.printStackTrace(e.getMessage());
     }
 
-    AbstractException(int code, String error, String... data) {
+    AbstractException(String code, String error, String... data) {
         super(fillParam(error, data));
         this.code = code;
         this.data = data;
         this.error = fillParam(error, data);
         this.printStackTrace(fillParam(error, data));
+    }
+
+    AbstractException(String code, String error) {
+        String[] data = new String[]{};
+        String s = fillParam(error, data);
+        this.code = code;
+        this.data = data;
+        this.error = s;
+        this.printStackTrace(s);
     }
 
     AbstractException(String error, String... data) {

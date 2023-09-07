@@ -1,13 +1,12 @@
 package com.icchance.q91.service;
 
-import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.MarketInfoDTO;
-import com.icchance.q91.entity.dto.OrderDTO;
+import com.icchance.q91.entity.vo.CheckGatewayVO;
+import com.icchance.q91.entity.vo.MarketVO;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 /**
  * <p>
@@ -27,7 +26,7 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/4 16:35:34
      */
-    Result getPendingOrderList(MarketDTO marketDTO);
+    List<MarketVO> getPendingOrderList(MarketDTO marketDTO);
 
     /**
      * <p>
@@ -38,7 +37,7 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/22 16:10:40
      */
-    Result checkGateway(MarketInfoDTO marketInfoDTO);
+    CheckGatewayVO checkGateway(MarketInfoDTO marketInfoDTO);
 
     /**
      * <p>
@@ -49,7 +48,7 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/22 16:11:37
      */
-    Result getPendingOrder(MarketDTO marketDTO);
+    MarketVO getPendingOrder(MarketDTO marketDTO);
 
     /**
      * <p>
@@ -60,7 +59,7 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/22 16:12:14
      */
-    Result buy(MarketInfoDTO marketInfoDTO);
+    void buy(MarketInfoDTO marketInfoDTO);
 
     /**
      * <p>
@@ -71,5 +70,5 @@ public interface MarketService {
      * @author 6687353
      * @since 2023/8/22 16:15:27
      */
-    Result sell(MarketInfoDTO marketInfoDTO);
+    void sell(MarketInfoDTO marketInfoDTO);
 }
