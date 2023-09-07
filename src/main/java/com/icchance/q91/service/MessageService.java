@@ -1,7 +1,12 @@
 package com.icchance.q91.service;
 
-import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MessageDTO;
+import com.icchance.q91.entity.model.Announcement;
+import com.icchance.q91.entity.vo.MessageListVO;
+import com.icchance.q91.entity.vo.MessageVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -21,7 +26,7 @@ public interface MessageService {
      * @author 6687353
      * @since 2023/8/17 16:00:01
      */
-    Result getAnnouncement(MessageDTO messageDTO);
+    List<Announcement> getAnnouncement(MessageDTO messageDTO);
 
     /**
      * <p>
@@ -32,7 +37,7 @@ public interface MessageService {
      * @author 6687353
      * @since 2023/8/18 13:43:09
      */
-    Result getUnreadPrivateMessageAmount(MessageDTO messageDTO);
+    MessageVO getUnreadPrivateMessageAmount(MessageDTO messageDTO);
 
     /**
      * <p>
@@ -43,7 +48,7 @@ public interface MessageService {
      * @author 6687353
      * @since 2023/8/18 13:47:12
      */
-    Result getMessageList(MessageDTO messageDTO);
+    MessageListVO getMessageList(MessageDTO messageDTO);
 
     /**
      * <p>
@@ -54,7 +59,7 @@ public interface MessageService {
      * @author 6687353
      * @since 2023/8/18 13:59:55
      */
-    Result setPrivateMessageNotice(MessageDTO messageDTO);
+    void setPrivateMessageNotice(MessageDTO messageDTO);
 
     /**
      * <p>
@@ -65,5 +70,5 @@ public interface MessageService {
      * @author 6687353
      * @since 2023/8/18 14:37:56
      */
-    Result deletePrivateMessage(MessageDTO messageDTO);
+    void deletePrivateMessage(MessageDTO messageDTO);
 }

@@ -1,5 +1,7 @@
 package com.icchance.q91.common.constant;
 
+import com.icchance.q91.common.error.ServiceExceptionModel;
+
 /**
  * <p>
  * 訊息代碼列舉
@@ -7,7 +9,7 @@ package com.icchance.q91.common.constant;
  * @author 6687353
  * @since 2023/7/20 14:27:58
  */
-public enum ResultCode {
+public enum ResultCode implements ServiceExceptionModel {
     // TODO 暫時設置，code不與captcha元件的RepCodeEnum重複
     // TODO 使用0100-5999 7000-9999範圍
     /** 系統類 */
@@ -35,12 +37,23 @@ public enum ResultCode {
     BALANCE_NOT_ENOUGH("2002", "馀额不足"),
     GATEWAY_TYPE_NOT_EXIST("2003", "付款方式不存在"),
     ORDER_FINISH("2004", "订单已完成"),
+    BUYER_NOT_PAY("2005", "买家尚未付款"),
     ;
 
-    public final String code;
-    public final String msg;
-    ResultCode(String code, String msg) {
-        this.code = code;
-        this.msg = msg;
+    public final String repCode;
+    public final String repMsg;
+    ResultCode(String repCode, String repMsg) {
+        this.repCode = repCode;
+        this.repMsg = repMsg;
+    }
+
+    @Override
+    public String getRepCode() {
+        return this.repCode;
+    }
+
+    @Override
+    public String getRepMsg() {
+        return this.repMsg;
     }
 }

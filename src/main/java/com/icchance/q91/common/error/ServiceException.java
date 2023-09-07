@@ -24,11 +24,11 @@ public class ServiceException extends AbstractException {
     }
 
     public ServiceException(ServiceExceptionModel e) {
-        super(e.getCode(), e.getMessage());
+        super(e.getRepCode(), e.getRepMsg());
     }
 
     public ServiceException(ServiceExceptionModel e, String... data) {
-        super(e.getCode(), e.getMessage(), data);
+        super(e.getRepCode(), e.getRepMsg(), data);
     }
 
     @Override

@@ -2,13 +2,19 @@ package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.BaseDTO;
 import com.icchance.q91.entity.dto.GatewayDTO;
-import com.icchance.q91.entity.dto.OrderDTO;
 import com.icchance.q91.entity.dto.TransactionDTO;
+import com.icchance.q91.entity.model.Gateway;
+import com.icchance.q91.entity.model.OrderRecord;
+import com.icchance.q91.entity.vo.OrderVO;
+import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -40,8 +46,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/pendingOrder")
-    public Result getPendingOrderList(@RequestBody BaseDTO baseDTO) {
-        return transactionService.getPendingOrderList(baseDTO);
+    public Result<List<PendingOrderVO>> getPendingOrderList(@RequestBody BaseDTO baseDTO) {
+        return SUCCESS_DATA.repData(transactionService.getPendingOrderList(baseDTO)).build();
     }
 
     /**
@@ -55,8 +61,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/pendingOrder/detail")
-    public Result getPendingOrderDetail(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.getPendingOrderDetail(transactionDTO);
+    public Result<PendingOrderVO> getPendingOrderDetail(@RequestBody TransactionDTO transactionDTO) {
+        return SUCCESS_DATA.repData(transactionService.getPendingOrderDetail(transactionDTO)).build();
     }
 
     /**
@@ -70,8 +76,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/cancel")
-    public Result cancelPendingOrder(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.cancelPendingOrder(transactionDTO);
+    public Result<Void> cancelPendingOrder(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.cancelPendingOrder(transactionDTO);
+        return SUCCESS;
     }
 
     /**
@@ -86,8 +93,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/check")
-    public Result checkPendingOrder(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.checkPendingOrder(transactionDTO);
+    public Result<Void> checkPendingOrder(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.checkPendingOrder(transactionDTO);
+        return SUCCESS;
     }
 
     /**
@@ -102,8 +110,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/verify")
-    public Result verifyPendingOrder(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.verifyPendingOrder(transactionDTO);
+    public Result<Void> verifyPendingOrder(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.verifyPendingOrder(transactionDTO);
+        return SUCCESS;
     }
 
     /**
@@ -117,8 +126,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/order")
-    public Result getOrderList(@RequestBody BaseDTO baseDTO) {
-        return transactionService.getOrderList(baseDTO);
+    public Result<List<OrderVO>> getOrderList(@RequestBody BaseDTO baseDTO) {
+        return SUCCESS_DATA.repData(transactionService.getOrderList(baseDTO)).build();
     }
 
     /**
@@ -132,8 +141,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/order/detail")
-    public Result getOrderDetail(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.getOrderDetail(transactionDTO);
+    public Result<OrderVO> getOrderDetail(@RequestBody TransactionDTO transactionDTO) {
+        return SUCCESS_DATA.repData(transactionService.getOrderDetail(transactionDTO)).build();
     }
 
     /**
@@ -147,8 +156,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/cancel")
-    public Result cancelOrder(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.cancelOrder(transactionDTO);
+    public Result<Void> cancelOrder(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.cancelOrder(transactionDTO);
+        return SUCCESS;
     }
 
     /**
@@ -162,8 +172,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/appeal")
-    public Result appealOrder(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.appealOrder(transactionDTO);
+    public Result<Void> appealOrder(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.appealOrder(transactionDTO);
+        return SUCCESS;
     }
 
     /**
@@ -177,8 +188,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/record")
-    public Result getRecord(@RequestBody BaseDTO baseDTO) {
-        return transactionService.getRecord(baseDTO);
+    public Result<List<OrderRecord>> getRecord(@RequestBody BaseDTO baseDTO) {
+        return SUCCESS_DATA.repData(transactionService.getRecord(baseDTO)).build();
     }
 
     /**
@@ -192,8 +203,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/gateway")
-    public Result getGatewayList(@RequestBody BaseDTO baseDTO) {
-        return transactionService.getGatewayList(baseDTO);
+    public Result<List<Gateway>> getGatewayList(@RequestBody BaseDTO baseDTO) {
+        return SUCCESS_DATA.repData(transactionService.getGatewayList(baseDTO)).build();
     }
 
     /**
@@ -207,8 +218,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/gateway/add")
-    public Result addGateway(@RequestBody GatewayDTO gatewayDTO) {
-        return transactionService.createGateway(gatewayDTO);
+    public Result<Void> addGateway(@RequestBody GatewayDTO gatewayDTO) {
+        transactionService.createGateway(gatewayDTO);
+        return SUCCESS;
     }
 
     /**
@@ -222,8 +234,9 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @DeleteMapping("/gateway/delete")
-    public Result deleteGateway(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.deleteGateway(transactionDTO);
+    public Result<Void> deleteGateway(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.deleteGateway(transactionDTO);
+        return SUCCESS;
     }
 
     /**
@@ -237,7 +250,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/verify")
-    public Result verifyOrder(@RequestBody TransactionDTO transactionDTO) {
-        return transactionService.verifyOrder(transactionDTO);
+    public Result<Void> verifyOrder(@RequestBody TransactionDTO transactionDTO) {
+        transactionService.verifyOrder(transactionDTO);
+        return SUCCESS;
     }
 }

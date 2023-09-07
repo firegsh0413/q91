@@ -3,11 +3,13 @@ package com.icchance.q91.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MessageDTO;
 import com.icchance.q91.entity.model.Announcement;
 import com.icchance.q91.entity.vo.AnnouncementVO;
 import com.icchance.q91.entity.vo.MessageListVO;
 import com.icchance.q91.entity.vo.PrivateMessageVO;
+import com.icchance.q91.entity.vo.MessageVO;
 import com.icchance.q91.mapper.AnnouncementMapper;
 import com.icchance.q91.mapper.PrivateMessageMapper;
 import com.icchance.q91.service.MessageService;
@@ -56,11 +58,8 @@ public class MessageServiceImpl implements MessageService {
      * @since 2023/8/17 16:00:15
      */
     @Override
-    public Result getAnnouncement(MessageDTO messageDTO) {
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(announcementMapper.selectList(Wrappers.<Announcement>lambdaQuery()))
-                .build();
+    public List<Announcement> getAnnouncement(MessageDTO messageDTO) {
+        return announcementMapper.selectList(Wrappers.<Announcement>lambdaQuery());
     }
 
     /**
@@ -73,12 +72,9 @@ public class MessageServiceImpl implements MessageService {
      * @since 2023/8/18 13:43:09
      */
     @Override
-    public Result getUnreadPrivateMessageAmount(MessageDTO messageDTO) {
+    public MessageVO getUnreadPrivateMessageAmount(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(privateMessageMapper.getPrivateMessageAmount(userId, IS_READ_FALSE))
-                .build();
+        return MessageVO.builder().count(privateMessageMapper.getPrivateMessageAmount(userId, IS_READ_FALSE)).build();
     }
 
     /**
@@ -91,7 +87,7 @@ public class MessageServiceImpl implements MessageService {
      * @since 2023/8/18 13:47:12
      */
     @Override
-    public Result getMessageList(MessageDTO messageDTO) {
+    public MessageListVO getMessageList(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
         List<PrivateMessageVO> privateMessages = privateMessageMapper.getPrivateMessageList(userId);
         List<Announcement> announcements = announcementMapper.selectList(Wrappers.lambdaQuery());
@@ -99,11 +95,10 @@ public class MessageServiceImpl implements MessageService {
         if (CollectionUtils.isNotEmpty(announcements)) {
             announcementVOList = announcements.stream().map(this::convertAnnouncementVO).collect(Collectors.toList());
         }
-        MessageListVO messageListVO = MessageListVO.builder()
+        return MessageListVO.builder()
                 .privateMessage(privateMessages)
                 .announcement(announcementVOList)
                 .build();
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(messageListVO).build();
     }
 
     /**
@@ -116,10 +111,9 @@ public class MessageServiceImpl implements MessageService {
      * @since 2023/8/18 13:59:55
      */
     @Override
-    public Result setPrivateMessageNotice(MessageDTO messageDTO) {
+    public void setPrivateMessageNotice(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
         privateMessageMapper.updateIsRead(messageDTO.getId(), userId, IS_READ_TRUE, LocalDateTime.now());
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -132,10 +126,9 @@ public class MessageServiceImpl implements MessageService {
      * @since 2023/8/18 14:37:56
      */
     @Override
-    public Result deletePrivateMessage(MessageDTO messageDTO) {
+    public void deletePrivateMessage(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
         privateMessageMapper.delete(messageDTO.getId(), userId);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     private AnnouncementVO convertAnnouncementVO(Announcement announcement) {

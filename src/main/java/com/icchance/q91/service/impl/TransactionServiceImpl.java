@@ -3,7 +3,9 @@ package com.icchance.q91.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
+import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.*;
 import com.icchance.q91.entity.model.*;
 import com.icchance.q91.entity.vo.OrderVO;
@@ -56,12 +58,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/18 16:58:29
      */
     @Override
-    public Result getPendingOrderList(BaseDTO baseDTO) {
+    public List<PendingOrderVO> getPendingOrderList(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(pendingOrderService.getList(userId))
-                .build();
+        return pendingOrderService.getList(userId);
     }
 
     /**
@@ -74,12 +73,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/18 16:58:42
      */
     @Override
-    public Result getPendingOrderDetail(TransactionDTO transactionDTO) {
+    public PendingOrderVO getPendingOrderDetail(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(pendingOrderService.getDetail(userId, transactionDTO.getId()))
-                .build();
+        return pendingOrderService.getDetail(userId, transactionDTO.getId());
     }
 
     /**
@@ -92,14 +88,14 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 09:33:44
      */
     @Override
-    public Result cancelPendingOrder(TransactionDTO transactionDTO) {
+    public void cancelPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
         if (Objects.isNull(pendingOrderVO)) {
-            return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
         if (OrderConstant.PendingOrderStatusEnum.FINISH.code.equals(pendingOrderVO.getStatus())) {
-            return Result.builder().repCode(ResultCode.ORDER_FINISH.code).repMsg(ResultCode.ORDER_FINISH.msg).build();
+            throw new ServiceException(ResultCode.ORDER_FINISH);
         }
         BigDecimal amount = pendingOrderVO.getAmount();
         pendingOrderService.cancel(userId, transactionDTO.getId());
@@ -124,7 +120,6 @@ public class TransactionServiceImpl implements TransactionService {
             buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(amount));
             userBalanceService.updateEntity(buyerBalance);
         }
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -138,7 +133,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 11:25:58
      */
     @Override
-    public Result checkPendingOrder(TransactionDTO transactionDTO) {
+    public void checkPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
         // 掛單狀態為有人下單
@@ -157,7 +152,6 @@ public class TransactionServiceImpl implements TransactionService {
             sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(pendingOrderVO.getAmount()));
             userBalanceService.updateEntity(sellerBalance);
         }
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -171,13 +165,13 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 11:49:56
      */
     @Override
-    public Result verifyPendingOrder(TransactionDTO transactionDTO) {
+    public void verifyPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
         BigDecimal amount = pendingOrderVO.getAmount();
         // 判斷掛單狀態是否為買家已付款
         if (!OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code.equals(pendingOrderVO.getStatus())) {
-            return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
+            throw new ServiceException(ResultCode.BUYER_NOT_PAY);
         }
 /*        if (LocalDateTime.now().isAfter(pendingOrderVO.getCutOffTime())) {
 
@@ -199,7 +193,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .status(OrderConstant.OrderStatusEnum.FINISH.code)
                 .build();
         orderService.update(orderDTO);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -212,12 +205,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 13:10:09
      */
     @Override
-    public Result getOrderList(BaseDTO baseDTO) {
+    public List<OrderVO> getOrderList(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(orderService.getList(userId))
-                .build();
+        return orderService.getList(userId);
     }
 
     /**
@@ -230,12 +220,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/11 11:55:14
      */
     @Override
-    public Result getOrderDetail(TransactionDTO transactionDTO) {
+    public OrderVO getOrderDetail(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(orderService.getDetail(userId, transactionDTO.getId()))
-                .build();
+        return orderService.getDetail(userId, transactionDTO.getId());
     }
 
     /**
@@ -248,7 +235,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 11:03:16
      */
     @Override
-    public Result cancelOrder(TransactionDTO transactionDTO) {
+    public void cancelOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
         orderService.cancel(userId, transactionDTO.getId());
@@ -273,7 +260,6 @@ public class TransactionServiceImpl implements TransactionService {
         sellBalance.setTradingAmount(sellBalance.getTradingAmount().subtract(orderVO.getAmount()));
         sellBalance.setPendingBalance(sellBalance.getPendingBalance().add(orderVO.getAmount()));
         userBalanceService.updateEntity(sellBalance);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -286,10 +272,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 14:23:42
      */
     @Override
-    public Result appealOrder(TransactionDTO transactionDTO) {
+    public void appealOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         orderService.appeal(userId, transactionDTO.getId());
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -302,12 +287,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 14:38:13
      */
     @Override
-    public Result getRecord(BaseDTO baseDTO) {
+    public List<OrderRecord> getRecord(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return Result.builder().repCode(ResultCode.SUCCESS.code)
-                .repMsg(ResultCode.SUCCESS.msg)
-                .repData(orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, userId)))
-                .build();
+        return orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, userId));
     }
 
     /**
@@ -321,10 +303,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/7/31 13:26:44
      */
     @Override
-    public Result getGatewayList(BaseDTO baseDTO) {
+    public List<Gateway> getGatewayList(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        List<Gateway> gatewayList = gatewayService.getGatewayList(userId);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(gatewayList).build();
+        return gatewayService.getGatewayList(userId);
     }
 
     /**
@@ -338,11 +319,10 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/7/31 13:27:53
      */
     @Override
-    public Result createGateway(GatewayDTO gatewayDTO) {
+    public void createGateway(GatewayDTO gatewayDTO) {
         Integer userId = jwtUtil.parseUserId(gatewayDTO.getToken());
         gatewayDTO.setUserId(userId);
         gatewayService.createGateway(gatewayDTO);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -356,10 +336,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/7/31 13:29:00
      */
     @Override
-    public Result deleteGateway(TransactionDTO transactionDTO) {
+    public void deleteGateway(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         gatewayService.deleteGateway(userId, transactionDTO.getId());
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -372,18 +351,16 @@ public class TransactionServiceImpl implements TransactionService {
      * @since 2023/8/22 15:48:13
      */
     @Override
-    public Result verifyOrder(TransactionDTO transactionDTO) {
+    public void verifyOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
         if (Objects.isNull(orderVO)) {
-            return Result.builder().repCode(ResultCode.NO_ORDER_EXIST.code).repMsg(ResultCode.NO_ORDER_EXIST.msg).build();
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
         // TODO 判斷超過截止時間 取消訂單
         if (LocalDateTime.now().isAfter(orderVO.getCutOffTime())) {
             this.cancelOrder(transactionDTO);
         }
-        //OrderDTO orderDTO = OrderDTO.builder().id(transactionDTO.getId()).cert(transactionDTO.getCert()).build();
-        //orderService.update(orderDTO);
         orderService.uploadCert(userId, orderVO.getId(), transactionDTO.getCert());
         // 訂單狀態更新
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
@@ -393,7 +370,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .cert(transactionDTO.getCert())
                 .build();
         pendingOrderService.update(pendingOrderDTO);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
 }

@@ -4,7 +4,7 @@ import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
 import com.anji.captcha.util.StringUtils;
 import com.icchance.q91.common.constant.ResultCode;
-import com.icchance.q91.common.result.Result;
+import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.dto.*;
 import com.icchance.q91.entity.model.User;
 import com.icchance.q91.entity.vo.UserBalanceVO;
@@ -67,9 +67,9 @@ public class UserServiceImpl implements UserService {
      * @since 2023/7/20 16:33:59
      */
     @Override
-    public Result register(UserDTO userDTO) {
+    public UserVO register(UserDTO userDTO) {
         if (Objects.nonNull(authUserService.getByAccount(userDTO.getAccount()))) {
-            return Result.builder().repCode(ResultCode.ACCOUNT_ALREADY_EXIST.code).repMsg(ResultCode.ACCOUNT_ALREADY_EXIST.msg).build();
+            throw new ServiceException(ResultCode.ACCOUNT_ALREADY_EXIST);
         }
         User user = new User();
         BeanUtils.copyProperties(userDTO, user);
@@ -83,8 +83,7 @@ public class UserServiceImpl implements UserService {
                 .availableAmount(new BigDecimal(0))
                 .build();
         userBalanceService.addEntity(userBalanceDTO);
-        UserVO userVO = UserVO.builder().account(userDTO.getAccount()).username(userDTO.getUsername()).build();
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
+        return UserVO.builder().account(userDTO.getAccount()).username(userDTO.getUsername()).build();
     }
 
     /**
@@ -98,7 +97,7 @@ public class UserServiceImpl implements UserService {
      * @since 2023/7/21 09:45:10
      */
     @Override
-    public Result login(UserDTO userDTO) {
+    public UserVO login(UserDTO userDTO) {
 
 
 /*        this.getOne(Wrappers.<User>lambdaQuery()
@@ -123,18 +122,17 @@ public class UserServiceImpl implements UserService {
         // 2. JWT產生對應token
         User user = authUserService.getByAccount(userDTO.getAccount());
         if (Objects.isNull(user)) {
-            return Result.builder().repCode(ResultCode.ACCOUNT_NOT_EXIST.code).repMsg(ResultCode.ACCOUNT_NOT_EXIST.msg).build();
+            throw new ServiceException(ResultCode.ACCOUNT_NOT_EXIST);
         }
         if (!user.getPassword().equals(userDTO.getPassword())) {
-            return Result.builder().repCode(ResultCode.ACCOUNT_OR_PASSWORD_WRONG.code).repMsg(ResultCode.ACCOUNT_OR_PASSWORD_WRONG.msg).build();
+            throw new ServiceException(ResultCode.ACCOUNT_OR_PASSWORD_WRONG);
         }
         String token = jwtUtil.createToken(userDTO.getAccount(), user.getId());
-        UserVO userVO = UserVO.builder()
+        return UserVO.builder()
                 .account(user.getAccount())
                 .username(user.getUsername())
                 .token(token)
                 .build();
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
     }
 
     /**
@@ -148,7 +146,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void logout(BaseDTO baseDTO) {
-        Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
+        //Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
 
     }
 
@@ -163,12 +161,12 @@ public class UserServiceImpl implements UserService {
      * @since 2023/7/25 17:28:51
      */
     @Override
-    public Result getUserInfo(BaseDTO baseDTO) {
+    public UserVO getUserInfo(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         User user = authUserService.getById(userId);
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userVO).build();
+        return userVO;
     }
 
     /**
@@ -181,14 +179,13 @@ public class UserServiceImpl implements UserService {
      * @since 2023/8/18 18:04:37
      */
     @Override
-    public Result updateUserInfo(UserInfoDTO userInfoDTO) {
+    public void updateUserInfo(UserInfoDTO userInfoDTO) {
         Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
         user.setUsername(userInfoDTO.getUsername());
         user.setAvatar(userInfoDTO.getAvatar());
         user.setUpdateTime(LocalDateTime.now());
         userMapper.updateById(user);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -201,10 +198,9 @@ public class UserServiceImpl implements UserService {
      * @since 2023/8/14 09:48:47
      */
     @Override
-    public Result getBalance(BaseDTO baseDTO) {
+    public UserBalanceVO getBalance(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        UserBalanceVO userBalanceVO = userBalanceService.getInfo(userId);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).repData(userBalanceVO).build();
+        return userBalanceService.getInfo(userId);
     }
 
     /**
@@ -217,7 +213,7 @@ public class UserServiceImpl implements UserService {
      * @since 2023/8/18 17:35:30
      */
     @Override
-    public Result certificate(CertificateDTO certificateDTO) {
+    public void certificate(CertificateDTO certificateDTO) {
         Integer userId = jwtUtil.parseUserId(certificateDTO.getToken());
         User user = authUserService.getById(userId);
         user.setName(certificateDTO.getName());
@@ -227,7 +223,6 @@ public class UserServiceImpl implements UserService {
         user.setCertified(Boolean.TRUE);
         user.setUpdateTime(LocalDateTime.now());
         authUserService.updateById(user);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -240,16 +235,15 @@ public class UserServiceImpl implements UserService {
      * @since 2023/8/18 17:49:17
      */
     @Override
-    public Result updatePassword(UserInfoDTO userInfoDTO) {
+    public void updatePassword(UserInfoDTO userInfoDTO) {
         Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
         if (!user.getPassword().equals(userInfoDTO.getOldPassword())) {
-            return Result.builder().repCode(ResultCode.PASSWORD_NOT_MATCH.code).repMsg(ResultCode.PASSWORD_NOT_MATCH.msg).build();
+            throw new ServiceException(ResultCode.PASSWORD_NOT_MATCH);
         }
         user.setPassword(userInfoDTO.getNewPassword());
         user.setUpdateTime(LocalDateTime.now());
         authUserService.updateById(user);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     /**
@@ -262,16 +256,15 @@ public class UserServiceImpl implements UserService {
      * @since 2023/8/18 17:59:47
      */
     @Override
-    public Result updateFundPassword(UserInfoDTO userInfoDTO) {
+    public void updateFundPassword(UserInfoDTO userInfoDTO) {
         Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
         if (!user.getFundPassword().equals(userInfoDTO.getOldFundPassword())) {
-            return Result.builder().repCode(ResultCode.PASSWORD_NOT_MATCH.code).repMsg(ResultCode.PASSWORD_NOT_MATCH.msg).build();
+            throw new ServiceException(ResultCode.FUND_PASSWORD_NOT_MATCH);
         }
         user.setFundPassword(userInfoDTO.getNewFundPassword());
         user.setUpdateTime(LocalDateTime.now());
         authUserService.updateById(user);
-        return Result.builder().repCode(ResultCode.SUCCESS.code).repMsg(ResultCode.SUCCESS.msg).build();
     }
 
     private boolean checkAccountValid(String input) {

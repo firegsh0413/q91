@@ -4,6 +4,8 @@ import com.icchance.q91.annotation.PassToken;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.entity.dto.*;
+import com.icchance.q91.entity.vo.UserBalanceVO;
+import com.icchance.q91.entity.vo.UserVO;
 import com.icchance.q91.service.UserBalanceService;
 import com.icchance.q91.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +45,8 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/register")
-    public Result register(@RequestBody UserDTO userDTO) {
-        return userService.register(userDTO);
+    public Result<UserVO> register(@RequestBody UserDTO userDTO) {
+        return Result.<UserVO>builder().repData(userService.register(userDTO)).build();
     }
 
     /**
@@ -58,8 +60,8 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/login")
-    public Result login(@RequestBody UserDTO userDTO) {
-        return userService.login(userDTO);
+    public Result<UserVO> login(@RequestBody UserDTO userDTO) {
+        return SUCCESS_DATA.repData(userService.login(userDTO)).build();
     }
 
     /**
@@ -73,7 +75,7 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/logout")
-    public Result logout(@RequestBody BaseDTO baseDTO) {
+    public Result<Void> logout(@RequestBody BaseDTO baseDTO) {
         userService.logout(baseDTO);
         return SUCCESS;
     }
@@ -89,8 +91,8 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/info")
-    public Result getUserInfo(@RequestBody BaseDTO baseDTO) {
-        return userService.getUserInfo(baseDTO);
+    public Result<Void> getUserInfo(@RequestBody BaseDTO baseDTO) {
+        return SUCCESS_DATA.repData(userService.getUserInfo(baseDTO)).build();
     }
 
     /**
@@ -104,8 +106,8 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @GetMapping("/balance")
-    public Result getBalance(@RequestBody BaseDTO baseDTO) {
-        return userService.getBalance(baseDTO);
+    public Result<UserBalanceVO> getBalance(@RequestBody BaseDTO baseDTO) {
+        return SUCCESS_DATA.repData(userService.getBalance(baseDTO)).build();
     }
 
     /**
@@ -119,8 +121,9 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/certificate")
-    public Result certificate(@RequestBody CertificateDTO certificateDTO) {
-        return userService.certificate(certificateDTO);
+    public Result<Void> certificate(@RequestBody CertificateDTO certificateDTO) {
+        userService.certificate(certificateDTO);
+        return SUCCESS;
     }
 
     /**
@@ -134,8 +137,9 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pwd/update")
-    public Result updatePassword(@RequestBody UserInfoDTO userInfoDTO) {
-        return userService.updatePassword(userInfoDTO);
+    public Result<Void> updatePassword(@RequestBody UserInfoDTO userInfoDTO) {
+        userService.updatePassword(userInfoDTO);
+        return SUCCESS;
     }
 
     /**
@@ -149,8 +153,9 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/fundPwd/update")
-    public Result updateFundPassword(@RequestBody UserInfoDTO userInfoDTO) {
-        return userService.updateFundPassword(userInfoDTO);
+    public Result<Void> updateFundPassword(@RequestBody UserInfoDTO userInfoDTO) {
+        userService.updateFundPassword(userInfoDTO);
+        return SUCCESS;
     }
 
     /**
@@ -164,8 +169,9 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/info/update")
-    public Result updateUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
-        return userService.updateUserInfo(userInfoDTO);
+    public Result<Void> updateUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
+        userService.updateUserInfo(userInfoDTO);
+        return SUCCESS;
     }
 
     /**
@@ -179,7 +185,7 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/balance/update")
-    public Result updateBalance(@RequestBody UserBalanceDTO userBalanceDTO) {
+    public Result<Void> updateBalance(@RequestBody UserBalanceDTO userBalanceDTO) {
         userBalanceService.update(userBalanceDTO);
         return SUCCESS;
     }

@@ -83,7 +83,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             }
             User user = authUserService.getByAccount(account);
             if (Objects.isNull(user)) {
-                throw new ServiceException(ResultCode.ACCOUNT_NOT_EXIST.msg);
+                throw new ServiceException(ResultCode.ACCOUNT_NOT_EXIST);
             }
         }
         return true;
