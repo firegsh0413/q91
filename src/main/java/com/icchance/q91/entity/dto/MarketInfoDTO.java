@@ -22,7 +22,7 @@ public class MarketInfoDTO {
 
     private String token;
 
-    private String userId;
+    private Integer userId;
     /** 訂單UID */
     private Integer id;
 
