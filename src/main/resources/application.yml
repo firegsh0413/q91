@@ -69,9 +69,12 @@ aj:
     req-verify-minute-limit: 60
 # log配置
 logging:
+  config: classpath:logback.xml
   level:
+    dao: debug
     root: debug
     org:
+      mybatis: debug
       apache:
         tomcat: INFO
         util:
