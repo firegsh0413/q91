@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
+    <!--<property file="${HOME}/configuration/application.yml" />-->
+    <contextName>logback</contextName>
+    <!-- console-appender -->
+    <include resource="logback/console-appender.xml"/>
+    <!-- file-appender -->
+    <include resource="logback/file-appender.xml"/>
+    <!-- 異步輸出LOG -->
+    <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 保證不拋棄log ( info trace debug )-->
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE_ALL"/>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_WARN" />
+        <appender-ref ref="FILE_ERROR" />
+        <appender-ref ref="ASYNC_LOG" />
+    </root>
+    <!-- 打印專案下所有log -->
+    <logger name="com.icchance.q91" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_WARN" />
+        <appender-ref ref="FILE_ERROR" />
+        <appender-ref ref="ASYNC_LOG" />
+    </logger>
+    <!-- db效能分析監控 -->
+    <logger name="com.icchance.q91.log.SqlFormatter" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="dbPerformanceFileAppender" />
+    </logger>
+    <!-- api效能分析監控 -->
+    <logger name="com.icchance.q91.aspect.RequestAspect" additivity="false">
+        <level value="TRACE" />
+        <appender-ref ref="apiPerformanceFileAppender" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_LOG" />
+    </logger>
+</configuration>

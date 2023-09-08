@@ -9,8 +9,9 @@ spring:
   application:
     name: q91
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${q91.db.ip}/${q91.db.name}
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://${q91.db.ip}/${q91.db.name}
     username: root
     password: root
   main:
@@ -29,7 +30,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true # 開啟駝峰映射
     cache-enabled: false
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #開啟SQL語句印出
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #開啟SQL語句印出
 
 
 # 圖形驗證(滑動驗證碼)配置
@@ -69,17 +70,10 @@ aj:
     req-verify-minute-limit: 60
 # log配置
 logging:
+  config: classpath:logback-spring.xml
   level:
-    root: debug
-    org:
-      apache:
-        tomcat: INFO
-        util:
-          net: WARN
-      springframework:
-        boot:
-          autoconfigure: ERROR
-        web: trace
+    root: INFO
+    p6spy: INFO
 
 # 自訂變數
 q91:
