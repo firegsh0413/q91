@@ -32,6 +32,7 @@ DEFAULT_LOG_AUTOCONFIG=ERROR
 [ "$MYSQL_PASS" != "" ] && CMD="$CMD -Dspring.datasource.password=$MYSQL_PASS"
 [ "$MYSQL_HOST" != "" ] && CMD="$CMD -Dq91.db.ip=$MYSQL_HOST"
 [ "$MYSQL_DB" != "" ] && CMD="$CMD -Dq91.db.name=$MYSQL_DB"
+[ "$LOG_FOLDER" != "" ] && CMD="$CMD -Dq91.log.folder=$LOG_FOLDER"
 
 # 對外PORT
 CMD="$CMD -Dserver.port=$DEFAULT_PORT"
