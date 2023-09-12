@@ -42,7 +42,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:02:09
      */
     @UserLoginToken
-    @GetMapping("/pendingOrder/list")
+    @PostMapping("/pendingOrder/list")
     public Result<List<MarketVO>> getMarketList(@RequestBody MarketDTO marketDTO) {
         return SUCCESS_DATA.repData(marketService.getPendingOrderList(marketDTO)).build();
     }
@@ -57,7 +57,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:04:49
      */
     @UserLoginToken
-    @GetMapping("/checkGateway")
+    @PostMapping("/checkGateway")
     public Result<CheckGatewayVO> checkGateway(@RequestBody MarketInfoDTO marketInfoDTO) {
         return SUCCESS_DATA.repData(marketService.checkGateway(marketInfoDTO)).build();
     }
@@ -72,7 +72,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:11:05
      */
     @UserLoginToken
-    @GetMapping("/pendingOrder")
+    @PostMapping("/pendingOrder")
     public Result<MarketVO> getPendingOrder(@RequestBody MarketDTO marketDTO) {
         return SUCCESS_DATA.repData(marketService.getPendingOrder(marketDTO)).build();
     }

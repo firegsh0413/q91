@@ -43,7 +43,7 @@ public class MessageController extends BaseController {
      * @since 2023/8/17 15:59:25
      */
     @UserLoginToken
-    @GetMapping("/announcement")
+    @PostMapping("/announcement")
     public Result<List<Announcement>> getAnnouncement(@RequestBody MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getAnnouncement(messageDTO)).build();
     }
@@ -58,7 +58,7 @@ public class MessageController extends BaseController {
      * @since 2023/8/18 13:34:19
      */
     @UserLoginToken
-    @GetMapping("/private/unread")
+    @PostMapping("/private/unread")
     public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getUnreadPrivateMessageAmount(messageDTO)).build();
     }
@@ -73,7 +73,7 @@ public class MessageController extends BaseController {
      * @since 2023/8/18 13:46:44
      */
     @UserLoginToken
-    @GetMapping("/list")
+    @PostMapping("/list")
     public Result<MessageListVO> getMessageList(@RequestBody MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getMessageList(messageDTO)).build();
     }

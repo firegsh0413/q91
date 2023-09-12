@@ -45,7 +45,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/14 10:12:27
      */
     @UserLoginToken
-    @GetMapping("/pendingOrder")
+    @PostMapping("/pendingOrder")
     public Result<List<PendingOrderVO>> getPendingOrderList(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(transactionService.getPendingOrderList(baseDTO)).build();
     }
@@ -60,7 +60,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/18 16:53:22
      */
     @UserLoginToken
-    @GetMapping("/pendingOrder/detail")
+    @PostMapping("/pendingOrder/detail")
     public Result<PendingOrderVO> getPendingOrderDetail(@RequestBody TransactionDTO transactionDTO) {
         return SUCCESS_DATA.repData(transactionService.getPendingOrderDetail(transactionDTO)).build();
     }
@@ -125,7 +125,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/11 11:55:44
      */
     @UserLoginToken
-    @GetMapping("/order")
+    @PostMapping("/order")
     public Result<List<OrderVO>> getOrderList(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(transactionService.getOrderList(baseDTO)).build();
     }
@@ -140,7 +140,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/11 11:55:14
      */
     @UserLoginToken
-    @GetMapping("/order/detail")
+    @PostMapping("/order/detail")
     public Result<OrderVO> getOrderDetail(@RequestBody TransactionDTO transactionDTO) {
         return SUCCESS_DATA.repData(transactionService.getOrderDetail(transactionDTO)).build();
     }
@@ -187,7 +187,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/22 14:38:13
      */
     @UserLoginToken
-    @GetMapping("/record")
+    @PostMapping("/record")
     public Result<List<OrderRecord>> getRecord(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(transactionService.getRecord(baseDTO)).build();
     }
@@ -202,7 +202,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/22 15:30:29
      */
     @UserLoginToken
-    @GetMapping("/gateway")
+    @PostMapping("/gateway")
     public Result<List<Gateway>> getGatewayList(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(transactionService.getGatewayList(baseDTO)).build();
     }

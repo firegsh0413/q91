@@ -90,7 +90,7 @@ public class UserController extends BaseController {
      * @since 2023/7/25 17:28:51
      */
     @UserLoginToken
-    @GetMapping("/info")
+    @PostMapping("/info")
     public Result<Void> getUserInfo(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(userService.getUserInfo(baseDTO)).build();
     }
@@ -105,7 +105,7 @@ public class UserController extends BaseController {
      * @since 2023/8/14 09:47:52
      */
     @UserLoginToken
-    @GetMapping("/balance")
+    @PostMapping("/balance")
     public Result<UserBalanceVO> getBalance(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(userService.getBalance(baseDTO)).build();
     }
