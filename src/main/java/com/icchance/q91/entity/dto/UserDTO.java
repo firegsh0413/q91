@@ -1,9 +1,13 @@
 package com.icchance.q91.entity.dto;
 
+import com.icchance.q91.common.error.group.Login;
+import com.icchance.q91.common.error.group.Register;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -19,12 +23,16 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
     /** 帳號 */
+    @NotBlank(groups = {Register.class, Login.class})
     private String account;
     /** 暱稱 */
+    @NotBlank(groups = {Register.class})
     private String username;
     /** 密碼 */
+    @NotBlank(groups = {Register.class, Login.class})
     private String password;
     /** 支付密碼 */
+    @NotBlank(groups = {Register.class})
     private String fundPassword;
     /** 驗證碼uid */
     private String cId;

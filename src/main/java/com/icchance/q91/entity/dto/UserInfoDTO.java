@@ -1,9 +1,11 @@
 package com.icchance.q91.entity.dto;
 
+import com.icchance.q91.common.error.group.FundPassword;
+import com.icchance.q91.common.error.group.Password;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * <p>
@@ -22,11 +24,12 @@ public class UserInfoDTO {
 
     private String avatar;
 
+    @NotBlank(groups = {Password.class})
     private String oldPassword;
-
+    @NotBlank(groups = {Password.class})
     private String newPassword;
-
+    @NotBlank(groups = {FundPassword.class})
     private String oldFundPassword;
-
+    @NotBlank(groups = {FundPassword.class})
     private String newFundPassword;
 }

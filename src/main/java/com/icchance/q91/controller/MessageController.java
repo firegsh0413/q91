@@ -11,6 +11,7 @@ import com.icchance.q91.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -59,7 +60,7 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/private/unread")
-    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody MessageDTO messageDTO) {
+    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody @Valid MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getUnreadPrivateMessageAmount(messageDTO)).build();
     }
 
@@ -89,7 +90,7 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/private/notice")
-    public Result<Void> setPrivateMessageNotice(@RequestBody MessageDTO messageDTO) {
+    public Result<Void> setPrivateMessageNotice(@RequestBody @Valid MessageDTO messageDTO) {
         messageService.setPrivateMessageNotice(messageDTO);
         return SUCCESS;
     }

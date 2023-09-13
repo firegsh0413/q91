@@ -2,6 +2,7 @@ package com.icchance.q91.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.icchance.q91.common.constant.ResultCode;
+import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MessageDTO;
@@ -53,13 +54,17 @@ public class MessageServiceImpl implements MessageService {
      * 取得首頁公告跑馬燈訊息
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return java.util.List<com.icchance.q91.entity.model.Announcement>
      * @author 6687353
      * @since 2023/8/17 16:00:15
      */
     @Override
     public List<Announcement> getAnnouncement(MessageDTO messageDTO) {
-        return announcementMapper.selectList(Wrappers.<Announcement>lambdaQuery());
+        List<Announcement> announcementList = announcementMapper.selectList(Wrappers.<Announcement>lambdaQuery());
+        if (CollectionUtils.isEmpty(announcementList)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
+        return announcementList;
     }
 
     /**
@@ -67,14 +72,18 @@ public class MessageServiceImpl implements MessageService {
      * 取得會員未讀站內信數量
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.MessageVO
      * @author 6687353
      * @since 2023/8/18 13:43:09
      */
     @Override
     public MessageVO getUnreadPrivateMessageAmount(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
-        return MessageVO.builder().count(privateMessageMapper.getPrivateMessageAmount(userId, IS_READ_FALSE)).build();
+        int privateMessageAmount = privateMessageMapper.getPrivateMessageAmount(userId, IS_READ_FALSE);
+        if (0 == privateMessageAmount) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
+        return MessageVO.builder().count(privateMessageAmount).build();
     }
 
     /**
@@ -82,7 +91,7 @@ public class MessageServiceImpl implements MessageService {
      * 取得會員消息管理清單
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.MessageListVO
      * @author 6687353
      * @since 2023/8/18 13:47:12
      */
@@ -106,7 +115,6 @@ public class MessageServiceImpl implements MessageService {
      * 會員站內信標記已讀
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 13:59:55
      */
@@ -121,7 +129,6 @@ public class MessageServiceImpl implements MessageService {
      * 會員刪除站內信
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 14:37:56
      */

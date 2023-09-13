@@ -1,6 +1,7 @@
 package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.UserLoginToken;
+import com.icchance.q91.common.error.group.CheckGateway;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MarketDTO;
@@ -9,6 +10,7 @@ import com.icchance.q91.entity.vo.CheckGatewayVO;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.service.MarketService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,7 +60,7 @@ public class MarketController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/checkGateway")
-    public Result<CheckGatewayVO> checkGateway(@RequestBody MarketInfoDTO marketInfoDTO) {
+    public Result<CheckGatewayVO> checkGateway(@RequestBody @Validated({CheckGateway.class}) MarketInfoDTO marketInfoDTO) {
         return SUCCESS_DATA.repData(marketService.checkGateway(marketInfoDTO)).build();
     }
 

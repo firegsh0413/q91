@@ -21,7 +21,7 @@ public interface UserService {
      * 註冊
      * </p>
      * @param userDTO UserDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.UserVO
      * @author 6687353
      * @since 2023/7/20 16:33:59
      */
@@ -32,7 +32,7 @@ public interface UserService {
      * 登錄
      * </p>
      * @param userDTO UserDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.UserVO
      * @author 6687353
      * @since 2023/7/21 09:45:10
      */
@@ -53,7 +53,7 @@ public interface UserService {
      * 取得會員個人訊息
      * </p>
      * @param baseDTO BaseDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.UserVO
      * @author 6687353
      * @since 2023/7/25 18:05:19
      */
@@ -64,7 +64,6 @@ public interface UserService {
      * 修改個人訊息
      * </p>
      * @param userInfoDTO UserInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 18:04:37
      */
@@ -75,7 +74,7 @@ public interface UserService {
      * 取得會員錢包訊息
      * </p>
      * @param baseDTO BaseDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.UserBalanceVO
      * @author 6687353
      * @since 2023/8/18 17:34:47
      */
@@ -86,7 +85,6 @@ public interface UserService {
      * 實名認證
      * </p>
      * @param certificateDTO CertificateDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:35:30
      */
@@ -97,7 +95,6 @@ public interface UserService {
      * 設置密碼
      * </p>
      * @param userInfoDTO UserInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:49:17
      */
@@ -108,7 +105,6 @@ public interface UserService {
      * 設置交易密碼
      * </p>
      * @param userInfoDTO UserInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:59:47
      */
