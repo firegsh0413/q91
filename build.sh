@@ -13,6 +13,8 @@ PROJECT=/java/q91/apifront
 SKIP_PUSH=Y
 # 預設 rebuild
 REBUILD=Y
+# 預設 BUILD_ONLY
+BUILD_ONLY=""
 
 for ARG in "$@"
 do
@@ -23,6 +25,10 @@ do
     if [ "$ARG" = "-s" ]; then
     # 使用舊檔
         REBUILD=""
+    fi
+    if [ "$ARG" = "-b" ]; then
+    # 只做 build
+        BUILD_ONLY="Y"
     fi
 done
 
@@ -59,7 +65,9 @@ VERSION=${VERSION:-unknow}
 IMAGE=${HOST}${PROJECT}
 IMAGEFULL=${IMAGE}:${VERSION}
 
-if ! docker build --progress plain -t ${IMAGE}:${VERSION} --build-arg="SRCFILE=$JARFILE" -f docker/Dockerfile .
+[ "$BUILD_ONLY" != "" ] && exit 0
+
+if ! docker build -t ${IMAGE}:${VERSION} --build-arg="SRCFILE=$JARFILE" -f docker/Dockerfile .
 then
   echo "docker build image ${IMAGEFULL} fail"
   exit 5

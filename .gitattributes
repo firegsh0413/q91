@@ -1,0 +1,12 @@
+# shell script
+*.sh text eol=lf
+
+# windows bat
+*.bat text eol=crlf
+
+# docker file
+/docker/**/* text eol=lf
+
+# Jenkins file
+Jenkinsfile eol=lf
+*.Jenkinsfile eol=lf

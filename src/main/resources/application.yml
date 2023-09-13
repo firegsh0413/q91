@@ -86,7 +86,7 @@ q91:
     ip: localhost:3306
     name: q91
   log:
-    folder: /log
+    folder: log
 jwt:
   signKey: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890
   expireTimeAsSec: 120

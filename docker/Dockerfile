@@ -22,6 +22,8 @@ WORKDIR /usr/local/bin
 
 ADD ./target/${SRCFILE} ./docker/docker-entrypoint.sh /usr/local/bin/
 
+RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 80
 
 ENTRYPOINT ["docker-entrypoint.sh"]
