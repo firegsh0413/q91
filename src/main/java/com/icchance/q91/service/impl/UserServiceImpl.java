@@ -164,6 +164,9 @@ public class UserServiceImpl implements UserService {
     public UserVO getUserInfo(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
         User user = authUserService.getById(userId);
+        if (Objects.isNull(user)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
         return userVO;
@@ -182,6 +185,9 @@ public class UserServiceImpl implements UserService {
     public void updateUserInfo(UserInfoDTO userInfoDTO) {
         Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
+        if (Objects.isNull(user)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
         user.setUsername(userInfoDTO.getUsername());
         user.setAvatar(userInfoDTO.getAvatar());
         user.setUpdateTime(LocalDateTime.now());
@@ -200,7 +206,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserBalanceVO getBalance(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return userBalanceService.getInfo(userId);
+        UserBalanceVO userBalanceVO = userBalanceService.getInfo(userId);
+        if (Objects.isNull(userBalanceVO)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
+        return userBalanceVO;
     }
 
     /**
@@ -216,6 +226,9 @@ public class UserServiceImpl implements UserService {
     public void certificate(CertificateDTO certificateDTO) {
         Integer userId = jwtUtil.parseUserId(certificateDTO.getToken());
         User user = authUserService.getById(userId);
+        if (Objects.isNull(user)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
         user.setName(certificateDTO.getName());
         user.setIdNumber(certificateDTO.getIdNumber());
         user.setIdCard(certificateDTO.getIdCard());
@@ -238,6 +251,9 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(UserInfoDTO userInfoDTO) {
         Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
+        if (Objects.isNull(user)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
         if (!user.getPassword().equals(userInfoDTO.getOldPassword())) {
             throw new ServiceException(ResultCode.PASSWORD_NOT_MATCH);
         }
@@ -259,6 +275,9 @@ public class UserServiceImpl implements UserService {
     public void updateFundPassword(UserInfoDTO userInfoDTO) {
         Integer userId = jwtUtil.parseUserId(userInfoDTO.getToken());
         User user = authUserService.getById(userId);
+        if (Objects.isNull(user)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
         if (!user.getFundPassword().equals(userInfoDTO.getOldFundPassword())) {
             throw new ServiceException(ResultCode.FUND_PASSWORD_NOT_MATCH);
         }

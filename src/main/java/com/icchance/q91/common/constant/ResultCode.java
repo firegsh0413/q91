@@ -17,8 +17,7 @@ public enum ResultCode implements ServiceExceptionModel {
     SYSTEM_UNDER_MAINTAIN("0002", "系统维护"),
     PARAM_LOSS("0003", "参数有缺"),
     PARAM_FORMAT_WRONG("0004", "参数格式错误"),
-
-
+    NO_DATA("0005", "查无信息"),
 
     /** 帳號類 */
     CAPTCHA_ERROR("1000", "验证码错误"),

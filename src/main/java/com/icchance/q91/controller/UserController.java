@@ -2,6 +2,10 @@ package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.PassToken;
 import com.icchance.q91.annotation.UserLoginToken;
+import com.icchance.q91.common.error.group.FundPassword;
+import com.icchance.q91.common.error.group.Login;
+import com.icchance.q91.common.error.group.Password;
+import com.icchance.q91.common.error.group.Register;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.entity.dto.*;
 import com.icchance.q91.entity.vo.UserBalanceVO;
@@ -9,7 +13,10 @@ import com.icchance.q91.entity.vo.UserVO;
 import com.icchance.q91.service.UserBalanceService;
 import com.icchance.q91.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -45,7 +52,7 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/register")
-    public Result<UserVO> register(@RequestBody UserDTO userDTO) {
+    public Result<UserVO> register(@RequestBody @Validated({Register.class}) UserDTO userDTO) {
         return Result.<UserVO>builder().repData(userService.register(userDTO)).build();
     }
 
@@ -60,7 +67,7 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/login")
-    public Result<UserVO> login(@RequestBody UserDTO userDTO) {
+    public Result<UserVO> login(@RequestBody @Validated({Login.class}) UserDTO userDTO) {
         return SUCCESS_DATA.repData(userService.login(userDTO)).build();
     }
 
@@ -90,7 +97,7 @@ public class UserController extends BaseController {
      * @since 2023/7/25 17:28:51
      */
     @UserLoginToken
-    @GetMapping("/info")
+    @PostMapping("/info")
     public Result<Void> getUserInfo(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(userService.getUserInfo(baseDTO)).build();
     }
@@ -105,7 +112,7 @@ public class UserController extends BaseController {
      * @since 2023/8/14 09:47:52
      */
     @UserLoginToken
-    @GetMapping("/balance")
+    @PostMapping("/balance")
     public Result<UserBalanceVO> getBalance(@RequestBody BaseDTO baseDTO) {
         return SUCCESS_DATA.repData(userService.getBalance(baseDTO)).build();
     }
@@ -121,7 +128,7 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/certificate")
-    public Result<Void> certificate(@RequestBody CertificateDTO certificateDTO) {
+    public Result<Void> certificate(@RequestBody @Valid CertificateDTO certificateDTO) {
         userService.certificate(certificateDTO);
         return SUCCESS;
     }
@@ -137,7 +144,7 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pwd/update")
-    public Result<Void> updatePassword(@RequestBody UserInfoDTO userInfoDTO) {
+    public Result<Void> updatePassword(@RequestBody @Validated({Password.class}) UserInfoDTO userInfoDTO) {
         userService.updatePassword(userInfoDTO);
         return SUCCESS;
     }
@@ -153,7 +160,7 @@ public class UserController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/fundPwd/update")
-    public Result<Void> updateFundPassword(@RequestBody UserInfoDTO userInfoDTO) {
+    public Result<Void> updateFundPassword(@RequestBody @Validated({FundPassword.class}) UserInfoDTO userInfoDTO) {
         userService.updateFundPassword(userInfoDTO);
         return SUCCESS;
     }

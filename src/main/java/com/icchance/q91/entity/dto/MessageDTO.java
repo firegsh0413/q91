@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * <p>
  * 站內訊息DTO
@@ -18,5 +20,6 @@ public class MessageDTO {
 
     private String token;
 
+    @NotNull
     private Integer id;
 }

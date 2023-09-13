@@ -46,7 +46,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        String token = "";
+        String token = StringUtils.EMPTY;
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
@@ -67,12 +67,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 JSONObject jsonObject = JSON.parseObject(restoreRequest.getBody());
                 if (Objects.isNull(jsonObject)) {
                     // 攔截
-                    return false;
+                    throw new ServiceException(ResultCode.PARAM_LOSS);
                 }
                 log.info("從request取得的JSON內容 = " + JSON.toJSONString(jsonObject));
+                if (Objects.isNull(jsonObject.get("token"))) {
+                    throw new ServiceException(ResultCode.PARAM_LOSS);
+                }
                 token = jsonObject.get("token").toString();
                 if (StringUtils.isBlank(token)) {
-                    return false;
+                    throw new ServiceException(ResultCode.PARAM_LOSS);
                 }
             }
             String account;

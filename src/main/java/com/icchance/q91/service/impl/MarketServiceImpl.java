@@ -71,14 +71,15 @@ public class MarketServiceImpl implements MarketService {
         marketDTO.setUserId(userId);
         marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
         List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
-        if (CollectionUtils.isNotEmpty(pendingOrderList)) {
-            pendingOrderList.forEach(marketVO -> {
-                String availableGatewayStr = marketVO.getAvailableGatewayStr();
-                if (StringUtils.isNotEmpty(availableGatewayStr)) {
-                    marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
-                }
-            });
+        if (CollectionUtils.isEmpty(pendingOrderList)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
+        pendingOrderList.forEach(marketVO -> {
+            String availableGatewayStr = marketVO.getAvailableGatewayStr();
+            if (StringUtils.isNotEmpty(availableGatewayStr)) {
+                marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
+            }
+        });
         List<Integer> gatewayType = marketDTO.getGatewayType();
         // 暫時過濾收款方式
         return pendingOrderList.stream().filter(marketVO -> {
@@ -124,16 +125,16 @@ public class MarketServiceImpl implements MarketService {
         Integer userId = jwtUtil.parseUserId(marketDTO.getToken());
         marketDTO.setUserId(userId);
         List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
-        if (CollectionUtils.isNotEmpty(pendingOrderList)) {
-            pendingOrderList.forEach(marketVO -> {
-                String availableGatewayStr = marketVO.getAvailableGatewayStr();
-                if (StringUtils.isNotEmpty(availableGatewayStr)) {
-                    marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
-                }
-            });
-            return pendingOrderList.get(0);
+        if (CollectionUtils.isEmpty(pendingOrderList)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
-        return null;
+        pendingOrderList.forEach(marketVO -> {
+            String availableGatewayStr = marketVO.getAvailableGatewayStr();
+            if (StringUtils.isNotEmpty(availableGatewayStr)) {
+                marketVO.setAvailableGateway(Arrays.stream(availableGatewayStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet()));
+            }
+        });
+        return pendingOrderList.get(0);
     }
 
     /**
@@ -211,7 +212,6 @@ public class MarketServiceImpl implements MarketService {
      * 出售
      * </p>
      * @param marketInfoDTO MarketInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:15:27
      */
@@ -232,7 +232,7 @@ public class MarketServiceImpl implements MarketService {
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
         sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().add(amount));
         if (amount.compareTo(sellerBalance.getAvailableAmount()) > 0) {
-            //return ResultSuper.builder().repCode(ResultCode.BALANCE_NOT_ENOUGH.code).repMsg(ResultCode.BALANCE_NOT_ENOUGH.msg).build();
+            throw new ServiceException(ResultCode.BALANCE_NOT_ENOUGH);
         }
         sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().subtract(amount));
         userBalanceService.updateEntity(sellerBalance);

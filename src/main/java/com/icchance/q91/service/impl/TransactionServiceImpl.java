@@ -12,10 +12,12 @@ import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.service.*;
 import com.icchance.q91.util.JwtUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,14 +55,18 @@ public class TransactionServiceImpl implements TransactionService {
      * 取得會員掛單訊息
      * </p>
      * @param baseDTO BaseDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return java.util.List<com.icchance.q91.entity.vo.PendingOrderVO>
      * @author 6687353
      * @since 2023/8/18 16:58:29
      */
     @Override
     public List<PendingOrderVO> getPendingOrderList(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return pendingOrderService.getList(userId);
+        List<PendingOrderVO> list = pendingOrderService.getList(userId);
+        if (CollectionUtils.isEmpty(list)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        return list;
     }
 
     /**
@@ -68,14 +74,18 @@ public class TransactionServiceImpl implements TransactionService {
      * 取得會員掛單（我的賣單）詳細訊息
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.PendingOrderVO
      * @author 6687353
      * @since 2023/8/18 16:58:42
      */
     @Override
     public PendingOrderVO getPendingOrderDetail(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        return pendingOrderService.getDetail(userId, transactionDTO.getId());
+        PendingOrderVO detail = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(detail)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        return detail;
     }
 
     /**
@@ -83,7 +93,6 @@ public class TransactionServiceImpl implements TransactionService {
      * 取消掛單
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 09:33:44
      */
@@ -128,7 +137,6 @@ public class TransactionServiceImpl implements TransactionService {
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 11:25:58
      */
@@ -136,8 +144,11 @@ public class TransactionServiceImpl implements TransactionService {
     public void checkPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(pendingOrderVO)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
         // 掛單狀態為有人下單
-        if (Objects.nonNull(pendingOrderVO) && OrderConstant.PendingOrderStatusEnum.ON_ORDER.code.equals(pendingOrderVO.getStatus())) {
+        if (OrderConstant.PendingOrderStatusEnum.ON_ORDER.code.equals(pendingOrderVO.getStatus())) {
             pendingOrderService.check(userId, transactionDTO.getId());
             // 更新訂單狀態
             Order order = Order.builder()
@@ -160,7 +171,6 @@ public class TransactionServiceImpl implements TransactionService {
      * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 11:49:56
      */
@@ -168,6 +178,9 @@ public class TransactionServiceImpl implements TransactionService {
     public void verifyPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(pendingOrderVO)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
         BigDecimal amount = pendingOrderVO.getAmount();
         // 判斷掛單狀態是否為買家已付款
         if (!OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code.equals(pendingOrderVO.getStatus())) {
@@ -200,14 +213,18 @@ public class TransactionServiceImpl implements TransactionService {
      * 查詢會員訂單列表
      * </p>
      * @param baseDTO BaseDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return java.util.List<com.icchance.q91.entity.vo.OrderVO>
      * @author 6687353
      * @since 2023/8/22 13:10:09
      */
     @Override
     public List<OrderVO> getOrderList(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return orderService.getList(userId);
+        List<OrderVO> list = orderService.getList(userId);
+        if (CollectionUtils.isEmpty(list)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        return list;
     }
 
     /**
@@ -215,14 +232,18 @@ public class TransactionServiceImpl implements TransactionService {
      * 查詢會員訂單詳情
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.OrderVO
      * @author 6687353
      * @since 2023/8/11 11:55:14
      */
     @Override
     public OrderVO getOrderDetail(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        return orderService.getDetail(userId, transactionDTO.getId());
+        OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(orderVO)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        return orderVO;
     }
 
     /**
@@ -230,7 +251,6 @@ public class TransactionServiceImpl implements TransactionService {
      * 取消訂單
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 11:03:16
      */
@@ -238,6 +258,9 @@ public class TransactionServiceImpl implements TransactionService {
     public void cancelOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(orderVO)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
         orderService.cancel(userId, transactionDTO.getId());
         // 取消訂單 買方錢包額度 交易中移除額度
         UserBalance buyerBalance = userBalanceService.getEntity(userId);
@@ -267,7 +290,6 @@ public class TransactionServiceImpl implements TransactionService {
      * 申訴訂單
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 14:23:42
      */
@@ -282,14 +304,18 @@ public class TransactionServiceImpl implements TransactionService {
      * 會員錢包紀錄訊息
      * </p>
      * @param baseDTO BaseDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return java.util.List<com.icchance.q91.entity.model.OrderRecord>
      * @author 6687353
      * @since 2023/8/22 14:38:13
      */
     @Override
     public List<OrderRecord> getRecord(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, userId));
+        List<OrderRecord> list = orderRecordService.list(Wrappers.<OrderRecord>lambdaQuery().eq(OrderRecord::getUserId, userId));
+        if (CollectionUtils.isEmpty(list)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
+        return list;
     }
 
     /**
@@ -298,14 +324,18 @@ public class TransactionServiceImpl implements TransactionService {
      * </p>
      *
      * @param baseDTO BaseDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return java.util.List<com.icchance.q91.entity.model.Gateway>
      * @author 6687353
      * @since 2023/7/31 13:26:44
      */
     @Override
     public List<Gateway> getGatewayList(BaseDTO baseDTO) {
         Integer userId = jwtUtil.parseUserId(baseDTO.getToken());
-        return gatewayService.getGatewayList(userId);
+        List<Gateway> gatewayList = gatewayService.getGatewayList(userId);
+        if (CollectionUtils.isEmpty(gatewayList)) {
+            throw new ServiceException(ResultCode.NO_DATA);
+        }
+        return gatewayList;
     }
 
     /**
@@ -314,7 +344,6 @@ public class TransactionServiceImpl implements TransactionService {
      * </p>
      *
      * @param gatewayDTO GatewayDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:27:53
      */
@@ -331,7 +360,6 @@ public class TransactionServiceImpl implements TransactionService {
      * </p>
      *
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/7/31 13:29:00
      */
@@ -346,7 +374,6 @@ public class TransactionServiceImpl implements TransactionService {
      * 上傳支付憑證
      * </p>
      * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class MarketDTO {
     /** 可用收款方式種類 */
     private List<Integer> gatewayType;
     /** 訂單UID */
+    @NotNull
     private Integer id;
     /** 訂單狀態 */
     private Integer status;

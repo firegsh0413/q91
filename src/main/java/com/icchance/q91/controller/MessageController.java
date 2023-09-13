@@ -11,6 +11,7 @@ import com.icchance.q91.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public class MessageController extends BaseController {
      * @since 2023/8/17 15:59:25
      */
     @UserLoginToken
-    @GetMapping("/announcement")
+    @PostMapping("/announcement")
     public Result<List<Announcement>> getAnnouncement(@RequestBody MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getAnnouncement(messageDTO)).build();
     }
@@ -58,8 +59,8 @@ public class MessageController extends BaseController {
      * @since 2023/8/18 13:34:19
      */
     @UserLoginToken
-    @GetMapping("/private/unread")
-    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody MessageDTO messageDTO) {
+    @PostMapping("/private/unread")
+    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody @Valid MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getUnreadPrivateMessageAmount(messageDTO)).build();
     }
 
@@ -73,7 +74,7 @@ public class MessageController extends BaseController {
      * @since 2023/8/18 13:46:44
      */
     @UserLoginToken
-    @GetMapping("/list")
+    @PostMapping("/list")
     public Result<MessageListVO> getMessageList(@RequestBody MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getMessageList(messageDTO)).build();
     }
@@ -89,7 +90,7 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/private/notice")
-    public Result<Void> setPrivateMessageNotice(@RequestBody MessageDTO messageDTO) {
+    public Result<Void> setPrivateMessageNotice(@RequestBody @Valid MessageDTO messageDTO) {
         messageService.setPrivateMessageNotice(messageDTO);
         return SUCCESS;
     }

@@ -1,6 +1,7 @@
 package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.UserLoginToken;
+import com.icchance.q91.common.error.group.CheckGateway;
 import com.icchance.q91.common.result.Result;
 import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MarketDTO;
@@ -9,6 +10,7 @@ import com.icchance.q91.entity.vo.CheckGatewayVO;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.service.MarketService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:02:09
      */
     @UserLoginToken
-    @GetMapping("/pendingOrder/list")
+    @PostMapping("/pendingOrder/list")
     public Result<List<MarketVO>> getMarketList(@RequestBody MarketDTO marketDTO) {
         return SUCCESS_DATA.repData(marketService.getPendingOrderList(marketDTO)).build();
     }
@@ -57,8 +59,8 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:04:49
      */
     @UserLoginToken
-    @GetMapping("/checkGateway")
-    public Result<CheckGatewayVO> checkGateway(@RequestBody MarketInfoDTO marketInfoDTO) {
+    @PostMapping("/checkGateway")
+    public Result<CheckGatewayVO> checkGateway(@RequestBody @Validated({CheckGateway.class}) MarketInfoDTO marketInfoDTO) {
         return SUCCESS_DATA.repData(marketService.checkGateway(marketInfoDTO)).build();
     }
 
@@ -72,7 +74,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:11:05
      */
     @UserLoginToken
-    @GetMapping("/pendingOrder")
+    @PostMapping("/pendingOrder")
     public Result<MarketVO> getPendingOrder(@RequestBody MarketDTO marketDTO) {
         return SUCCESS_DATA.repData(marketService.getPendingOrder(marketDTO)).build();
     }

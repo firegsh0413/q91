@@ -71,7 +71,6 @@ public class JwtUtil {
      */
     private Claims parseToken(String token) {
         Claims claims = Jwts.parserBuilder()
-                //.setSigningKey(Keys.hmacShaKeyFor(jwtSignKey.getBytes(StandardCharsets.UTF_8)))
                 .setSigningKey(Keys.hmacShaKeyFor(jwtSignKey.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseClaimsJws(token)

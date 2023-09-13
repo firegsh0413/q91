@@ -22,7 +22,7 @@ public interface MessageService {
      * 取得首頁公告跑馬燈訊息
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return java.util.List<com.icchance.q91.entity.model.Announcement>
      * @author 6687353
      * @since 2023/8/17 16:00:01
      */
@@ -33,7 +33,7 @@ public interface MessageService {
      * 取得會員未讀站內信數量
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.MessageVO
      * @author 6687353
      * @since 2023/8/18 13:43:09
      */
@@ -44,7 +44,7 @@ public interface MessageService {
      * 取得會員消息管理清單
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.MessageListVO
      * @author 6687353
      * @since 2023/8/18 13:47:12
      */
@@ -55,7 +55,6 @@ public interface MessageService {
      * 會員站內信標記已讀
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 13:59:55
      */
@@ -66,7 +65,6 @@ public interface MessageService {
      * 會員刪除站內信
      * </p>
      * @param messageDTO MessageDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 14:37:56
      */

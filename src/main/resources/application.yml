@@ -74,6 +74,11 @@ logging:
   level:
     root: INFO
     p6spy: INFO
+# Actuator 監控設定
+management:
+  endpoint:
+    health:
+      show-details: always
 
 # 自訂變數
 q91:
