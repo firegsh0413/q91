@@ -1,12 +1,15 @@
 package com.icchance.q91.entity.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+import static com.icchance.q91.common.constant.CacheConstant.Default.TIME_PATTERN;
 
 /**
  * <p>
@@ -26,7 +29,7 @@ public class AnnouncementVO {
     private String title;
 
     private String content;
-
+    @JsonFormat(pattern = TIME_PATTERN)
     private LocalDateTime createTime;
 
 }

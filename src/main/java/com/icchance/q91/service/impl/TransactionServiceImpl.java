@@ -1,11 +1,10 @@
 package com.icchance.q91.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
-import com.icchance.q91.common.result.Result;
-import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.*;
 import com.icchance.q91.entity.model.*;
 import com.icchance.q91.entity.vo.OrderVO;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -111,7 +109,7 @@ public class TransactionServiceImpl implements TransactionService {
         // 取消掛單 賣方錢包額度要回歸
         // 1.掛單狀態為掛賣中 賣單餘額->可售數量
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
-        if (OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrderVO.getStatus())) {
+        if (OrderConstant.PendingOrderStatusEnum.ON_SALE.code.equals(pendingOrderVO.getStatus())) {
             sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
             sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().add(amount));
         }
@@ -153,7 +151,7 @@ public class TransactionServiceImpl implements TransactionService {
             // 更新訂單狀態
             Order order = Order.builder()
                     .id(pendingOrderVO.getOrderId())
-                    .status(OrderConstant.OrderStatusEnum.SELLER_CHECKED.code)
+                    .status(OrderConstant.OrderStatusEnum.PAY_UPLOAD.code)
                     .updateTime(LocalDateTime.now())
                     .cutOffTime(LocalDateTime.now().plusMinutes(10)).build();
             orderService.updateById(order);
@@ -270,7 +268,7 @@ public class TransactionServiceImpl implements TransactionService {
         // 錢包額度 交易中->賣單餘額
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(orderVO.getPendingOrderId())
-                .status(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code)
+                .status(OrderConstant.PendingOrderStatusEnum.ON_SALE.code)
                 // 買方資訊清空
                 .orderId(null)
                 .buyerId(null)
@@ -297,6 +295,16 @@ public class TransactionServiceImpl implements TransactionService {
     public void appealOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         orderService.appeal(userId, transactionDTO.getId());
+        // 賣方掛單更新
+        PendingOrder pendingOrder = new LambdaQueryChainWrapper<>(pendingOrderService.getBaseMapper())
+                .eq(PendingOrder::getOrderId, transactionDTO.getId())
+                .one();
+        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
+                .id(pendingOrder.getId())
+                .status(OrderConstant.PendingOrderStatusEnum.APPEAL.code)
+                //.cutOffTime(null)
+                .build();
+        pendingOrderService.update(pendingOrderDTO);
     }
 
     /**

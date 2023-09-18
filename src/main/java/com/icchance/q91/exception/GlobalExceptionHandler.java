@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +74,24 @@ public class GlobalExceptionHandler {
                 .repMsg(ResultCode.PARAM_LOSS.repMsg)
                 .detail(detail)
                 .repData(detail)
+                .build();
+    }
+
+    /**
+     * <p>
+     * 輸入輸出異常處理
+     * </p>
+     * @author 6687353
+     * @since 2023/9/18 15:07:50
+     */
+    @ExceptionHandler(IOException.class)
+    public Result<?> IOExceptionHandler(HttpServletRequest req, HttpServletResponse res, Exception e) {
+        return Result.builder()
+                .date(new Date())
+                .repCode(ResultCode.PARAM_FORMAT_WRONG.repCode)
+                .url(req.getRequestURL().toString())
+                .repMsg(ResultCode.PARAM_FORMAT_WRONG.repMsg)
+                .detail(e.getMessage())
                 .build();
     }
 

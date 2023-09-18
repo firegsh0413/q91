@@ -1,6 +1,6 @@
 package com.icchance.q91.entity.vo;
 
-import com.icchance.q91.entity.model.Gateway;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import static com.icchance.q91.common.constant.CacheConstant.Default.TIME_PATTERN;
 
 /**
  * <p>
@@ -30,10 +31,13 @@ public class BaseOrderVO {
     /** 掛/訂單狀態 */
     private Integer status;
     /** 建立掛/訂單時間 */
+    @JsonFormat(pattern = TIME_PATTERN)
     private LocalDateTime createTime;
     /** 最後操作時間 */
+    @JsonFormat(pattern = TIME_PATTERN)
     private LocalDateTime updateTime;
     /** 下單時間 */
+    @JsonFormat(pattern = TIME_PATTERN)
     private LocalDateTime tradeTime;
     /** 掛賣金額 */
     private BigDecimal amount;

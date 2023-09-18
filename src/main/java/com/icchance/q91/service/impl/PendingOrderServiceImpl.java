@@ -137,7 +137,7 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
         String orderNumber = generateOrderNumber(LocalDateTime.now());
         PendingOrder pendingOrder = new PendingOrder();
         BeanUtils.copyProperties(pendingOrderDTO, pendingOrder);
-        pendingOrder.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
+        pendingOrder.setStatus(OrderConstant.PendingOrderStatusEnum.ON_SALE.code);
         pendingOrder.setCreateTime(LocalDateTime.now());
         pendingOrder.setOrderNumber(orderNumber);
         baseMapper.insert(pendingOrder);

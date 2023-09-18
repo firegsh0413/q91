@@ -28,12 +28,15 @@ public interface OrderConstant {
     }
 
     enum PendingOrderStatusEnum {
-        ON_PENDING(1, "掛賣中"),
-        ON_ORDER(2, "買家已下單"),
-        NO_PAY(3, "買家未付款"),
-        ALREADY_PAY(4, "買家已付款"),
-        FINISH(5, "已完成"),
-        CANCEL(6, "已取消"),
+        // 掛賣中
+        ON_SALE(1, "出售中"),
+        // 買家已下單
+        ON_ORDER(2, "待確認"),
+        NO_PAY(3, "待出款-買家未付款"),
+        ALREADY_PAY(4, "待出款-買家已付款"),
+        APPEAL(5, "申訴處理"),
+        FINISH(6, "成功"),
+        CANCEL(7, "已取消"),
         ;
         public final Integer code;
         public final String desc;
@@ -52,12 +55,14 @@ public interface OrderConstant {
      * @since 2023/7/31 15:26:22
      */
     enum OrderStatusEnum {
-
-        ON_ORDER(1, "已下單，待賣家確認"),
-        SELLER_CHECKED(2, "賣家已確認，待轉帳"),
-        ORDER_VERIFY(3, "已付款，待賣家確認"),
-        APPEAL(4, "申訴中"),
-        FINISH(5, "已完成"),
+        // 已下單，待賣家確認
+        ON_ORDER(1, "等待確認"),
+        // 賣家已確認，待轉帳
+        PAY_UPLOAD(2, "上傳支付"),
+        // 已付款，待賣家確認
+        ORDER_VERIFY(3, "待入款"),
+        APPEAL(4, "申訴處理"),
+        FINISH(5, "成功"),
         CANCEL(6, "已取消"),
         ;
         public final Integer code;

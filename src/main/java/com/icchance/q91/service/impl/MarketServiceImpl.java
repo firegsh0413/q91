@@ -3,8 +3,6 @@ package com.icchance.q91.service.impl;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
-import com.icchance.q91.common.result.Result;
-import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.MarketInfoDTO;
 import com.icchance.q91.entity.dto.OrderDTO;
@@ -69,7 +67,7 @@ public class MarketServiceImpl implements MarketService {
     public List<MarketVO> getPendingOrderList(MarketDTO marketDTO) {
         Integer userId = jwtUtil.parseUserId(marketDTO.getToken());
         marketDTO.setUserId(userId);
-        marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_PENDING.code);
+        marketDTO.setStatus(OrderConstant.PendingOrderStatusEnum.ON_SALE.code);
         List<MarketVO> pendingOrderList = pendingOrderService.getMarketList(marketDTO);
         if (CollectionUtils.isEmpty(pendingOrderList)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
@@ -155,7 +153,7 @@ public class MarketServiceImpl implements MarketService {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
         // 掛單狀態不為掛賣中
-        if (!OrderConstant.PendingOrderStatusEnum.ON_PENDING.code.equals(pendingOrder.getStatus())) {
+        if (!OrderConstant.PendingOrderStatusEnum.ON_SALE.code.equals(pendingOrder.getStatus())) {
             throw new ServiceException(ResultCode.ORDER_LOCK_BY_ANOTHER);
         }
         Gateway buyerGateway = gatewayService.getGatewayByType(userId, marketInfoDTO.getType());

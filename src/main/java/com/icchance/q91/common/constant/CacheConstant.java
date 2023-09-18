@@ -9,5 +9,7 @@ public interface CacheConstant {
         Long TIME_OUT = -1L;
         /** 默認的時間單位,分鐘 */
         TimeUnit TIME_UNIT = TimeUnit.MINUTES;
+
+        String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     }
 }
