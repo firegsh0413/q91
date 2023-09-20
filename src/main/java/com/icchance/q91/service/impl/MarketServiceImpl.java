@@ -176,7 +176,6 @@ public class MarketServiceImpl implements MarketService {
                 .sellerGatewayId(Optional.ofNullable(sellerGateway).map(Gateway::getId).orElse(null))
                 .amount(amount)
                 .tradeTime(tradeTime)
-                //.cutOffTime(tradeTime.plusMinutes(10))
                 .build();
         Order order = orderService.create(orderDTO);
         // 2-2.更新掛單狀態
@@ -191,9 +190,9 @@ public class MarketServiceImpl implements MarketService {
                 .build();
         pendingOrderService.update(pendingOrderDTO);
         // 3.更新買方錢包 交易中+額度
-        UserBalance buyerBalance = userBalanceService.getEntity(userId);
+/*        UserBalance buyerBalance = userBalanceService.getEntity(userId);
         buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().add(amount));
-        userBalanceService.updateEntity(buyerBalance);
+        userBalanceService.updateEntity(buyerBalance);*/
         // 4.建立訂單(錢包)紀錄
         OrderRecord orderRecord = OrderRecord.builder()
                 .userId(userId)

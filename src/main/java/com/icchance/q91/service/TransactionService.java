@@ -74,6 +74,8 @@ public interface TransactionService {
      */
     void verifyPendingOrder(TransactionDTO transactionDTO);
 
+    void verifyPendingOrder(Integer userId, Integer orderId);
+
     /**
      * <p>
      * 查詢會員訂單列表
@@ -105,6 +107,8 @@ public interface TransactionService {
      * @since 2023/8/22 14:17:35
      */
     void cancelOrder(TransactionDTO transactionDTO);
+
+    void cancelOrder(Integer userId, Integer orderId);
 
     /**
      * <p>

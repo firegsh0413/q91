@@ -1,5 +1,6 @@
 package com.icchance.q91.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.icchance.q91.common.constant.OrderConstant;
@@ -9,6 +10,7 @@ import com.icchance.q91.entity.dto.*;
 import com.icchance.q91.entity.model.*;
 import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
+import com.icchance.q91.nsq.Producer;
 import com.icchance.q91.service.*;
 import com.icchance.q91.util.JwtUtil;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,9 +38,10 @@ public class TransactionServiceImpl implements TransactionService {
     private final OrderRecordService orderRecordService;
     private final UserBalanceService userBalanceService;
     private final JwtUtil jwtUtil;
+    private final Producer producer;
     public TransactionServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService,
                                   OrderService orderService, OrderRecordService orderRecordService, UserBalanceService userBalanceService,
-                                  JwtUtil jwtUtil) {
+                                  JwtUtil jwtUtil, Producer producer) {
         this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
@@ -46,6 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
         this.orderRecordService = orderRecordService;
         this.userBalanceService = userBalanceService;
         this.jwtUtil = jwtUtil;
+        this.producer = producer;
     }
 
     /**
@@ -109,7 +113,8 @@ public class TransactionServiceImpl implements TransactionService {
         // 取消掛單 賣方錢包額度要回歸
         // 1.掛單狀態為掛賣中 賣單餘額->可售數量
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
-        if (OrderConstant.PendingOrderStatusEnum.ON_SALE.code.equals(pendingOrderVO.getStatus())) {
+        if (OrderConstant.PendingOrderStatusEnum.ON_SALE.code.equals(pendingOrderVO.getStatus())
+                || OrderConstant.PendingOrderStatusEnum.ON_ORDER.code.equals(pendingOrderVO.getStatus())) {
             sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(amount));
             sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().add(amount));
         }
@@ -120,12 +125,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
         userBalanceService.updateEntity(sellerBalance);
         // 如果有買方 已下訂訂單取消
-        // 錢包額度 交易中額度扣除
         if (Objects.nonNull(pendingOrderVO.getBuyerId())) {
+            OrderVO orderVO = orderService.getDetail(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
             orderService.cancel(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
-            UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
-            buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(amount));
-            userBalanceService.updateEntity(buyerBalance);
+            // 如果訂單狀態在等待上傳支付之後，錢包額度 交易中額度扣除
+            if (OrderConstant.OrderStatusEnum.PAY_UPLOAD.code <= orderVO.getStatus()) {
+                UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
+                buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(orderVO.getAmount()));
+                userBalanceService.updateEntity(buyerBalance);
+            }
         }
     }
 
@@ -155,11 +163,19 @@ public class TransactionServiceImpl implements TransactionService {
                     .updateTime(LocalDateTime.now())
                     .cutOffTime(LocalDateTime.now().plusMinutes(10)).build();
             orderService.updateById(order);
+            // TODO 待優化
+            OrderVO orderVO = orderService.getDetail(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
+            // 推送訂單等待上傳支付憑證倒數資訊
+            producer.checkOrder(JSON.toJSONString(transactionDTO));
             // 掛單有人下訂 用戶錢包額度 賣單餘額->交易中
             UserBalance sellerBalance = userBalanceService.getEntity(userId);
-            sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(pendingOrderVO.getAmount()));
-            sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(pendingOrderVO.getAmount()));
+            sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(orderVO.getAmount()));
+            sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(orderVO.getAmount()));
             userBalanceService.updateEntity(sellerBalance);
+            // 買方錢包額度 交易中+
+            UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
+            buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().add(orderVO.getAmount()));
+            userBalanceService.updateEntity(buyerBalance);
         }
     }
 
@@ -175,20 +191,24 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void verifyPendingOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        verifyPendingOrder(userId, transactionDTO.getId());
+    }
+    @Override
+    public void verifyPendingOrder(Integer userId, Integer orderId) {
+        PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(userId, orderId);
         if (Objects.isNull(pendingOrderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
-        BigDecimal amount = pendingOrderVO.getAmount();
+        // 待優化
+        OrderVO orderVO = orderService.getDetail(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
+        BigDecimal amount = orderVO.getAmount();
         // 判斷掛單狀態是否為買家已付款
         if (!OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code.equals(pendingOrderVO.getStatus())) {
             throw new ServiceException(ResultCode.BUYER_NOT_PAY);
         }
-/*        if (LocalDateTime.now().isAfter(pendingOrderVO.getCutOffTime())) {
-
-        }*/
         // 掛單有人下訂 用戶錢包額度 從交易中扣除
         UserBalance sellerBalance = userBalanceService.getEntity(userId);
+
         sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().subtract(amount));
         userBalanceService.updateEntity(sellerBalance);
         // 打幣給買家 交易中->可售數量/錢包餘額
@@ -197,7 +217,7 @@ public class TransactionServiceImpl implements TransactionService {
         buyerBalance.setBalance(buyerBalance.getBalance().add(amount));
         buyerBalance.setAvailableAmount(buyerBalance.getAvailableAmount().add(amount));
         userBalanceService.updateEntity(buyerBalance);
-        pendingOrderService.verify(userId, transactionDTO.getId());
+        pendingOrderService.verify(userId, orderId);
         // 更新訂單狀態
         OrderDTO orderDTO = OrderDTO.builder()
                 .id(pendingOrderVO.getOrderId())
@@ -255,11 +275,16 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void cancelOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
+        cancelOrder(userId, transactionDTO.getId());
+    }
+
+    @Override
+    public void cancelOrder(Integer userId, Integer orderId) {
+        OrderVO orderVO = orderService.getDetail(userId, orderId);
         if (Objects.isNull(orderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
-        orderService.cancel(userId, transactionDTO.getId());
+        orderService.cancel(userId, orderId);
         // 取消訂單 買方錢包額度 交易中移除額度
         UserBalance buyerBalance = userBalanceService.getEntity(userId);
         buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(orderVO.getAmount()));
@@ -392,16 +417,13 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(orderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
-        // TODO 判斷超過截止時間 取消訂單
-        if (LocalDateTime.now().isAfter(orderVO.getCutOffTime())) {
-            this.cancelOrder(transactionDTO);
-        }
         orderService.uploadCert(userId, orderVO.getId(), transactionDTO.getCert());
+        // 已經支付
+        producer.uploadCert(JSON.toJSONString(transactionDTO));
         // 訂單狀態更新
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(orderVO.getPendingOrderId())
                 .status(OrderConstant.PendingOrderStatusEnum.ALREADY_PAY.code)
-                //.cutOffTime(LocalDateTime.now().plusMinutes(10))
                 .cert(transactionDTO.getCert())
                 .build();
         pendingOrderService.update(pendingOrderDTO);

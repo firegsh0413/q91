@@ -79,6 +79,17 @@ management:
   endpoint:
     health:
       show-details: always
+# NSQ
+nsq:
+  produce:
+    host: 127.0.0.1
+    port: 4150
+  lookup:
+    host: 127.0.0.1
+    port: 4161
+  channel: channel
+  # 延遲發送(s)
+  timeout: 600
 
 # 自訂變數
 q91:

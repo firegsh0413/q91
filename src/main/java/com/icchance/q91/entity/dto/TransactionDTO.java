@@ -20,6 +20,11 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class TransactionDTO {
 
+    public TransactionDTO(String token, Integer id, String cert) {
+        this.token = token;
+        this.id = id;
+        this.cert = cert;
+    }
     private String token;
     /** 訂單uid */
     @NotNull(groups = {Order.class, OrderVerify.class})

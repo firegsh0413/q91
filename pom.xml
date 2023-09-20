@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.icchance</groupId>
 	<artifactId>q91</artifactId>
-	<version>0.0.16-SNAPSHOT</version>
+	<version>0.0.17-SNAPSHOT</version>
 	<name>q91</name>
 	<description>q91</description>
 	<properties>
@@ -122,6 +122,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<!-- NSQ -->
+		<dependency>
+			<groupId>com.sproutsocial</groupId>
+			<artifactId>nsq-j</artifactId>
+			<version>1.4.2</version>
 		</dependency>
 		<!-- 阿里 JSON -->
 		<dependency>
