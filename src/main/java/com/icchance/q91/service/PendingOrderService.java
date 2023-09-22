@@ -82,11 +82,11 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * 建立掛單
      * </p>
      * @param pendingOrderDTO  PendingOrderDTO
-     * @return java.lang.String
+     * @return com.icchance.q91.entity.model.PendingOrder
      * @author 6687353
      * @since 2023/8/22 16:46:04
      */
-    String create(PendingOrderDTO pendingOrderDTO);
+    PendingOrder create(PendingOrderDTO pendingOrderDTO);
 
     /**
      * <p>

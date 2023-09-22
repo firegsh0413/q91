@@ -38,18 +38,18 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
 
     private final CaptchaService captchaService;
-    private final RedisKit redisKit;
+    //private final RedisKit redisKit;
     private final JwtUtil jwtUtil;
     private final AuthUserService authUserService;
     private final UserBalanceService userBalanceService;
     private final UserMapper userMapper;
 
     //private final CaptchaCacheServiceRedisImpl captchaCacheServiceRedis;
-    public UserServiceImpl(CaptchaService captchaService, RedisKit redisKit, JwtUtil jwtUtil, AuthUserService authUserService,
+    public UserServiceImpl(CaptchaService captchaService, JwtUtil jwtUtil, AuthUserService authUserService,
                            UserBalanceService userBalanceService, UserMapper userMapper) {
         this.captchaService = captchaService;
         //this.captchaCacheServiceRedis = captchaCacheServiceRedis;
-        this.redisKit = redisKit;
+        //this.redisKit = redisKit;
         this.jwtUtil = jwtUtil;
         this.authUserService = authUserService;
         this.userBalanceService = userBalanceService;

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.icchance.q91.common.constant.OrderConstant;
+import com.icchance.q91.common.constant.RedisKey;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.dto.*;
@@ -12,7 +13,10 @@ import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.nsq.Producer;
 import com.icchance.q91.service.*;
+import com.icchance.q91.util.DistributedLocker;
 import com.icchance.q91.util.JwtUtil;
+import com.icchance.q91.util.RedisKeyUtil;
+import com.icchance.q91.util.RedissonLockUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+
+import static com.icchance.q91.common.constant.RedisKey.Order.PENDING_ORDER_ID;
 
 /**
  * <p>
@@ -31,7 +37,7 @@ import java.util.Objects;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-    private final UserService userService;
+    //private final UserService userService;
     private final GatewayService gatewayService;
     private final PendingOrderService pendingOrderService;
     private final OrderService orderService;
@@ -39,10 +45,10 @@ public class TransactionServiceImpl implements TransactionService {
     private final UserBalanceService userBalanceService;
     private final JwtUtil jwtUtil;
     private final Producer producer;
-    public TransactionServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService,
+    public TransactionServiceImpl(GatewayService gatewayService, PendingOrderService pendingOrderService,
                                   OrderService orderService, OrderRecordService orderRecordService, UserBalanceService userBalanceService,
                                   JwtUtil jwtUtil, Producer producer) {
-        this.userService = userService;
+        //this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
         this.orderService = orderService;
@@ -135,6 +141,10 @@ public class TransactionServiceImpl implements TransactionService {
                 userBalanceService.updateEntity(buyerBalance);
             }
         }
+        // 解鎖
+        if (RedissonLockUtil.isLocked(RedisKeyUtil.generateKey(pendingOrderVO.getId()))) {
+            RedissonLockUtil.unlock(RedisKeyUtil.generateKey(pendingOrderVO.getId()));
+        }
     }
 
     /**
@@ -224,6 +234,10 @@ public class TransactionServiceImpl implements TransactionService {
                 .status(OrderConstant.OrderStatusEnum.FINISH.code)
                 .build();
         orderService.update(orderDTO);
+        // 解鎖
+        if (RedissonLockUtil.isLocked(RedisKeyUtil.generateKey(pendingOrderVO.getId()))) {
+            RedissonLockUtil.unlock(RedisKeyUtil.generateKey(pendingOrderVO.getId()));
+        }
     }
 
     /**
@@ -299,13 +313,16 @@ public class TransactionServiceImpl implements TransactionService {
                 .buyerId(null)
                 .buyerGatewayId(null)
                 .tradeTime(null)
-                //.cutOffTime(null)
                 .build();
         pendingOrderService.update(pendingOrderDTO);
         UserBalance sellBalance = userBalanceService.getEntity(orderVO.getSellerId());
         sellBalance.setTradingAmount(sellBalance.getTradingAmount().subtract(orderVO.getAmount()));
         sellBalance.setPendingBalance(sellBalance.getPendingBalance().add(orderVO.getAmount()));
         userBalanceService.updateEntity(sellBalance);
+        // 解鎖
+        if (RedissonLockUtil.isLocked(RedisKeyUtil.generateKey(orderVO.getPendingOrderId()))) {
+            RedissonLockUtil.unlock(RedisKeyUtil.generateKey(orderVO.getPendingOrderId()));
+        }
     }
 
     /**
@@ -327,7 +344,6 @@ public class TransactionServiceImpl implements TransactionService {
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(pendingOrder.getId())
                 .status(OrderConstant.PendingOrderStatusEnum.APPEAL.code)
-                //.cutOffTime(null)
                 .build();
         pendingOrderService.update(pendingOrderDTO);
     }

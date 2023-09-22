@@ -9,6 +9,7 @@ import com.icchance.q91.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.omg.CORBA.SystemException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -115,8 +116,13 @@ public class GlobalExceptionHandler {
             code = ResultCode.PARAM_LOSS.repCode;
             message = ResultCode.PARAM_LOSS.repMsg;
             detail = me.getParameter().getParameterName();
+        } else if (e instanceof SystemException) {
+            SystemException se = (SystemException) e;
+            code = ResultCode.SYSTEM_ERROR.repCode;
+            message = se.getMessage();
+            detail = se.getMessage();
         }
-        log.error(EXCEPTION_MSG, "AbstractException", e.getClass().getName(), e.getMessage(), req.getRequestURL().toString(), e);
+        log.error(EXCEPTION_MSG, "AbstractException", e.getClass().getName(), e.getMessage(), req.getRequestURL().toString());
         res.setStatus(ERROR_CODE);
         // 錯誤訊息dialog > title:message, 內容:detail
         return Result.builder()

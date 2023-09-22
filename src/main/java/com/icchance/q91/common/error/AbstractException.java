@@ -8,6 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
+/**
+ * <p>
+ * 錯誤抽象類
+ * </p>
+ * @author 6687353
+ * @since 2023/9/22 15:23:30
+ */
 @Getter
 @Setter
 public class AbstractException extends RuntimeException {

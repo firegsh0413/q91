@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -19,10 +18,9 @@ import com.icchance.q91.redis.impl.RedisKitImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.LocalDate;
@@ -30,14 +28,21 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * <p>
+ * Redis配置類
+ * </p>
+ * @author 6687353
+ * @since 2023/9/21 14:36:10
+ */
 @Slf4j
 @Configuration
-public class RedisConfiguration {
+public class RedisConfig {
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(LettuceConnectionFactory factory) {
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory factory) {
         log.info(">>>>>>>> 初始化 RedisTemplate 配置信息 <<<<<<<<");
-        factory.setShareNativeConnection(false);
+        //factory.setShareNativeConnection(false);
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(factory);
         // 使用Jackson2JsonRedisSerialize 替换默認序列化
@@ -63,7 +68,6 @@ public class RedisConfiguration {
         timeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
         objectMapper.registerModule(timeModule);
 
-
         //jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         // 設置key的序列化規則
@@ -78,6 +82,8 @@ public class RedisConfiguration {
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
+
+
 
     @Bean
     public RedisKit redisKit(RedisTemplate redisTemplate){

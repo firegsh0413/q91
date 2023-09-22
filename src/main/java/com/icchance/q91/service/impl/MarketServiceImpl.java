@@ -1,22 +1,23 @@
 package com.icchance.q91.service.impl;
 
 import com.icchance.q91.common.constant.OrderConstant;
+import com.icchance.q91.common.constant.RedisKey;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.MarketInfoDTO;
 import com.icchance.q91.entity.dto.OrderDTO;
 import com.icchance.q91.entity.dto.PendingOrderDTO;
-import com.icchance.q91.entity.model.Gateway;
-import com.icchance.q91.entity.model.Order;
-import com.icchance.q91.entity.model.OrderRecord;
-import com.icchance.q91.entity.model.UserBalance;
+import com.icchance.q91.entity.model.*;
 import com.icchance.q91.entity.vo.CheckGatewayVO;
 import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.service.*;
 import com.icchance.q91.util.JwtUtil;
+import com.icchance.q91.util.RedisKeyUtil;
+import com.icchance.q91.util.RedissonLockUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.RedissonLock;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,17 +35,18 @@ import java.util.stream.Collectors;
 @Service
 public class MarketServiceImpl implements MarketService {
 
-    private final UserService userService;
+    //private final UserService userService;
     private final GatewayService gatewayService;
     private final PendingOrderService pendingOrderService;
     private final OrderService orderService;
     private final OrderRecordService orderRecordService;
     private final UserBalanceService userBalanceService;
     private final JwtUtil jwtUtil;
-    public MarketServiceImpl(UserService userService, GatewayService gatewayService, PendingOrderService pendingOrderService,
+
+    public MarketServiceImpl(GatewayService gatewayService, PendingOrderService pendingOrderService,
                              OrderService orderService, OrderRecordService orderRecordService, UserBalanceService userBalanceService,
                              JwtUtil jwtUtil) {
-        this.userService = userService;
+        //this.userService = userService;
         this.gatewayService = gatewayService;
         this.pendingOrderService = pendingOrderService;
         this.orderService = orderService;
@@ -140,7 +142,6 @@ public class MarketServiceImpl implements MarketService {
      * 購買
      * </p>
      * @param marketInfoDTO MarketInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:12:14
      */
@@ -152,7 +153,11 @@ public class MarketServiceImpl implements MarketService {
         if (Objects.isNull(pendingOrder)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
+        if (RedissonLockUtil.isLocked(RedisKeyUtil.generateKey(marketInfoDTO.getId()))) {
+            throw new ServiceException(ResultCode.ORDER_IN_TRANSACTION);
+        }
         // 掛單狀態不為掛賣中
+        // 不為鎖定狀態
         if (!OrderConstant.PendingOrderStatusEnum.ON_SALE.code.equals(pendingOrder.getStatus())) {
             throw new ServiceException(ResultCode.ORDER_LOCK_BY_ANOTHER);
         }
@@ -202,6 +207,8 @@ public class MarketServiceImpl implements MarketService {
                 .createTime(tradeTime)
                 .build();
         orderRecordService.save(orderRecord);
+        // 上鎖
+        RedissonLockUtil.lock(RedisKeyUtil.generateKey(pendingOrder.getId()));
     }
 
     /**
@@ -222,8 +229,8 @@ public class MarketServiceImpl implements MarketService {
                 .amount(amount)
                 .availableGatewayStr(marketInfoDTO.getAvailableGateway().stream().map(Object::toString).collect(Collectors.joining(",")))
                 .build();
-        String orderNumber = pendingOrderService.create(pendingOrderDTO);
-
+        PendingOrder pendingOrder = pendingOrderService.create(pendingOrderDTO);
+        String orderNumber = pendingOrder.getOrderNumber();
         // 2.更新賣方錢包
         // 可售數量->賣單餘額
         UserBalance sellerBalance = userBalanceService.getEntity(userId);

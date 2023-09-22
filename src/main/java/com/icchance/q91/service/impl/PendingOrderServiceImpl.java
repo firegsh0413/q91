@@ -128,12 +128,12 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
      * 建立掛單
      * </p>
      * @param pendingOrderDTO  PendingOrderDTO
-     * @return java.lang.String
+     * @return com.icchance.q91.entity.model.PendingOrder
      * @author 6687353
      * @since 2023/8/22 16:46:04
      */
     @Override
-    public String create(PendingOrderDTO pendingOrderDTO) {
+    public PendingOrder create(PendingOrderDTO pendingOrderDTO) {
         String orderNumber = generateOrderNumber(LocalDateTime.now());
         PendingOrder pendingOrder = new PendingOrder();
         BeanUtils.copyProperties(pendingOrderDTO, pendingOrder);
@@ -152,7 +152,7 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
             orderAvailableGatewayList.add(orderAvailableGateway);
         }
         orderAvailableGatewayService.saveBatch(orderAvailableGatewayList);
-        return orderNumber;
+        return pendingOrder;
     }
 
     /**

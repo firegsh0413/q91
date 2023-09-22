@@ -14,10 +14,11 @@ public enum ResultCode implements ServiceExceptionModel {
     // TODO 使用0100-5999 7000-9999範圍
     /** 系統類 */
     SUCCESS("0000", "SUCCESS"),
-    SYSTEM_UNDER_MAINTAIN("0002", "系统维护"),
+    SYSTEM_ERROR("0002", "系统異常"),
     PARAM_LOSS("0003", "参数有缺"),
     PARAM_FORMAT_WRONG("0004", "参数格式错误"),
     NO_DATA("0005", "查无信息"),
+    TRY_REDIS_LOCK_FAILED("0006", "獲取分布式鎖失敗"),
 
     /** 帳號類 */
     CAPTCHA_ERROR("1000", "验证码错误"),
@@ -37,6 +38,7 @@ public enum ResultCode implements ServiceExceptionModel {
     GATEWAY_TYPE_NOT_EXIST("2003", "付款方式不存在"),
     ORDER_FINISH("2004", "订单已完成"),
     BUYER_NOT_PAY("2005", "买家尚未付款"),
+    ORDER_IN_TRANSACTION("2006", "此单已在交易中无法操作"),
     ;
 
     public final String repCode;

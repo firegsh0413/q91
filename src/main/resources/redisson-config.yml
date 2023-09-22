@@ -1,0 +1,36 @@
+---
+singleServerConfig:
+  # 連接空閒超時(ms)
+  idleConnectionTimeout: 10000
+  # 連接超時(ms)
+  connectTimeout: 10000
+  # 命令等待超時(ms)
+  timeout: 3000
+  # 命令失敗重試次數
+  retryAttempts: 3
+  # 命令重試發送時間間隔(ms)
+  retryInterval: 1500
+  password: null
+  # 單一連接最大訂閱數量
+  subscriptionsPerConnection: 5
+  # 客戶端名稱
+  clientName: null
+  address: "redis://127.0.0.1:6379"
+  # 發布和訂閱連接的最小空閒連接數
+  subscriptionConnectionMinimumIdleSize: 1
+  # 發布和訂閱連接池大小
+  subscriptionConnectionPoolSize: 50
+  # 最小空閒連接數
+  connectionMinimumIdleSize: 24
+  # 連接池大小
+  connectionPoolSize: 64
+  database: 0
+  # DNS監測時間間隔(ms)
+  dnsMonitoringInterval: 5000
+# 線程池數量
+threads: 16
+#nettyThreads: 32
+# 編碼
+codec: !<org.redisson.codec.JsonJacksonCodec> {}
+# 傳輸模式
+transportMode: "NIO"
