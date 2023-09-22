@@ -49,7 +49,8 @@ if [ "$REBUILD" != "" ];then
   # 建立輸出檔
   mvn clean || (echo "mvn clean fail" && exit 4)
   mvn compile || (echo "mvn compile fail" && exit 5)
-  mvn package || (echo "mvn package fail" && exit 6)
+  mvn package || (echo "mvn package fail -DskipTests" && exit 6)
+
 fi
 
 # 檢查 jar 檔
