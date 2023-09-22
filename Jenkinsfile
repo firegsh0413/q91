@@ -208,7 +208,7 @@ pipeline {
                     // 保存佈署檔
                     script {
                         archiveArtifacts artifacts: "$OUTPUT/*.jar"
-                        archiveArtifacts artifacts: "$OUTPUT_LOG/*"
+                        // archiveArtifacts artifacts: "$OUTPUT_LOG/*"
                         archiveArtifacts artifacts: "pom.xml"
                     }
                     // 刪除舊檔
@@ -234,7 +234,7 @@ pipeline {
                 unarchive mapping: ["pom.xml": ""]
                 UpdateJobName()
                 unarchive mapping: ["$OUTPUT/": ""]
-                unarchive mapping: ["$OUTPUT_LOG/": ""]
+                // unarchive mapping: ["$OUTPUT_LOG/": ""]
                 script {
                     echo "env is ${env.BUILD_ENV}"
                     // 建置腳本
