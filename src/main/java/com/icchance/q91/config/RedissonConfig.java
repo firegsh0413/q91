@@ -5,6 +5,8 @@ import com.icchance.q91.util.impl.RedissonDistributeLocker;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +22,11 @@ import java.io.IOException;
 @Configuration
 public class RedissonConfig {
 
+    @Value("${spring.redis.host}")
+    private String host;
+    @Value("${spring.redis.port}")
+    private String port;
+
     @Bean
     public RedissonDistributeLocker redissonLocker(RedissonClient redissonClient) {
         RedissonDistributeLocker locker = new RedissonDistributeLocker(redissonClient);
@@ -32,6 +39,8 @@ public class RedissonConfig {
     @Bean
     public RedissonClient createRedissonClient() throws IOException {
         Config config = Config.fromYAML(RedissonConfig.class.getClassLoader().getResource("redisson-config.yml"));
+        SingleServerConfig singleServerConfig = config.useSingleServer();
+        singleServerConfig.setAddress("redis://" + host + ":" + port);
         return Redisson.create(config);
     }
 
