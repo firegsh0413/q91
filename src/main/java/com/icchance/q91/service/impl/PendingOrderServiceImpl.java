@@ -2,6 +2,8 @@ package com.icchance.q91.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.icchance.q91.common.constant.OrderConstant;
+import com.icchance.q91.common.constant.ResultCode;
+import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.dto.MarketDTO;
 import com.icchance.q91.entity.dto.PendingOrderDTO;
 import com.icchance.q91.entity.model.Gateway;
@@ -13,6 +15,7 @@ import com.icchance.q91.mapper.PendingOrderMapper;
 import com.icchance.q91.service.GatewayService;
 import com.icchance.q91.service.OrderAvailableGatewayService;
 import com.icchance.q91.service.PendingOrderService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -144,6 +147,9 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
         // 可用收款方式 取得收款資訊並存入關聯表
         List<Gateway> gatewayList = gatewayService.getGatewayList(pendingOrderDTO.getUserId());
         List<OrderAvailableGateway> orderAvailableGatewayList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(gatewayList)) {
+            throw new ServiceException(ResultCode.NO_AVAILABLE_GATEWAY);
+        }
         for (Gateway gateway : gatewayList) {
             OrderAvailableGateway orderAvailableGateway = OrderAvailableGateway.builder()
                     .orderId(pendingOrder.getId())

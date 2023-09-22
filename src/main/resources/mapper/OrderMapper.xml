@@ -33,7 +33,7 @@
         SELECT
             <include refid="BaseColumnList" />,
             <include refid="SellerColumnList" />
-        FROM q91.orders a
+        FROM orders a
         INNER JOIN USER seller ON a.seller_id = seller.ID
         INNER JOIN USER buyer ON a.user_id = buyer.ID
         <where>
@@ -98,7 +98,7 @@
             <include refid="SellerColumnList" />,
             <include refid="SellerGatewayColumnList" />,
             <include refid="BuyerGatewayColumnList" />
-        FROM q91.orders a
+        FROM orders a
         INNER JOIN USER seller ON a.seller_id = seller.id
         INNER JOIN USER buyer ON a.user_id = buyer.id
         INNER JOIN gateway sellerGateway ON a.seller_gateway_id = sellerGateway.ID

@@ -30,6 +30,7 @@ public enum ResultCode implements ServiceExceptionModel {
     ACCOUNT_NOT_VALID("1006", "6-12位英文大小写或数字字元"),
     USERNAME_NOT_VALId("1007", "1~8位中文或英文大小写"),
     FUND_PASSWORD_NOT_VALID("1008", "6位数字字元"),
+    NO_AVAILABLE_GATEWAY("1009", "无可用交易渠道"),
 
     /** 訂單交易類 */
     NO_ORDER_EXIST("2000", "查无订单信息"),

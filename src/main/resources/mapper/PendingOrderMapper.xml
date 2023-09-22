@@ -98,7 +98,7 @@
         <include refid="SellerColumnList" />,
         <include refid="SellerGatewayColumnList" />,
         <include refid="BuyerGatewayColumnList" />
-        FROM q91.pending_order a
+        FROM pending_order a
         INNER JOIN user seller ON a.user_id = seller.ID
         LEFT JOIN user buyer ON a.buyer_id = buyer.ID
         LEFT JOIN gateway sellerGateway ON a.SELLER_GATEWAY_ID = sellerGateway.ID
