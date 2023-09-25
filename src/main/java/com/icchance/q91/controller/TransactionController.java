@@ -168,7 +168,7 @@ public class TransactionController extends BaseController {
 
     /**
      * <p>
-     * 申訴訂單
+     * 掛單申訴
      * </p>
      * @param transactionDTO TransactionDTO
      * @return com.icchance.q91.common.result.Result
@@ -176,7 +176,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/22 14:22:51
      */
     @UserLoginToken
-    @PostMapping("/order/appeal")
+    @PostMapping("/pendingOrder/appeal")
     public Result<Void> appealOrder(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
         transactionService.appealOrder(transactionDTO);
         return SUCCESS;
@@ -255,9 +255,8 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/verify")
-    public Result<Void> verifyOrder(@RequestBody @Validated({OrderVerify.class}) TransactionDTO transactionDTO) {
-        transactionService.verifyOrder(transactionDTO);
-        return SUCCESS;
+    public Result<TransactionDTO> verifyOrder(@RequestBody @Validated({OrderVerify.class}) TransactionDTO transactionDTO) {
+        return SUCCESS_DATA.repData(transactionService.verifyOrder(transactionDTO)).build();
     }
 
     /**

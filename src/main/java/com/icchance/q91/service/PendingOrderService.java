@@ -126,4 +126,16 @@ public interface PendingOrderService extends IService<PendingOrder> {
      */
     int verify(Integer userId, Integer orderId);
 
+    /**
+     * <p>
+     * 掛單申訴
+     * </p>
+     * @param userId 用戶uid
+     * @param orderId 掛單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 18:32:30
+     */
+    int appeal(Integer userId, Integer orderId);
+
 }

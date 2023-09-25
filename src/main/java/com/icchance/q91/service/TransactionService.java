@@ -112,7 +112,7 @@ public interface TransactionService {
 
     /**
      * <p>
-     * 申訴訂單
+     * 掛單申訴
      * </p>
      * @param transactionDTO TransactionDTO
      * @author 6687353
@@ -167,10 +167,11 @@ public interface TransactionService {
      * 上傳支付憑證
      * </p>
      * @param transactionDTO TransactionDTO
+     * @return com.icchance.q91.entity.dto.TransactionDTO
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */
-    void verifyOrder(TransactionDTO transactionDTO);
+    TransactionDTO verifyOrder(TransactionDTO transactionDTO);
 
     /**
      * <p>

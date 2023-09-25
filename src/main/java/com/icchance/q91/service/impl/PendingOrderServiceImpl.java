@@ -217,10 +217,29 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
      */
     @Override
     public int verify(Integer userId, Integer orderId) {
-        //PendingOrder pendingOrder = baseMapper.selectOne(Wrappers.<PendingOrder>lambdaQuery().eq(PendingOrder::getUserId, userId).eq(PendingOrder::getId, orderId));
         PendingOrder pendingOrder = PendingOrder.builder()
                 .id(orderId)
                 .status(OrderConstant.PendingOrderStatusEnum.FINISH.code)
+                .updateTime(LocalDateTime.now())
+                .build();
+        return baseMapper.updateById(pendingOrder);
+    }
+
+    /**
+     * <p>
+     * 掛單申訴
+     * </p>
+     * @param userId  用戶uid
+     * @param orderId 掛單uid
+     * @return int
+     * @author 6687353
+     * @since 2023/8/25 18:32:30
+     */
+    @Override
+    public int appeal(Integer userId, Integer orderId) {
+        PendingOrder pendingOrder = PendingOrder.builder()
+                .id(orderId)
+                .status(OrderConstant.PendingOrderStatusEnum.APPEAL.code)
                 .updateTime(LocalDateTime.now())
                 .build();
         return baseMapper.updateById(pendingOrder);

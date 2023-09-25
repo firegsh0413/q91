@@ -20,11 +20,6 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class TransactionDTO {
 
-    public TransactionDTO(String token, Integer id, String cert) {
-        this.token = token;
-        this.id = id;
-        this.cert = cert;
-    }
     private String token;
     /** 訂單uid */
     @NotNull(groups = {Order.class, OrderVerify.class})
@@ -32,5 +27,7 @@ public class TransactionDTO {
     /** 支付憑證 */
     @NotNull(groups = {OrderVerify.class})
     private String cert;
-
+/*    *//** 是否為申訴 *//*
+    @Builder.Default
+    private Boolean isAppeal = Boolean.FALSE;*/
 }

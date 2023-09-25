@@ -157,7 +157,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * <p>
      * 生成訂單編號
      * </p>
-     * @param localDateTime
+     * @param localDateTime 日期
      * @return java.lang.String
      * @author 6687353
      * @since 2023/8/22 15:57:24

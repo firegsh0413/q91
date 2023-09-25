@@ -107,8 +107,10 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(pendingOrderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
-        if (OrderConstant.PendingOrderStatusEnum.FINISH.code.equals(pendingOrderVO.getStatus())) {
-            throw new ServiceException(ResultCode.ORDER_FINISH);
+        // 掛單狀態為待確認或出售中才可取消
+        if (!OrderConstant.PendingOrderStatusEnum.ON_SALE.code.equals(pendingOrderVO.getStatus())
+            && !OrderConstant.PendingOrderStatusEnum.ON_CHECK.code.equals(pendingOrderVO.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
         }
         BigDecimal amount = pendingOrderVO.getAmount();
         pendingOrderService.cancel(userId, transactionDTO.getId());
@@ -159,30 +161,31 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(pendingOrderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
-        // 掛單狀態為有人下單
-        if (OrderConstant.PendingOrderStatusEnum.ON_CHECK.code.equals(pendingOrderVO.getStatus())) {
-            pendingOrderService.check(userId, transactionDTO.getId());
-            // 更新訂單狀態
-            Order order = Order.builder()
-                    .id(pendingOrderVO.getOrderId())
-                    .status(OrderConstant.OrderStatusEnum.PAY_UPLOAD.code)
-                    .updateTime(LocalDateTime.now())
-                    .cutOffTime(LocalDateTime.now().plusMinutes(10)).build();
-            orderService.updateById(order);
-            // TODO 待優化
-            OrderVO orderVO = orderService.getDetail(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
-            // 推送訂單等待上傳支付憑證倒數資訊
-            producer.checkOrder(JSON.toJSONString(transactionDTO));
-            // 掛單有人下訂 用戶錢包額度 賣單餘額->交易中
-            UserBalance sellerBalance = userBalanceService.getEntity(userId);
-            sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(orderVO.getAmount()));
-            sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(orderVO.getAmount()));
-            userBalanceService.updateEntity(sellerBalance);
-            // 買方錢包額度 交易中+
-            UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
-            buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().add(orderVO.getAmount()));
-            userBalanceService.updateEntity(buyerBalance);
+        // 掛單狀態為待確認才往下處理
+        if (!OrderConstant.PendingOrderStatusEnum.ON_CHECK.code.equals(pendingOrderVO.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
         }
+        pendingOrderService.check(userId, transactionDTO.getId());
+        // 更新訂單狀態
+        Order order = Order.builder()
+                .id(pendingOrderVO.getOrderId())
+                .status(OrderConstant.OrderStatusEnum.PAY_UPLOAD.code)
+                .updateTime(LocalDateTime.now())
+                .cutOffTime(LocalDateTime.now().plusMinutes(10)).build();
+        orderService.updateById(order);
+        // TODO 待優化
+        OrderVO orderVO = orderService.getDetail(pendingOrderVO.getBuyerId(), pendingOrderVO.getOrderId());
+        // 推送訂單等待上傳支付憑證倒數資訊
+        producer.checkOrder(JSON.toJSONString(transactionDTO));
+        // 掛單有人下訂 用戶錢包額度 賣單餘額->交易中
+        UserBalance sellerBalance = userBalanceService.getEntity(userId);
+        sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().subtract(orderVO.getAmount()));
+        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().add(orderVO.getAmount()));
+        userBalanceService.updateEntity(sellerBalance);
+        // 買方錢包額度 交易中+
+        UserBalance buyerBalance = userBalanceService.getEntity(pendingOrderVO.getBuyerId());
+        buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().add(orderVO.getAmount()));
+        userBalanceService.updateEntity(buyerBalance);
     }
 
     /**
@@ -294,6 +297,11 @@ public class TransactionServiceImpl implements TransactionService {
         if (Objects.isNull(orderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
         }
+        // 訂單狀態為上傳支付或待確認
+        if (!OrderConstant.OrderStatusEnum.ON_CHECK.code.equals(orderVO.getStatus())
+            && !OrderConstant.OrderStatusEnum.PAY_UPLOAD.code.equals(orderVO.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
+        }
         orderService.cancel(userId, orderId);
         // 取消訂單 買方錢包額度 交易中移除額度
         UserBalance buyerBalance = userBalanceService.getEntity(userId);
@@ -323,7 +331,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     /**
      * <p>
-     * 申訴訂單
+     * 掛單申訴
      * </p>
      * @param transactionDTO TransactionDTO
      * @author 6687353
@@ -332,16 +340,22 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void appealOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
-        orderService.appeal(userId, transactionDTO.getId());
-        // 賣方掛單更新
-        PendingOrder pendingOrder = new LambdaQueryChainWrapper<>(pendingOrderService.getBaseMapper())
-                .eq(PendingOrder::getOrderId, transactionDTO.getId())
+        PendingOrderVO detail = pendingOrderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(detail)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        if (!OrderConstant.PendingOrderStatusEnum.ON_TRANSACTION.code.equals(detail.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
+        }
+        pendingOrderService.appeal(userId, transactionDTO.getId());
+        // 訂單更新
+        Order order = new LambdaQueryChainWrapper<>(orderService.getBaseMapper())
+                .eq(Order::getPendingOrderId, transactionDTO.getId())
                 .one();
-        PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
-                .id(pendingOrder.getId())
-                .status(OrderConstant.PendingOrderStatusEnum.APPEAL.code)
-                .build();
-        pendingOrderService.update(pendingOrderDTO);
+        if (Objects.isNull(order)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        orderService.appeal(order.getUserId(), order.getId());
     }
 
     /**
@@ -419,15 +433,20 @@ public class TransactionServiceImpl implements TransactionService {
      * 上傳支付憑證
      * </p>
      * @param transactionDTO TransactionDTO
+     * @return com.icchance.q91.entity.dto.TransactionDTO
      * @author 6687353
      * @since 2023/8/22 15:48:13
      */
     @Override
-    public void verifyOrder(TransactionDTO transactionDTO) {
+    public TransactionDTO verifyOrder(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
         OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
         if (Objects.isNull(orderVO)) {
             throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        // 訂單狀態為上傳支付才處理
+        if (!OrderConstant.OrderStatusEnum.PAY_UPLOAD.code.equals(orderVO.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
         }
         orderService.uploadCert(userId, orderVO.getId(), transactionDTO.getCert());
         // 已經支付
@@ -439,6 +458,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .cert(transactionDTO.getCert())
                 .build();
         pendingOrderService.update(pendingOrderDTO);
+        return transactionDTO;
     }
 
     /**
