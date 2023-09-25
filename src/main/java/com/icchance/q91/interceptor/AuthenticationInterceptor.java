@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icchance.q91.annotation.PassToken;
+import com.icchance.q91.annotation.UserCertificateAnnotation;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
@@ -82,11 +83,17 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             try {
                 account = jwtUtil.parseAccount(token);
             } catch (JWTDecodeException je) {
-                throw new RuntimeException("401");
+                throw new ServiceException(ResultCode.AWT_PARSE_ERROR);
             }
             User user = authUserService.getByAccount(account);
             if (Objects.isNull(user)) {
                 throw new ServiceException(ResultCode.ACCOUNT_NOT_EXIST);
+            }
+            // TODO 在通過用戶存在判別後進行用戶憑證判別
+            if (method.isAnnotationPresent(UserCertificateAnnotation.class)) {
+                if (Objects.isNull(user.getCertified()) || !user.getCertified()) {
+                    throw new ServiceException(ResultCode.NOT_CERTIFICATE);
+                }
             }
         }
         return true;

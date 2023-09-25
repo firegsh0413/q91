@@ -67,7 +67,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String orderNumber = generateOrderNumber(LocalDateTime.now());
         Order order = new Order();
         BeanUtils.copyProperties(orderDTO, order);
-        order.setStatus(OrderConstant.OrderStatusEnum.ON_ORDER.code);
+        order.setStatus(OrderConstant.OrderStatusEnum.ON_CHECK.code);
         order.setOrderNumber(orderNumber);
         order.setCreateTime(LocalDateTime.now());
         baseMapper.insert(order);
@@ -89,7 +89,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public int uploadCert(Integer userId, Integer orderId, String cert) {
         Order order = Order.builder()
                 .id(orderId)
-                .status(OrderConstant.OrderStatusEnum.ORDER_VERIFY.code)
+                .status(OrderConstant.OrderStatusEnum.ON_TRANSACTION.code)
                 .updateTime(LocalDateTime.now())
                 .cert(cert)
                 .build();

@@ -196,7 +196,7 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
     public int check(Integer userId, Integer orderId) {
         PendingOrder pendingOrder = PendingOrder.builder()
                 .id(orderId)
-                .status(OrderConstant.PendingOrderStatusEnum.NO_PAY.code)
+                .status(OrderConstant.PendingOrderStatusEnum.PAY_UPLOAD.code)
                 .updateTime(LocalDateTime.now())
                 // 掛單下單時間為確認訂單的十分後
                 .tradeTime(LocalDateTime.now().plusMinutes(10))

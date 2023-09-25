@@ -172,4 +172,14 @@ public interface TransactionService {
      */
     void verifyOrder(TransactionDTO transactionDTO);
 
+    /**
+     * <p>
+     * 手動打款
+     * </p>
+     * @param transactionDTO  TransactionDTO
+     * @author 6687353
+     * @since 2023/9/25 11:13:24
+     */
+    void manualPay(TransactionDTO transactionDTO);
+
 }

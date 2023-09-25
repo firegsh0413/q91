@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @author 6687353
  * @since 2023/8/17 15:44:49
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UserLoginToken {
     boolean required() default true;

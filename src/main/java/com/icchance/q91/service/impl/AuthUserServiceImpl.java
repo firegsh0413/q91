@@ -86,6 +86,7 @@ public class AuthUserServiceImpl extends ServiceImpl<UserMapper, User> implement
             address = generateRandomAddress();
             isDuplicate = Objects.nonNull(this.getOne(Wrappers.<User>lambdaQuery().eq(User::getAddress, address)));
         } while (isDuplicate);
+        user.setCertified(Boolean.FALSE);
         user.setAddress(address);
         this.save(user);
         return user;

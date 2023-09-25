@@ -1,5 +1,6 @@
 package com.icchance.q91.controller;
 
+import com.icchance.q91.annotation.UserCertificateAnnotation;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.error.group.Order;
 import com.icchance.q91.common.error.group.OrderVerify;
@@ -256,6 +257,21 @@ public class TransactionController extends BaseController {
     @PostMapping("/order/verify")
     public Result<Void> verifyOrder(@RequestBody @Validated({OrderVerify.class}) TransactionDTO transactionDTO) {
         transactionService.verifyOrder(transactionDTO);
+        return SUCCESS;
+    }
+
+    /**
+     * <p>
+     * 手動打款
+     * </p>
+     * @param transactionDTO  TransactionDTO
+     * @return com.icchance.q91.common.result.Result<java.lang.Void>
+     * @author 6687353
+     * @since 2023/9/25 11:18:27
+     */
+    @PostMapping("/order/manualPay")
+    public Result<Void> manualPay(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+        transactionService.manualPay(transactionDTO);
         return SUCCESS;
     }
 }

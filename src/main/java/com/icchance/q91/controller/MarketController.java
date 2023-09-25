@@ -1,5 +1,6 @@
 package com.icchance.q91.controller;
 
+import com.icchance.q91.annotation.UserCertificateAnnotation;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.error.group.CheckGateway;
 import com.icchance.q91.common.result.Result;
@@ -89,6 +90,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:12:14
      */
     @UserLoginToken
+    @UserCertificateAnnotation
     @PostMapping("/buy")
     public Result<Void> buy(@RequestBody MarketInfoDTO marketInfoDTO) {
         marketService.buy(marketInfoDTO);
@@ -105,6 +107,7 @@ public class MarketController extends BaseController {
      * @since 2023/8/22 16:15:27
      */
     @UserLoginToken
+    @UserCertificateAnnotation
     @PostMapping("/sell")
     public Result<Void> sell(@RequestBody MarketInfoDTO marketInfoDTO) {
         marketService.sell(marketInfoDTO);

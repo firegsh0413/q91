@@ -39,7 +39,7 @@ public class MessageHandler {
         TransactionDTO transactionDTO = JSON.parseObject(new String(data), TransactionDTO.class);
         PendingOrderVO pendingOrderDetail = transactionService.getPendingOrderDetail(transactionDTO);
         // 還在買家未付款則取消訂單
-        if (OrderConstant.PendingOrderStatusEnum.NO_PAY.code.equals(pendingOrderDetail.getStatus())) {
+        if (OrderConstant.PendingOrderStatusEnum.PAY_UPLOAD.code.equals(pendingOrderDetail.getStatus())) {
             transactionService.cancelOrder(pendingOrderDetail.getBuyerId(), pendingOrderDetail.getOrderId());
         }
     }
@@ -56,7 +56,7 @@ public class MessageHandler {
         log.info("MessageHandler.getUploadCertConsumer, data:{}", data);
         TransactionDTO transactionDTO = JSON.parseObject(new String(data), TransactionDTO.class);
         OrderVO orderDetail = transactionService.getOrderDetail(transactionDTO);
-        if (OrderConstant.OrderStatusEnum.ORDER_VERIFY.code.equals(orderDetail.getStatus())) {
+        if (OrderConstant.OrderStatusEnum.ON_TRANSACTION.code.equals(orderDetail.getStatus())) {
             transactionService.verifyPendingOrder(orderDetail.getSellerId(), orderDetail.getPendingOrderId());
         }
     }

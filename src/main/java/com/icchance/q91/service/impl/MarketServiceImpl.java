@@ -1,7 +1,6 @@
 package com.icchance.q91.service.impl;
 
 import com.icchance.q91.common.constant.OrderConstant;
-import com.icchance.q91.common.constant.RedisKey;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
 import com.icchance.q91.entity.dto.MarketDTO;
@@ -17,7 +16,6 @@ import com.icchance.q91.util.RedisKeyUtil;
 import com.icchance.q91.util.RedissonLockUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.redisson.RedissonLock;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -186,7 +184,7 @@ public class MarketServiceImpl implements MarketService {
         // 2-2.更新掛單狀態
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .id(marketInfoDTO.getId())
-                .status(OrderConstant.PendingOrderStatusEnum.ON_ORDER.code)
+                .status(OrderConstant.PendingOrderStatusEnum.ON_CHECK.code)
                 .buyerId(userId)
                 .buyerGatewayId(Optional.of(buyerGateway).map(Gateway::getId).orElse(null))
                 .orderId(order.getId())

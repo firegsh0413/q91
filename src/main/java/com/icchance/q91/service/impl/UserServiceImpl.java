@@ -218,7 +218,6 @@ public class UserServiceImpl implements UserService {
      * 實名認證
      * </p>
      * @param certificateDTO CertificateDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/18 17:35:30
      */

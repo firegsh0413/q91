@@ -31,6 +31,7 @@ public enum ResultCode implements ServiceExceptionModel {
     USERNAME_NOT_VALId("1007", "1~8位中文或英文大小写"),
     FUND_PASSWORD_NOT_VALID("1008", "6位数字字元"),
     NO_AVAILABLE_GATEWAY("1009", "无可用交易渠道"),
+    AWT_PARSE_ERROR("1010", "通行口令无效"),
 
     /** 訂單交易類 */
     NO_ORDER_EXIST("2000", "查无订单信息"),
@@ -40,6 +41,9 @@ public enum ResultCode implements ServiceExceptionModel {
     ORDER_FINISH("2004", "订单已完成"),
     BUYER_NOT_PAY("2005", "买家尚未付款"),
     ORDER_IN_TRANSACTION("2006", "此单已在交易中无法操作"),
+    NOT_CERTIFICATE("2007", "用户未通过身份认证"),
+    ORDER_STATUS_ERROR("2008", "订单状态异常"),
+
     ;
 
     public final String repCode;
