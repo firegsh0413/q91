@@ -2,8 +2,6 @@ package com.icchance.q91.entity.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
 

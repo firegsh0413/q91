@@ -26,13 +26,13 @@ public class UserDTO {
     @NotBlank(groups = {Register.class, Login.class})
     private String account;
     /** 暱稱 */
-    @NotBlank(groups = {Register.class})
+    @NotBlank(groups = Register.class)
     private String username;
     /** 密碼 */
     @NotBlank(groups = {Register.class, Login.class})
     private String password;
     /** 支付密碼 */
-    @NotBlank(groups = {Register.class})
+    @NotBlank(groups = Register.class)
     private String fundPassword;
     /** 驗證碼uid */
     private String cId;

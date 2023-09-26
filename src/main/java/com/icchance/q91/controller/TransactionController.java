@@ -66,7 +66,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/detail")
-    public Result<PendingOrderVO> getPendingOrderDetail(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<PendingOrderVO> getPendingOrderDetail(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         return SUCCESS_DATA.repData(transactionService.getPendingOrderDetail(transactionDTO)).build();
     }
 
@@ -81,7 +81,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/cancel")
-    public Result<Void> cancelPendingOrder(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<Void> cancelPendingOrder(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         transactionService.cancelPendingOrder(transactionDTO);
         return SUCCESS;
     }
@@ -98,7 +98,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/check")
-    public Result<Void> checkPendingOrder(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<Void> checkPendingOrder(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         transactionService.checkPendingOrder(transactionDTO);
         return SUCCESS;
     }
@@ -115,7 +115,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/pendingOrder/verify")
-    public Result<Void> verifyPendingOrder(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<Void> verifyPendingOrder(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         transactionService.verifyPendingOrder(transactionDTO);
         return SUCCESS;
     }
@@ -146,7 +146,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/detail")
-    public Result<OrderVO> getOrderDetail(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<OrderVO> getOrderDetail(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         return SUCCESS_DATA.repData(transactionService.getOrderDetail(transactionDTO)).build();
     }
 
@@ -161,7 +161,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/cancel")
-    public Result<Void> cancelOrder(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<Void> cancelOrder(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         transactionService.cancelOrder(transactionDTO);
         return SUCCESS;
     }
@@ -223,7 +223,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @DeleteMapping("/gateway/delete")
-    public Result<Void> deleteGateway(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
+    public Result<Void> deleteGateway(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         transactionService.deleteGateway(transactionDTO);
         return SUCCESS;
     }
@@ -239,7 +239,7 @@ public class TransactionController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/order/verify")
-    public Result<TransactionDTO> verifyOrder(@RequestBody @Validated({OrderVerify.class}) TransactionDTO transactionDTO) {
+    public Result<TransactionDTO> verifyOrder(@RequestBody @Validated(OrderVerify.class) TransactionDTO transactionDTO) {
         return SUCCESS_DATA.repData(transactionService.verifyOrder(transactionDTO)).build();
     }
 

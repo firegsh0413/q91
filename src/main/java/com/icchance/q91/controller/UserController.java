@@ -52,7 +52,7 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/register")
-    public Result<UserVO> register(@RequestBody @Validated({Register.class}) UserDTO userDTO) {
+    public Result<UserVO> register(@RequestBody @Validated(Register.class) UserDTO userDTO) {
         return Result.<UserVO>builder().repData(userService.register(userDTO)).build();
     }
 
@@ -67,7 +67,7 @@ public class UserController extends BaseController {
      */
     @PassToken
     @PostMapping("/login")
-    public Result<UserVO> login(@RequestBody @Validated({Login.class}) UserDTO userDTO) {
+    public Result<UserVO> login(@RequestBody @Validated(Login.class) UserDTO userDTO) {
         return SUCCESS_DATA.repData(userService.login(userDTO)).build();
     }
 

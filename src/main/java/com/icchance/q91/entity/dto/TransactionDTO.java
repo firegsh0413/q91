@@ -25,7 +25,7 @@ public class TransactionDTO {
     @NotNull(groups = {Order.class, OrderVerify.class})
     private Integer id;
     /** 支付憑證 */
-    @NotNull(groups = {OrderVerify.class})
+    @NotNull(groups = OrderVerify.class)
     private String cert;
 /*    *//** 是否為申訴 *//*
     @Builder.Default

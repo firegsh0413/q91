@@ -2,7 +2,6 @@ package com.icchance.q91.controller;
 
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.result.Result;
-import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.MessageDTO;
 import com.icchance.q91.entity.model.Announcement;
 import com.icchance.q91.entity.vo.MessageListVO;
@@ -60,7 +59,7 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @PostMapping("/private/unread")
-    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody @Valid MessageDTO messageDTO) {
+    public Result<MessageVO> getUnreadPrivateMessageAmount(@RequestBody MessageDTO messageDTO) {
         return SUCCESS_DATA.repData(messageService.getUnreadPrivateMessageAmount(messageDTO)).build();
     }
 
@@ -106,7 +105,7 @@ public class MessageController extends BaseController {
      */
     @UserLoginToken
     @DeleteMapping("/private/delete")
-    public Result<Void> deletePrivateMessage(@RequestBody MessageDTO messageDTO) {
+    public Result<Void> deletePrivateMessage(@RequestBody @Valid MessageDTO messageDTO) {
         messageService.deletePrivateMessage(messageDTO);
         return SUCCESS;
     }

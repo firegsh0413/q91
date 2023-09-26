@@ -23,13 +23,13 @@ public class MarketInfoDTO {
     private String token;
 
     /** 訂單UID */
-    @NotNull(groups = {BuyAndSell.class})
+    @NotNull(groups = BuyAndSell.class)
     private Integer id;
-    @NotNull(groups = {CheckGateway.class})
+    @NotNull(groups = CheckGateway.class)
     private Set<Integer> availableGateway;
-    @NotNull(groups = {BuyAndSell.class})
+    @NotNull(groups = BuyAndSell.class)
     private BigDecimal amount;
-    @NotNull(groups = {BuyAndSell.class})
+    @NotNull(groups = BuyAndSell.class)
     private Integer type;
 
 }

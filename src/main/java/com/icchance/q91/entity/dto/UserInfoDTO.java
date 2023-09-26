@@ -24,12 +24,12 @@ public class UserInfoDTO {
 
     private String avatar;
 
-    @NotBlank(groups = {Password.class})
+    @NotBlank(groups = Password.class)
     private String oldPassword;
-    @NotBlank(groups = {Password.class})
+    @NotBlank(groups = Password.class)
     private String newPassword;
-    @NotBlank(groups = {FundPassword.class})
+    @NotBlank(groups = FundPassword.class)
     private String oldFundPassword;
-    @NotBlank(groups = {FundPassword.class})
+    @NotBlank(groups = FundPassword.class)
     private String newFundPassword;
 }
