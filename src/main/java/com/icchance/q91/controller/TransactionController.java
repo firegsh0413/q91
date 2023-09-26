@@ -168,22 +168,6 @@ public class TransactionController extends BaseController {
 
     /**
      * <p>
-     * 掛單申訴
-     * </p>
-     * @param transactionDTO TransactionDTO
-     * @return com.icchance.q91.common.result.Result
-     * @author 6687353
-     * @since 2023/8/22 14:22:51
-     */
-    @UserLoginToken
-    @PostMapping("/pendingOrder/appeal")
-    public Result<Void> appealOrder(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
-        transactionService.appealOrder(transactionDTO);
-        return SUCCESS;
-    }
-
-    /**
-     * <p>
      * 會員錢包紀錄訊息
      * </p>
      * @param baseDTO BaseDTO
@@ -259,32 +243,4 @@ public class TransactionController extends BaseController {
         return SUCCESS_DATA.repData(transactionService.verifyOrder(transactionDTO)).build();
     }
 
-    /**
-     * <p>
-     * 申訴成功，客服手動打款到買家帳戶
-     * </p>
-     * @param transactionDTO  TransactionDTO
-     * @return com.icchance.q91.common.result.Result<java.lang.Void>
-     * @author 6687353
-     * @since 2023/9/25 11:18:27
-     */
-    @PostMapping("/order/appeal/success")
-    public Result<Void> manualPay(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
-        transactionService.manualPay(transactionDTO);
-        return SUCCESS;
-    }
-
-    /**
-     * <p>
-     * 申訴失敗，客服取消訂單
-     * </p>
-     * @param transactionDTO  TransactionDTO
-     * @return com.icchance.q91.common.result.Result<java.lang.Void>
-     * @author 6687353
-     * @since 2023/9/26 11:22:12
-     */
-    @PostMapping("/order/appeal/fail")
-    public Result<Void> appealFail(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
-        return SUCCESS;
-    }
 }

@@ -112,16 +112,6 @@ public interface TransactionService {
 
     /**
      * <p>
-     * 掛單申訴
-     * </p>
-     * @param transactionDTO TransactionDTO
-     * @author 6687353
-     * @since 2023/8/22 14:23:42
-     */
-    void appealOrder(TransactionDTO transactionDTO);
-
-    /**
-     * <p>
      * 會員錢包紀錄訊息
      * </p>
      * @param baseDTO BaseDTO
@@ -172,25 +162,5 @@ public interface TransactionService {
      * @since 2023/8/22 15:48:13
      */
     TransactionDTO verifyOrder(TransactionDTO transactionDTO);
-
-    /**
-     * <p>
-     * 申訴成功，客服手動打款到買家帳戶
-     * </p>
-     * @param transactionDTO  TransactionDTO
-     * @author 6687353
-     * @since 2023/9/25 11:13:24
-     */
-    void manualPay(TransactionDTO transactionDTO);
-
-    /**
-     * <p>
-     * 申訴失敗，客服取消訂單
-     * </p>
-     * @param transactionDTO  TransactionDTO
-     * @author 6687353
-     * @since 2023/9/26 11:23:27
-     */
-    void appealFail(TransactionDTO transactionDTO);
 
 }

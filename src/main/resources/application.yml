@@ -87,6 +87,8 @@ nsq:
   lookup:
     host: 127.0.0.1
     port: 4161
+    # 1:啟用 0:停用
+    enable: 1
   channel: channel
   # 延遲發送(s)
   timeout: 600

@@ -1,5 +1,6 @@
 package com.icchance.q91.nsq;
 
+import com.icchance.q91.common.constant.MessageConstant;
 import com.icchance.q91.common.constant.NsqTopicEnum;
 import com.sproutsocial.nsq.Subscriber;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,8 @@ public class Consumer implements ApplicationRunner {
     private String host;
     @Value("${nsq.lookup.port}")
     private Integer port;
+    @Value("${nsq.lookup.enable}")
+    private Integer enable;
     @Value("${nsq.channel}")
     private String channel;
     private final MessageHandler messageHandler;
@@ -33,8 +36,10 @@ public class Consumer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args)  {
-        Subscriber subscriber = new Subscriber(host + ":" + port);
-        subscriber.subscribe(NsqTopicEnum.CHECK_ORDER.getValue(), channel, messageHandler::getCheckOrderConsumer);
-        subscriber.subscribe(NsqTopicEnum.UPLOAD_CERT.getValue(), channel, messageHandler::getUploadCertConsumer);
+        if (MessageConstant.IS_READ_TRUE.equals(enable)) {
+            Subscriber subscriber = new Subscriber(host + ":" + port);
+            subscriber.subscribe(NsqTopicEnum.CHECK_ORDER.getValue(), channel, messageHandler::getCheckOrderConsumer);
+            subscriber.subscribe(NsqTopicEnum.UPLOAD_CERT.getValue(), channel, messageHandler::getUploadCertConsumer);
+        }
     }
 }
