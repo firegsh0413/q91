@@ -99,16 +99,6 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
         return baseMapper.getMarketDetail(userId, orderId);
     }
 
-    @Override
-    public int uploadCert(Integer userId, Integer orderId, String cert) {
-        PendingOrder pendingOrder = PendingOrder.builder()
-                .id(orderId)
-                .cert(cert)
-                .updateTime(LocalDateTime.now())
-                .build();
-        return baseMapper.updateById(pendingOrder);
-    }
-
     /**
      * <p>
      * 更新掛單
@@ -163,26 +153,6 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
 
     /**
      * <p>
-     * 取消掛單
-     * </p>
-     * @param userId 用戶uid
-     * @param orderId 訂單uid
-     * @return com.icchance.q91.common.result.Result
-     * @author 6687353
-     * @since 2023/8/22 09:33:44
-     */
-    @Override
-    public int cancel(Integer userId, Integer orderId) {
-        PendingOrder pendingOrder = PendingOrder.builder()
-                .id(orderId)
-                .status(OrderConstant.PendingOrderStatusEnum.CANCEL.code)
-                .updateTime(LocalDateTime.now())
-                .build();
-        return baseMapper.updateById(pendingOrder);
-    }
-
-    /**
-     * <p>
      * 確認掛單已被下訂
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
@@ -206,40 +176,19 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
 
     /**
      * <p>
-     * 核實掛單
-     * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
+     * 掛單完成
      * </p>
-     * @param userId 用戶uid
-     * @param orderId 訂單uid
-     * @return int
-     * @author 6687353
-     * @since 2023/8/22 13:43:43
-     */
-    @Override
-    public int verify(Integer userId, Integer orderId) {
-        PendingOrder pendingOrder = PendingOrder.builder()
-                .id(orderId)
-                .status(OrderConstant.PendingOrderStatusEnum.FINISH.code)
-                .updateTime(LocalDateTime.now())
-                .build();
-        return baseMapper.updateById(pendingOrder);
-    }
-
-    /**
-     * <p>
-     * 掛單申訴
-     * </p>
-     * @param userId  用戶uid
      * @param orderId 掛單uid
+     * @param status 狀態代碼
      * @return int
      * @author 6687353
-     * @since 2023/8/25 18:32:30
+     * @since 2023/9/26 09:57:59
      */
     @Override
-    public int appeal(Integer userId, Integer orderId) {
+    public int updateStatus(Integer orderId, Integer status) {
         PendingOrder pendingOrder = PendingOrder.builder()
                 .id(orderId)
-                .status(OrderConstant.PendingOrderStatusEnum.APPEAL.code)
+                .status(status)
                 .updateTime(LocalDateTime.now())
                 .build();
         return baseMapper.updateById(pendingOrder);
@@ -249,7 +198,7 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
      * <p>
      * 生成訂單編號
      * </p>
-     * @param localDateTime
+     * @param localDateTime 時間
      * @return java.lang.String
      * @author 6687353
      * @since 2023/8/22 15:57:24

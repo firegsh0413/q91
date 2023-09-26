@@ -115,39 +115,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     /**
      * <p>
-     * 取消訂單
+     * 更新訂單狀態
      * </p>
-     * @param userId  用戶uid
      * @param orderId 訂單uid
+     * @param status  狀態代碼
      * @return int
      * @author 6687353
-     * @since 2023/8/25 17:27:18
+     * @since 2023/9/26 10:14:01
      */
     @Override
-    public int cancel(Integer userId, Integer orderId) {
+    public int updateStatus(Integer orderId, Integer status) {
         Order order = Order.builder()
                 .id(orderId)
-                .status(OrderConstant.OrderStatusEnum.CANCEL.code)
-                .updateTime(LocalDateTime.now())
-                .build();
-        return baseMapper.updateById(order);
-    }
-
-    /**
-     * <p>
-     * 訂單申訴
-     * </p>
-     * @param userId  用戶uid
-     * @param orderId 訂單uid
-     * @return int
-     * @author 6687353
-     * @since 2023/8/25 18:32:30
-     */
-    @Override
-    public int appeal(Integer userId, Integer orderId) {
-        Order order = Order.builder()
-                .id(orderId)
-                .status(OrderConstant.OrderStatusEnum.APPEAL.code)
+                .status(status)
                 .updateTime(LocalDateTime.now())
                 .build();
         return baseMapper.updateById(order);

@@ -33,7 +33,7 @@ public interface MarketService {
      * 驗證會員是否有收款方式
      * </p>
      * @param marketInfoDTO MarketInfoDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.CheckGatewayVO
      * @author 6687353
      * @since 2023/8/22 16:10:40
      */
@@ -44,7 +44,7 @@ public interface MarketService {
      * 取得賣方掛單訊息
      * </p>
      * @param marketDTO MarketDTO
-     * @return com.icchance.q91.common.result.Result
+     * @return com.icchance.q91.entity.vo.MarketVO
      * @author 6687353
      * @since 2023/8/22 16:11:37
      */
@@ -55,7 +55,6 @@ public interface MarketService {
      * 購買
      * </p>
      * @param marketInfoDTO MarketInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:12:14
      */
@@ -66,7 +65,6 @@ public interface MarketService {
      * 出售
      * </p>
      * @param marketInfoDTO MarketInfoDTO
-     * @return com.icchance.q91.common.result.Result
      * @author 6687353
      * @since 2023/8/22 16:15:27
      */

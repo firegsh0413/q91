@@ -64,8 +64,6 @@ public interface PendingOrderService extends IService<PendingOrder> {
      */
     MarketVO getMarketDetail(Integer userId, Integer orderId);
 
-    int uploadCert(Integer userId, Integer orderId, String cert);
-
     /**
      * <p>
      * 更新掛單
@@ -90,18 +88,6 @@ public interface PendingOrderService extends IService<PendingOrder> {
 
     /**
      * <p>
-     * 取消掛單
-     * </p>
-     * @param userId 用戶uid
-     * @param orderId 訂單uid
-     * @return com.icchance.q91.common.result.Result
-     * @author 6687353
-     * @since 2023/8/22 09:33:44
-     */
-    int cancel(Integer userId, Integer orderId);
-
-    /**
-     * <p>
      * 確認掛單已被下訂
      * （賣單第一階段狀態：買家已下單請賣家確認）
      * </p>
@@ -115,27 +101,14 @@ public interface PendingOrderService extends IService<PendingOrder> {
 
     /**
      * <p>
-     * 核實掛單
-     * （賣單第二階段狀態：買家已付款請賣家核實並打幣）
+     * 更新掛單狀態
      * </p>
-     * @param userId 用戶uid
-     * @param orderId 訂單uid
-     * @return int
-     * @author 6687353
-     * @since 2023/8/22 13:43:43
-     */
-    int verify(Integer userId, Integer orderId);
-
-    /**
-     * <p>
-     * 掛單申訴
-     * </p>
-     * @param userId 用戶uid
      * @param orderId 掛單uid
+     * @param status 狀態代碼
      * @return int
      * @author 6687353
-     * @since 2023/8/25 18:32:30
+     * @since 2023/9/26 09:57:59
      */
-    int appeal(Integer userId, Integer orderId);
+    int updateStatus(Integer orderId, Integer status);
 
 }

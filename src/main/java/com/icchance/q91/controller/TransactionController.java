@@ -261,16 +261,30 @@ public class TransactionController extends BaseController {
 
     /**
      * <p>
-     * 手動打款
+     * 申訴成功，客服手動打款到買家帳戶
      * </p>
      * @param transactionDTO  TransactionDTO
      * @return com.icchance.q91.common.result.Result<java.lang.Void>
      * @author 6687353
      * @since 2023/9/25 11:18:27
      */
-    @PostMapping("/order/manualPay")
+    @PostMapping("/order/appeal/success")
     public Result<Void> manualPay(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
         transactionService.manualPay(transactionDTO);
+        return SUCCESS;
+    }
+
+    /**
+     * <p>
+     * 申訴失敗，客服取消訂單
+     * </p>
+     * @param transactionDTO  TransactionDTO
+     * @return com.icchance.q91.common.result.Result<java.lang.Void>
+     * @author 6687353
+     * @since 2023/9/26 11:22:12
+     */
+    @PostMapping("/order/appeal/fail")
+    public Result<Void> appealFail(@RequestBody @Validated({Order.class}) TransactionDTO transactionDTO) {
         return SUCCESS;
     }
 }
