@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.icchance</groupId>
 	<artifactId>q91</artifactId>
-	<version>0.0.28-SNAPSHOT</version>
+	<version>0.0.29-SNAPSHOT</version>
 	<name>q91</name>
 	<description>q91</description>
 	<properties>
