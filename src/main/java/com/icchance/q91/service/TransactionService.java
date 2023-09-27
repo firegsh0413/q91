@@ -163,4 +163,24 @@ public interface TransactionService {
      */
     TransactionDTO verifyOrder(TransactionDTO transactionDTO);
 
+    /**
+     * <p>
+     * 申訴成功，客服手動打款到買家帳戶
+     * </p>
+     * @param transactionDTO  TransactionDTO
+     * @author 6687353
+     * @since 2023/9/25 11:13:24
+     */
+    void manualPay(TransactionDTO transactionDTO);
+
+    /**
+     * <p>
+     * 申訴失敗，客服取消訂單
+     * </p>
+     * @param transactionDTO  TransactionDTO
+     * @author 6687353
+     * @since 2023/9/26 11:23:27
+     */
+    void appealFail(TransactionDTO transactionDTO);
+
 }

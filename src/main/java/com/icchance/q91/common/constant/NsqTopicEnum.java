@@ -11,6 +11,9 @@ public enum NsqTopicEnum {
 
     CHECK_ORDER("CHECK_ORDER"),
     UPLOAD_CERT("UPLOAD_CERT"),
+    APPEAL_SUCCESS("APPEAL_SUCCESS"),
+    APPEAL_FAIL("APPEAL_FAIL"),
+
     ;
     private final String value;
 

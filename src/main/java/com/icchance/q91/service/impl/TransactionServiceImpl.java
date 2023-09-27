@@ -427,4 +427,84 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionDTO;
     }
 
+    /**
+     * <p>
+     * 手動打款
+     * </p>
+     * @param transactionDTO TransactionDTO
+     * @author 6687353
+     * @since 2023/9/25 11:13:24
+     */
+    @Override
+    public void manualPay(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        // 買家進行申訴要求手動打款
+        OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(orderVO)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        // 判斷訂單狀態是否為申訴中
+        if (!OrderConstant.OrderStatusEnum.APPEAL.code.equals(orderVO.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
+        }
+        BigDecimal amount = orderVO.getAmount();
+        PendingOrderVO pendingOrderVO = pendingOrderService.getDetail(orderVO.getSellerId(), orderVO.getPendingOrderId());
+        // 掛單有人下訂 用戶錢包額度 從交易中扣除
+        UserBalance sellerBalance = userBalanceService.getEntity(orderVO.getSellerId());
+        sellerBalance.setTradingAmount(sellerBalance.getTradingAmount().subtract(amount));
+        userBalanceService.updateEntity(sellerBalance);
+        // 打幣給買家 交易中->可售數量/錢包餘額
+        UserBalance buyerBalance = userBalanceService.getEntity(userId);
+        buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(amount));
+        buyerBalance.setBalance(buyerBalance.getBalance().add(amount));
+        buyerBalance.setAvailableAmount(buyerBalance.getAvailableAmount().add(amount));
+        userBalanceService.updateEntity(buyerBalance);
+        // 掛單狀態為手動打款
+        pendingOrderService.updateStatus(pendingOrderVO.getId(), OrderConstant.PendingOrderStatusEnum.MANUAL_PAY.code);
+        // 更新訂單狀態
+        orderService.updateStatus(transactionDTO.getId(), OrderConstant.OrderStatusEnum.FINISH.code);
+        // 解鎖
+        if (RedissonLockUtil.isLocked(RedisKeyUtil.generateKey(pendingOrderVO.getId()))) {
+            RedissonLockUtil.unlock(RedisKeyUtil.generateKey(pendingOrderVO.getId()));
+        }
+    }
+
+    /**
+     * <p>
+     * 申訴失敗，客服取消訂單
+     * </p>
+     * @param transactionDTO TransactionDTO
+     * @author 6687353
+     * @since 2023/9/26 11:23:27
+     */
+    @Override
+    public void appealFail(TransactionDTO transactionDTO) {
+        Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        OrderVO orderVO = orderService.getDetail(userId, transactionDTO.getId());
+        if (Objects.isNull(orderVO)) {
+            throw new ServiceException(ResultCode.NO_ORDER_EXIST);
+        }
+        // 訂單狀態為申訴中
+        if (!OrderConstant.OrderStatusEnum.APPEAL.code.equals(orderVO.getStatus())) {
+            throw new ServiceException(ResultCode.ORDER_STATUS_ERROR);
+        }
+        orderService.updateStatus(orderVO.getId(), OrderConstant.OrderStatusEnum.CANCEL.code);
+        // 取消訂單 買方錢包額度 交易中移除額度
+        UserBalance buyerBalance = userBalanceService.getEntity(userId);
+        buyerBalance.setTradingAmount(buyerBalance.getTradingAmount().subtract(orderVO.getAmount()));
+        userBalanceService.updateEntity(buyerBalance);
+        // 賣方掛單更新
+        // TODO 訂單取消 對應掛單一起取消
+        pendingOrderService.updateStatus(orderVO.getPendingOrderId(), OrderConstant.PendingOrderStatusEnum.CANCEL.code);
+        // 錢包額度 交易中->賣單餘額
+        UserBalance sellBalance = userBalanceService.getEntity(orderVO.getSellerId());
+        sellBalance.setTradingAmount(sellBalance.getTradingAmount().subtract(orderVO.getAmount()));
+        sellBalance.setPendingBalance(sellBalance.getPendingBalance().add(orderVO.getAmount()));
+        userBalanceService.updateEntity(sellBalance);
+        // 解鎖
+        if (RedissonLockUtil.isLocked(RedisKeyUtil.generateKey(orderVO.getPendingOrderId()))) {
+            RedissonLockUtil.unlock(RedisKeyUtil.generateKey(orderVO.getPendingOrderId()));
+        }
+    }
+
 }

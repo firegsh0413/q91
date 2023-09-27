@@ -60,4 +60,38 @@ public class MessageHandler {
             transactionService.verifyPendingOrder(orderDetail.getSellerId(), orderDetail.getPendingOrderId());
         }
     }
+
+    /**
+     * <p>
+     * 申訴成功
+     * </p>
+     * @param data  訊息主體
+     * @author 6687353
+     * @since 2023/9/27 17:01:42
+     */
+    public void getAppealSuccess(byte[] data) {
+        log.info("MessageHandler.getAppealSuccess, data:{}", data);
+        TransactionDTO transactionDTO = JSON.parseObject(new String(data), TransactionDTO.class);
+        OrderVO orderDetail = transactionService.getOrderDetail(transactionDTO);
+        if (OrderConstant.OrderStatusEnum.APPEAL.code.equals(orderDetail.getStatus())) {
+            transactionService.manualPay(transactionDTO);
+        }
+    }
+
+    /**
+     * <p>
+     * 申訴失敗
+     * </p>
+     * @param data  訊息主體
+     * @author 6687353
+     * @since 2023/9/27 17:02:10
+     */
+    public void getAppealFail(byte[] data) {
+        log.info("MessageHandler.getAppealFail, data:{}", data);
+        TransactionDTO transactionDTO = JSON.parseObject(new String(data), TransactionDTO.class);
+        OrderVO orderDetail = transactionService.getOrderDetail(transactionDTO);
+        if (OrderConstant.OrderStatusEnum.APPEAL.code.equals(orderDetail.getStatus())) {
+            transactionService.appealFail(transactionDTO);
+        }
+    }
 }

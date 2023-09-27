@@ -40,6 +40,8 @@ public class Consumer implements ApplicationRunner {
             Subscriber subscriber = new Subscriber(host + ":" + port);
             subscriber.subscribe(NsqTopicEnum.CHECK_ORDER.getValue(), channel, messageHandler::getCheckOrderConsumer);
             subscriber.subscribe(NsqTopicEnum.UPLOAD_CERT.getValue(), channel, messageHandler::getUploadCertConsumer);
+            subscriber.subscribe(NsqTopicEnum.APPEAL_SUCCESS.getValue(), channel, messageHandler::getAppealSuccess);
+            subscriber.subscribe(NsqTopicEnum.APPEAL_FAIL.getValue(), channel, messageHandler::getAppealFail);
         }
     }
 }
