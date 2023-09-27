@@ -121,7 +121,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void setPrivateMessageNotice(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
-        privateMessageMapper.updateIsRead(messageDTO.getId(), userId, IS_READ_TRUE, LocalDateTime.now());
+        if (0 == privateMessageMapper.updateIsRead(messageDTO.getId(), userId, IS_READ_TRUE, LocalDateTime.now())) {
+            throw new ServiceException(ResultCode.MESSAGE_NOT_EXIST);
+        }
     }
 
     /**
@@ -135,7 +137,9 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void deletePrivateMessage(MessageDTO messageDTO) {
         Integer userId = jwtUtil.parseUserId(messageDTO.getToken());
-        privateMessageMapper.delete(messageDTO.getId(), userId);
+        if (0 == privateMessageMapper.delete(messageDTO.getId(), userId)) {
+            throw new ServiceException(ResultCode.MESSAGE_NOT_EXIST);
+        }
     }
 
     private AnnouncementVO convertAnnouncementVO(Announcement announcement) {

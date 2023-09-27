@@ -43,6 +43,10 @@ public enum ResultCode implements ServiceExceptionModel {
     ORDER_IN_TRANSACTION("2006", "此单已在交易中无法操作"),
     NOT_CERTIFICATE("2007", "用户未通过身份认证"),
     ORDER_STATUS_ERROR("2008", "订单状态异常"),
+    AMOUNT_ERROR("2009", "请输入正确金额"),
+
+    /** 訊息類 */
+    MESSAGE_NOT_EXIST("3000", "讯息不存在"),
 
     ;
 

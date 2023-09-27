@@ -221,6 +221,13 @@ public class MarketServiceImpl implements MarketService {
     public void sell(MarketInfoDTO marketInfoDTO) {
         Integer userId = jwtUtil.parseUserId(marketInfoDTO.getToken());
         BigDecimal amount = marketInfoDTO.getAmount();
+        if (BigDecimal.ZERO.compareTo(amount) > 0) {
+            throw new ServiceException(ResultCode.AMOUNT_ERROR);
+        }
+        UserBalance sellerBalance = userBalanceService.getEntity(userId);
+        if (amount.compareTo(sellerBalance.getAvailableAmount()) >= 0) {
+            throw new ServiceException(ResultCode.BALANCE_NOT_ENOUGH);
+        }
         // 1.建立掛單
         PendingOrderDTO pendingOrderDTO = PendingOrderDTO.builder()
                 .userId(userId)
@@ -231,11 +238,7 @@ public class MarketServiceImpl implements MarketService {
         String orderNumber = pendingOrder.getOrderNumber();
         // 2.更新賣方錢包
         // 可售數量->賣單餘額
-        UserBalance sellerBalance = userBalanceService.getEntity(userId);
         sellerBalance.setPendingBalance(sellerBalance.getPendingBalance().add(amount));
-        if (amount.compareTo(sellerBalance.getAvailableAmount()) > 0) {
-            throw new ServiceException(ResultCode.BALANCE_NOT_ENOUGH);
-        }
         sellerBalance.setAvailableAmount(sellerBalance.getAvailableAmount().subtract(amount));
         userBalanceService.updateEntity(sellerBalance);
         // 3.建立訂單紀錄
