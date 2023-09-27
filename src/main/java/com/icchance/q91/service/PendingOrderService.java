@@ -8,6 +8,7 @@ import com.icchance.q91.entity.vo.MarketVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -110,5 +111,17 @@ public interface PendingOrderService extends IService<PendingOrder> {
      * @since 2023/9/26 09:57:59
      */
     int updateStatus(Integer orderId, Integer status);
+
+    /**
+     * <p>
+     * 取交易中掛單列表
+     * </p>
+     * @param userId  用戶ID
+     * @param sellerGatewayId 交易中交易渠道ID
+     * @return java.util.List<com.icchance.q91.entity.model.PendingOrder>
+     * @author 6687353
+     * @since 2023/9/27 09:21:54
+     */
+    List<PendingOrder> getPendingOrderList(Integer userId, Integer sellerGatewayId);
 
 }

@@ -2,11 +2,13 @@ package com.icchance.q91.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
 import com.icchance.q91.common.error.ServiceException;
-import com.icchance.q91.entity.dto.*;
+import com.icchance.q91.entity.dto.BaseDTO;
+import com.icchance.q91.entity.dto.GatewayDTO;
+import com.icchance.q91.entity.dto.PendingOrderDTO;
+import com.icchance.q91.entity.dto.TransactionDTO;
 import com.icchance.q91.entity.model.*;
 import com.icchance.q91.entity.vo.OrderVO;
 import com.icchance.q91.entity.vo.PendingOrderVO;
@@ -384,6 +386,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void deleteGateway(TransactionDTO transactionDTO) {
         Integer userId = jwtUtil.parseUserId(transactionDTO.getToken());
+        // 檢查是否有使用此交易渠道的掛單
+        List<PendingOrder> pendingOrderList = pendingOrderService.getPendingOrderList(userId, transactionDTO.getId());
+        if (CollectionUtils.isNotEmpty(pendingOrderList)) {
+            throw new ServiceException(ResultCode.ORDER_IN_TRANSACTION);
+        }
         gatewayService.deleteGateway(userId, transactionDTO.getId());
     }
 

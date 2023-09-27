@@ -1,11 +1,9 @@
 package com.icchance.q91.controller;
 
-import com.icchance.q91.annotation.UserCertificateAnnotation;
 import com.icchance.q91.annotation.UserLoginToken;
 import com.icchance.q91.common.error.group.Order;
 import com.icchance.q91.common.error.group.OrderVerify;
 import com.icchance.q91.common.result.Result;
-import com.icchance.q91.common.result.ResultSuper;
 import com.icchance.q91.entity.dto.BaseDTO;
 import com.icchance.q91.entity.dto.GatewayDTO;
 import com.icchance.q91.entity.dto.TransactionDTO;
@@ -16,7 +14,10 @@ import com.icchance.q91.entity.vo.PendingOrderVO;
 import com.icchance.q91.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -222,7 +223,7 @@ public class TransactionController extends BaseController {
      * @since 2023/8/22 15:35:41
      */
     @UserLoginToken
-    @DeleteMapping("/gateway/delete")
+    @PostMapping("/gateway/delete")
     public Result<Void> deleteGateway(@RequestBody @Validated(Order.class) TransactionDTO transactionDTO) {
         transactionService.deleteGateway(transactionDTO);
         return SUCCESS;

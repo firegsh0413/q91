@@ -1,5 +1,6 @@
 package com.icchance.q91.service.impl;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.icchance.q91.common.constant.OrderConstant;
 import com.icchance.q91.common.constant.ResultCode;
@@ -192,6 +193,25 @@ public class PendingOrderServiceImpl extends ServiceImpl<PendingOrderMapper, Pen
                 .updateTime(LocalDateTime.now())
                 .build();
         return baseMapper.updateById(pendingOrder);
+    }
+
+    /**
+     * <p>
+     * 取交易中掛單列表
+     * </p>
+     * @param userId  用戶ID
+     * @param sellerGatewayId 交易中交易渠道ID
+     * @return java.util.List<com.icchance.q91.entity.model.PendingOrder>
+     * @author 6687353
+     * @since 2023/9/27 09:21:54
+     */
+    @Override
+    public List<PendingOrder> getPendingOrderList(Integer userId, Integer sellerGatewayId) {
+        return new LambdaQueryChainWrapper<>(baseMapper)
+                .eq(PendingOrder::getUserId, userId)
+                .eq(PendingOrder::getSellerGatewayId, sellerGatewayId)
+                .ne(PendingOrder::getStatus, OrderConstant.PendingOrderStatusEnum.CANCEL.code)
+                .list();
     }
 
     /**
